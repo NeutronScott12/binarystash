@@ -5,6 +5,7 @@
         { "path": "comments" },
         { "path": "common" },
         { "path": "ecommence" },
-        { "path": "profile" }
+        { "path": "profile" },
+        { "path": "cli" }
     ]
 }

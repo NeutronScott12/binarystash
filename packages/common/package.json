@@ -2,11 +2,12 @@
     "name": "@binarystash/common",
     "version": "0.0.1",
     "description": "",
-    "main": "index.js",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "delete-build": "rimraf ./dist",
-        "build": "cross-env npm run delete-build && tsc && npm run copy-graphql",
+        "build": "cross-env npm run delete-build && tsc",
         "build:bash": "build.sh"
     },
     "keywords": [],
@@ -19,6 +20,7 @@
         "express": "^4.16.4",
         "express-session": "^1.15.6",
         "graphql": "^14.1.1",
+        "graphql-shield": "^5.1.2",
         "graphql-tools": "^4.0.4",
         "helmet": "^3.15.0",
         "ioredis": "^4.6.2",

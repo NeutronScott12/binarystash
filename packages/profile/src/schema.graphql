@@ -1,33 +1,7 @@
 # import * from "./generated/prisma.graphql"
+# import * from "./modules/profile/profile.schema.graphql"
 
 scalar Upload
-
-type MyUser {
-    id: ID!
-    email: String!
-    notifications: [Notification!]
-    set_private: Boolean!
-    username: String!
-    gitHubId: String
-    facebookId: String
-    twitterId: String
-    gmailId: String
-    directMessages: [Comment!]
-    avatar_url: File!
-    private: Boolean!
-    blockedUsers: [User!]
-    confirmed: Boolean!
-    online: Boolean!
-    friends: [User!]
-    friend_requests: [User!]
-    createdAt: String!
-    updatedAt: String!
-    role: UserRole!
-    teams: [Team!]
-    channels: [Channel!]
-    owned_teams: [Team!]
-    owned_channels: [Channel!]
-}
 
 type VoidResponse {
     ok: Boolean
@@ -39,37 +13,9 @@ type Error {
     message: String!
 }
 
-type ProfileError {
-    username: String
-    avatar_url: File
-    message: String
-    error: String
-    path: String
-}
-
-type ProfileResponse {
-    user: MyUser
-    errors: ProfileError
-}
-
-type AddFriendResponse {
-    ok: Boolean!
-    errors: [Error!]
-    user: User
-}
-
-type FriendRemoveResponse {
-    ok: Boolean!
-    user: User
-}
-
-type UpdateProfileResponse {
-    avatar: File
-    username: String
-}
-
 type Query {
     getProfile(username: String!): ProfileResponse
+    queryUsers: [MyUser!]
 }
 
 type Subscription {

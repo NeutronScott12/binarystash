@@ -1,4 +1,3 @@
-import { expressMiddleware } from '@binarystash/common'
 import { ApolloServer } from 'apollo-server-express'
 import { S3 } from 'aws-sdk'
 import 'dotenv/config'
@@ -15,15 +14,22 @@ import {
     logger,
     normalisePort,
 } from 'scotts_utilities'
-//Replace it someday
 import { PORT } from './constants'
+//Replace it someday
 // import CustomDirectives from './directives'
 import { Prisma } from './generated/prisma-client'
+// import {} from '@binarystash/common'
+// import { middleware } from './middleware/express'
 // import { middleware } from './middleware/express'
 // import { ShieldMiddleware } from './middleware/graphql/shield'
 // import { setupPassport } from './passport'
 import { redis } from './redis'
-import passport = require('passport')
+// import { logger } from './utils/logger'
+
+// import { graphqlMiddleware } from './middleware/graphql/graphql-middleware';
+// import { Prisma } from './generated/prisma-client';
+
+// const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 const s3Client: S3 = new S3({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -54,7 +60,7 @@ const app = express()
 
 // let passport = setupPassport()
 
-expressMiddleware(app, passport, redis)
+// middleware(app)
 
 // app.use('/api/v1', ApiRouter)
 

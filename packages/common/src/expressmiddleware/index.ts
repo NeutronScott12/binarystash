@@ -12,7 +12,7 @@ import { addUser } from '../utils/auth/middleware'
 
 const redisStore = require('connect-redis')(session)
 
-export const middleware = (
+export const expressMiddleware = (
     app: Express,
     passport: passport.PassportStatic,
     redis: Redis,

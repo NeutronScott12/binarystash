@@ -1,0 +1,23 @@
+# import * from "./generated/prisma.graphql"
+
+scalar Upload
+
+type Query {
+    showTeam(teamSlug: String!): Team!
+    showTeams(authorId: ID!): [Team!]
+    showChannel(channelId: ID!): Channel!
+}
+
+type Subscription {
+    messageSubscription(channelId: ID!): MessageSubscriptionPayload!
+}
+
+type Mutation {
+    removeChannelMember(channelId: ID!, userId: ID!): Channel!
+    createChannel(name: String!, teamId: ID!): Channel!
+    createTeam(name: String!): Team!
+    addTeamMember(userId: ID!, teamId: ID!): Team!
+    addChannelMember(userId: ID!, channelId: ID!): Channel!
+    createChannelMember(userId: String!, channelId: String!): Channel!
+    removeTeamMember(userId: ID!, teamId: ID!): Team
+}

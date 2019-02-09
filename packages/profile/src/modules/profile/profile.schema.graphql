@@ -1,0 +1,55 @@
+type MyUser {
+    id: ID!
+    email: String!
+    notifications: [Notification!]
+    set_private: Boolean!
+    username: String!
+    gitHubId: String
+    facebookId: String
+    twitterId: String
+    gmailId: String
+    directMessages: [Comment!]
+    avatar_url: File!
+    private: Boolean!
+    blockedUsers: [User!]
+    confirmed: Boolean!
+    online: Boolean!
+    friends: [User!]
+    friend_requests: [User!]
+    createdAt: String!
+    updatedAt: String!
+    role: UserRole!
+    teams: [Team!]
+    channels: [Channel!]
+    owned_teams: [Team!]
+    owned_channels: [Channel!]
+}
+
+type ProfileError {
+    username: String
+    avatar_url: File
+    message: String
+    error: String
+    path: String
+}
+
+type ProfileResponse {
+    user: MyUser
+    errors: ProfileError
+}
+
+type AddFriendResponse {
+    ok: Boolean!
+    errors: [Error!]
+    user: User
+}
+
+type FriendRemoveResponse {
+    ok: Boolean!
+    user: User
+}
+
+type UpdateProfileResponse {
+    avatar: File
+    username: String
+}

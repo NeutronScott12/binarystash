@@ -18,8 +18,7 @@ import {
 import { PORT } from './constants'
 // import CustomDirectives from './directives'
 import { Prisma } from './generated/prisma-client'
-// import { middleware } from './middleware/express'
-// import { middleware } from './middleware/express'
+import { permissions } from './graphqlMiddleware'
 // import { ShieldMiddleware } from './middleware/graphql/shield'
 // import { setupPassport } from './passport'
 import { redis } from './redis'
@@ -63,7 +62,7 @@ const app = express()
 
 // app.use('/api/v1', ApiRouter)
 
-const { schema } = applyMiddleware(makeSchema)
+const { schema } = applyMiddleware(makeSchema, permissions)
 
 const server: ApolloServer = new ApolloServer({
     schema,
