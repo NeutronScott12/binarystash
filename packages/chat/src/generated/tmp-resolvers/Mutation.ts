@@ -26,4 +26,7 @@ export const Mutation: MutationResolvers.Type = {
     removeTeamMember: (parent, args, ctx) => {
         throw new Error('Resolver not implemented')
     },
+    createMessage: (parent, args, ctx) => {
+        throw new Error('Resolver not implemented')
+    },
 }

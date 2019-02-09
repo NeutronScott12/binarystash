@@ -5225,6 +5225,11 @@ export namespace MutationResolvers {
         teamId: string
     }
 
+    export interface ArgsCreateMessage {
+        body: string
+        channelId: string
+    }
+
     export type RemoveChannelMemberResolver = (
         parent: undefined,
         args: ArgsRemoveChannelMember,
@@ -5273,6 +5278,13 @@ export namespace MutationResolvers {
         ctx: Context,
         info: GraphQLResolveInfo,
     ) => Team | null | Promise<Team | null>
+
+    export type CreateMessageResolver = (
+        parent: undefined,
+        args: ArgsCreateMessage,
+        ctx: Context,
+        info: GraphQLResolveInfo,
+    ) => Message | Promise<Message>
 
     export interface Type {
         removeChannelMember: (
@@ -5323,6 +5335,13 @@ export namespace MutationResolvers {
             ctx: Context,
             info: GraphQLResolveInfo,
         ) => Team | null | Promise<Team | null>
+
+        createMessage: (
+            parent: undefined,
+            args: ArgsCreateMessage,
+            ctx: Context,
+            info: GraphQLResolveInfo,
+        ) => Message | Promise<Message>
     }
 }
 

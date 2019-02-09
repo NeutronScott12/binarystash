@@ -49,6 +49,7 @@
         "prisma-binding": "^2.3.2",
         "prisma-client-lib": "^1.26.4",
         "scotts_utilities": "^0.0.12",
+        "shortid": "^2.2.14",
         "uuid": "^3.3.2",
         "winston": "^3.1.0",
         "yup": "^0.26.6"
@@ -72,6 +73,7 @@
         "@types/nodemailer": "^4.6.5",
         "@types/passport": "^1.0.0",
         "@types/passport-facebook": "^2.1.8",
+        "@types/shortid": "^0.0.29",
         "@types/uuid": "^3.4.4",
         "@types/yup": "^0.26.3",
         "faker": "^4.1.0",

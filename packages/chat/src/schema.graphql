@@ -20,4 +20,5 @@ type Mutation {
     addChannelMember(userId: ID!, channelId: ID!): Channel!
     createChannelMember(userId: String!, channelId: String!): Channel!
     removeTeamMember(userId: ID!, teamId: ID!): Team
+    createMessage(body: String!, channelId: ID!): Message!
 }
