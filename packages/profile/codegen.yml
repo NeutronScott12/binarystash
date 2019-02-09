@@ -1,0 +1,7 @@
+schema: http://localhost:2000/graphql
+documents: ./src/schema.graphql
+
+generates:
+    src/types/generated_types.ts:
+        - typescript-common
+        - typescript-server
