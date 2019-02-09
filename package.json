@@ -1,0 +1,27 @@
+{
+    "name": "micro-services-servers",
+    "version": "1.0.0",
+    "description": "",
+    "private": true,
+    "main": "index.js",
+    "scripts": {
+        "build:server": "npx lerna run build:bash",
+        "prisma-deploy": "prisma deploy",
+        "prisma-up": "docker-compose up -d",
+        "prisma-down": "docker-compose down"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "lerna": "^3.11.0"
+    },
+    "workspaces": {
+        "packages": [
+            "packages/*"
+        ]
+    },
+    "resolutions": {
+        "graphql": "14.0.0"
+    }
+}

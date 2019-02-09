@@ -1,0 +1,10 @@
+{
+    "files": [],
+    "references": [
+        { "path": "auth" },
+        { "path": "comments" },
+        { "path": "common" },
+        { "path": "ecommence" },
+        { "path": "profile" }
+    ]
+}

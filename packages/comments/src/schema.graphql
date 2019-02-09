@@ -1,0 +1,33 @@
+# import * from "./generated/prisma.graphql"
+
+type Query {
+    queryComment(parentId: ID!, limit: Int, offset: Int): CommentConnection!
+}
+
+type Subscription {
+    newCommentSubscription(pageId: ID!): CommentSubscriptionPayload!
+}
+
+type DeleteCommentResponse {
+    id: ID
+    parentId: ID
+}
+
+type Mutation {
+    deleteComment(id: ID!): DeleteCommentResponse!
+    editComment(id: ID!, body: String!): Comment!
+
+    createComment(
+        pageId: ID!
+        parentId: ID!
+        body: String
+        repliedTo: ID
+    ): Comment!
+    createReply(
+        pageId: ID!
+        parentId: ID!
+        body: String
+        repliedTo: ID
+    ): Comment!
+    likeComment(commentId: ID!): Comment
+}

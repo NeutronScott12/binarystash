@@ -1,0 +1,53 @@
+version: '3'
+services:
+    # volumes:
+    #     - '/data:/data'
+    # server:
+    #     environment:
+    #         PRISMA_DB_URL: prisma:4466
+    #         NODE_ENV: production
+    #         REDIS_URL: redis:6379
+    #     image: ogneutron/prismabackend
+    #     restart: always
+    #     depends_on:
+    #         - redis
+    #         - prisma
+    #         - postgres
+    #     ports:
+    #         - '2000:2000'
+    redis:
+        image: 'redis:alpine'
+        container_name: redis_cache
+        ports:
+            - '6379:6379'
+        volumes:
+            - ./redis.conf:/usr/local/etc/redis/redis.conf
+    prisma:
+        image: prismagraphql/prisma:1.25.4
+        restart: always
+        ports:
+            - '4466:4466'
+        environment:
+            PRISMA_CONFIG: |
+                port: 4466
+                # uncomment the next line and provide the env var PRISMA_MANAGEMENT_API_SECRET=my-secret to activate cluster security
+                # managementApiSecret: my-secret
+                databases:
+                    default:
+                        connector: postgres
+                        host: postgres
+                        user: prisma
+                        password: prisma
+                        rawAccess: true
+                        port: 5432
+                        migrations: true
+    postgres:
+        image: postgres
+        restart: always
+        environment:
+            POSTGRES_USER: prisma
+            POSTGRES_PASSWORD: prisma
+        volumes:
+            - postgres:/var/lib/postgresql/data
+volumes:
+    postgres:
