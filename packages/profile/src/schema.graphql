@@ -1,0 +1,94 @@
+# import * from "./generated/prisma.graphql"
+
+scalar Upload
+
+type MyUser {
+    id: ID!
+    email: String!
+    notifications: [Notification!]
+    set_private: Boolean!
+    username: String!
+    gitHubId: String
+    facebookId: String
+    twitterId: String
+    gmailId: String
+    directMessages: [Comment!]
+    avatar_url: File!
+    private: Boolean!
+    blockedUsers: [User!]
+    confirmed: Boolean!
+    online: Boolean!
+    friends: [User!]
+    friend_requests: [User!]
+    createdAt: String!
+    updatedAt: String!
+    role: UserRole!
+    teams: [Team!]
+    channels: [Channel!]
+    owned_teams: [Team!]
+    owned_channels: [Channel!]
+}
+
+type VoidResponse {
+    ok: Boolean
+    errors: [Error!]
+}
+
+type Error {
+    path: String!
+    message: String!
+}
+
+type ProfileError {
+    username: String
+    avatar_url: File
+    message: String
+    error: String
+    path: String
+}
+
+type ProfileResponse {
+    user: MyUser
+    errors: ProfileError
+}
+
+type AddFriendResponse {
+    ok: Boolean!
+    errors: [Error!]
+    user: User
+}
+
+type FriendRemoveResponse {
+    ok: Boolean!
+    user: User
+}
+
+type UpdateProfileResponse {
+    avatar: File
+    username: String
+}
+
+type Query {
+    getProfile(username: String!): ProfileResponse
+}
+
+type Subscription {
+    friendRequestSubscription(id: ID!): UserSubscriptionPayload!
+    friendSubscription(id: ID!): UserSubscriptionPayload!
+}
+
+type Mutation {
+    friendRemove(friendId: ID!): FriendRemoveResponse!
+    friendRequest(requestedId: ID!): VoidResponse!
+    addFriend(requestedId: ID!): AddFriendResponse!
+    friendReject(id: ID!): VoidResponse!
+    blockUser(id: ID!): MyUser
+    unblockUser(id: ID!): MyUser
+    setProfilePrivacy(bool: Boolean!): MyUser
+    updateProfile(
+        username: String
+        oldPassword: String
+        newPassword: String
+        avatar: Upload
+    ): UpdateProfileResponse
+}

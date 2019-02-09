@@ -1,0 +1,173 @@
+enum UserRole {
+    ADMIN
+    MODERATOR
+    USER
+}
+
+enum OnlineStatus {
+    ONLINE
+    OFFLINE
+    AWAY
+    INVISBLE
+}
+
+type File {
+    id: ID! @unique
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    filename: String!
+    mimetype: String!
+    encoding: String!
+    key: String!
+    ETag: String!
+    url: String!
+}
+
+type Rating {
+    id: ID! @unique
+    vote: Int!
+    author: [User!]!
+}
+
+type Notification {
+    id: ID! @unique
+    message: String
+    comments: Comment
+    messages: Message
+    team: Team
+    channel: Channel
+    friend_requests: User @relation(name: "FriendRequestNotifcation")
+    friend: User @relation(name: "FriendNotification")
+    author: User! @relation(name: "NotificationAuthor")
+}
+
+type User {
+    id: ID! @unique
+    email: String @unique
+    notifications: [Notification!]! @relation(name: "UserNotification")
+    set_private: Boolean! @default(value: true)
+    username: String! @unique
+    password: String!
+    gitHubId: ID @unique
+    facebookId: ID @unique
+    twitterId: ID @unique
+    gmailId: String
+    directMessages: [Comment!]! @relation(name: "UserDirectMessage")
+    avatar_url: File!
+    private: Boolean! @default(value: false)
+    blockedUsers: [User!]! @relation(name: "BlockedUsers")
+    confirmed: Boolean! @default(value: false)
+    online: Boolean! @default(value: false)
+    friends: [User!]! @relation(name: "UserFriends")
+    friend_requests: [User!]! @relation(name: "UserFriendRequests")
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    role: UserRole!
+    teams: [Team!]! @relation(name: "TeamMembers")
+    channels: [Channel!]! @relation(name: "ChannelMembers")
+    owned_teams: [Team!]! @relation(name: "TeamAuthor", onDelete: CASCADE)
+    owned_channels: [Channel!]!
+        @relation(name: "AuthorChannel", onDelete: CASCADE)
+}
+
+type Comment {
+    id: ID! @unique
+    body: String!
+    parentId: ID!
+    pageId: ID!
+    repliedTo: User @relation(name: "RepliedTo")
+    ratings: Rating!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    replies: [Comment!]! @relation(name: "CommentReplies", onDelete: CASCADE)
+    author: User! @relation(name: "CommentUser")
+}
+
+type Message {
+    id: ID! @unique
+    body: String!
+    parentId: ID!
+    url: String!
+    filetype: String!
+    author: User!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+type Channel {
+    id: ID! @unique
+    name: String!
+    slug: String! @unique
+    moderators: [User!]! @relation(name: "ChannelModerators")
+    public: Boolean @default(value: true)
+    messages: [Message!]!
+    teamId: ID!
+    members: [User!]! @relation(name: "ChannelMembers")
+    author: User! @relation(name: "AuthorChannel")
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+type Team {
+    id: ID! @unique
+    name: String!
+    slug: String! @unique
+    moderators: [User!]! @relation(name: "TeamModerators")
+    author: User! @relation(name: "TeamAuthor")
+    members: [User!]! @relation(name: "TeamMembers")
+    channels: [Channel!]!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    confirmed: Boolean! @default(value: false)
+    online: Boolean! @default(value: false)
+}
+
+type TeamSetting {
+    id: ID! @unique
+    cankick: Boolean!
+}
+
+type Todo {
+    id: ID! @unique
+    body: String!
+    author: User! @unique
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+type TodoProject {
+    id: ID! @unique
+    name: String!
+    todos: [Todo!]!
+    author: User! @unique
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+type Order {
+    id: ID! @unique
+    products: [Product!]
+    customer: Customer!
+    total_price: Float!
+    confirmed: Boolean!
+    currency: String!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+type Customer {
+    id: ID! @unique
+    user: User!
+    stripeId: ID!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+type Product {
+    id: ID! @unique
+    name: String! @unique
+    stock: Int!
+    price: Float!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
