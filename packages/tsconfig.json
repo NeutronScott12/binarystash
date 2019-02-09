@@ -1,7 +1,7 @@
 {
     "files": [],
     "references": [
-        { "path": "auth" },
+        { "path": "authentication" },
         { "path": "comments" },
         { "path": "common" },
         { "path": "ecommence" },
