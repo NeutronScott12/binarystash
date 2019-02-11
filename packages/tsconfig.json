@@ -6,6 +6,7 @@
         { "path": "common" },
         { "path": "ecommence" },
         { "path": "profile" },
-        { "path": "cli" }
+        { "path": "cli" },
+        { "path": "notifications" }
     ]
 }

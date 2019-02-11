@@ -1,0 +1,23 @@
+# import * from "./generated/prisma.graphql"
+
+type Error {
+    path: String!
+    message: String!
+}
+
+type DeleteNotificationResponse {
+    ok: Boolean
+    errors: Error
+}
+
+type Query {
+    fetchNotifications: [Notification!]
+}
+
+type Subscription {
+    NotificationSubscription(id: ID!): NotificationSubscriptionPayload!
+}
+
+type Mutation {
+    deleteNotification(id: ID!): DeleteNotificationResponse
+}

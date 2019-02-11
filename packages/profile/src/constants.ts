@@ -1,5 +1,5 @@
 export const PORT: number =
-    ((process.env.PORT as unknown) as number | undefined) || 2121
+    ((process.env.PORT as unknown) as number | undefined) || 2422
 export const REDIS_PREFIX = 'sess:'
 export const USER_SESSION_ID_PREFIX = 'userSids:'
 export const FORGOT_PASSWORD_PREFIX = 'forgotPassword:'
