@@ -3,4 +3,4 @@
 npm run build
 npm run copy-graphql
 
-docker build -t binarystashchat .
+docker build -t ogneutron/binarystashchat .
