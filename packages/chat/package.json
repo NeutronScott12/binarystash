@@ -1,6 +1,6 @@
 {
     "name": "@binarystash/chat",
-    "version": "0.0.1",
+    "version": "1.0.1",
     "description": "",
     "main": "index.js",
     "scripts": {
@@ -21,7 +21,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@binarystash/common": "0.0.1",
+        "@binarystash/common": "^1.0.1",
         "apollo-server-express": "^2.4.0",
         "bcryptjs": "^2.4.3",
         "compression": "^1.7.3",
