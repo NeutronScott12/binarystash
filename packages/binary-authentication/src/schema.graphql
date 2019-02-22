@@ -1,0 +1,79 @@
+# import * from "./generated/prisma.graphql"
+
+scalar Upload
+
+directive @auth on FIELD_DEFINITION
+
+type MyUser {
+    id: ID!
+    email: String!
+    notifications: [Notification!]
+    set_private: Boolean!
+    username: String!
+    gitHubId: String
+    facebookId: String
+    twitterId: String
+    gmailId: String
+    directMessages: [Comment!]
+    avatar_url: File!
+    private: Boolean!
+    blockedUsers: [User!]
+    confirmed: Boolean!
+    online: Boolean!
+    friends: [User!]
+    friend_requests: [User!]
+    createdAt: String!
+    updatedAt: String!
+    role: UserRole!
+    teams: [Team!]
+    channels: [Channel!]
+    owned_teams: [Team!]
+    owned_channels: [Channel!]
+}
+
+type ForgotPasswordResponse {
+    ok: Boolean!
+    result: String!
+}
+
+type LoginResponse {
+    ok: Boolean!
+    token: String
+    refreshToken: String!
+    user: User
+}
+
+type RegisterResponse {
+    ok: Boolean!
+    result: String!
+}
+
+type Error {
+    path: String!
+    message: String!
+}
+
+type VoidResponse {
+    ok: Boolean
+    errors: [Error!]
+}
+
+type Query {
+    currentUser: MyUser @auth
+
+    queryUsers: [MyUser!]
+}
+
+type Mutation {
+    login(email: String!, password: String): LoginResponse!
+    register(
+        email: String!
+        username: String!
+        password: String!
+    ): RegisterResponse!
+    forgotPassword(email: String!): ForgotPasswordResponse!
+    checkToken(token: String!): ForgotPasswordResponse!
+    resetPassword(id: ID!, password: String!): ForgotPasswordResponse!
+    logout: Boolean!
+    authConfirmation(token: String!): ForgotPasswordResponse!
+}

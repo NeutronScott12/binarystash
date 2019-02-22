@@ -1,5 +1,6 @@
-import auth from './auth'
+import auth from './auth';
 
-export default {
+export const SchemaDirectives = {
     auth,
 }
+
