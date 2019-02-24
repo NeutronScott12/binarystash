@@ -70,6 +70,36 @@ type User {
         @relation(name: "AuthorChannel", onDelete: CASCADE)
 }
 
+type Moderator {
+    id: ID! @unique
+    user: User!
+    can_delete: Boolean!
+    can_ban: Boolean!
+    can_edit: Boolean!
+    can_close: Boolean!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+type CommentOptions {
+    comments_open: Boolean!
+}
+
+type CommentSection {
+    id: ID! @unique
+    comments: [Comment!]! @relation(name: "SectionComments", onDelete: CASCADE)
+    pageId: ID! @unique
+    url: String! @unique
+    admin: User! @relation(name: "SectionAdmin", onDelete: CASCADE)
+    moderators: [Moderator!]!
+        @relation(name: "SectionModerators", onDelete: CASCADE)
+    options: CommentOptions!
+    bannedUsers: [User!]!
+        @relation(name: "SectionBannedUsers", onDelete: CASCADE)
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
 type Comment {
     id: ID! @unique
     body: String!

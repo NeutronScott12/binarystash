@@ -2,6 +2,7 @@
 
 type Query {
     queryComment(parentId: ID!, limit: Int, offset: Int): CommentConnection!
+    fetchCommentSection(pageId: ID!, url: String!): CommentSection!
 }
 
 type Subscription {
@@ -13,7 +14,21 @@ type DeleteCommentResponse {
     parentId: ID
 }
 
+input ModeratorsArgs {
+    users: [ID!]
+}
+
+input CommentSectionOptions {
+    open: Boolean!
+}
+
 type Mutation {
+    createCommentSection(
+        pageId: ID!
+        url: String!
+        moderators: ModeratorsArgs!
+        options: CommentSectionOptions!
+    ): CommentSection!
     deleteComment(id: ID!): DeleteCommentResponse!
     editComment(id: ID!, body: String!): Comment!
 
@@ -22,6 +37,7 @@ type Mutation {
         parentId: ID!
         body: String
         repliedTo: ID
+        commentSectionId: ID!
     ): Comment!
     createReply(
         pageId: ID!

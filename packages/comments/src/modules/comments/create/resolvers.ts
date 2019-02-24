@@ -8,6 +8,70 @@ import winston = require('winston')
 
 export const resolvers = {
     Mutation: {
+        async createCommentSection(
+            _: any,
+            {
+                pageId,
+                url,
+                moderators,
+                options,
+            }: MutationResolvers.ArgsCreateCommentSection,
+            { db, session }: Context,
+        ) {
+            try {
+                let adminId: any
+
+                if (!session.userId) {
+                    if (session.decodedUser && session.decodedUser.id)
+                        adminId = session.decodedUser.id
+                } else {
+                    adminId = session.userId
+                }
+
+                if (adminId === undefined || adminId === null) {
+                    throw new ForbiddenError(INVALID_CREDENTIALS)
+                }
+
+                const mods = moderators.users.map(u => ({
+                    user: {
+                        connect: {
+                            id: u,
+                        },
+                    },
+                    can_ban: true,
+                    can_delete: true,
+                    can_edit: true,
+                    can_close: true,
+                }))
+
+                console.log('MODS', mods)
+
+                const commentSection = await db.createCommentSection({
+                    admin: {
+                        connect: {
+                            id: adminId,
+                        },
+                    },
+                    url,
+                    pageId,
+                    moderators: {
+                        create: mods,
+                    },
+                    options: {
+                        create: {
+                            comments_open: options.open,
+                        },
+                    },
+                })
+
+                return commentSection
+            } catch (error) {
+                return logger('Create Comment Section').error({
+                    level: '5',
+                    message: error,
+                })
+            }
+        },
         async createReply(
             _: any,
             {
@@ -73,7 +137,12 @@ export const resolvers = {
         },
         async createComment(
             _: any,
-            { pageId, body, parentId }: MutationResolvers.ArgsCreateComment,
+            {
+                pageId,
+                body,
+                parentId,
+                commentSectionId,
+            }: MutationResolvers.ArgsCreateComment,
             { db, session }: Context,
         ): Promise<Comment | winston.Logger | ApolloError> {
             try {
@@ -102,7 +171,18 @@ export const resolvers = {
                             },
                         })
 
-                        console.log('COMMENT_CREATED', comment)
+                        const commentSection = await db.updateCommentSection({
+                            where: {
+                                id: commentSectionId,
+                            },
+                            data: {
+                                comments: {
+                                    connect: {
+                                        id: comment.id,
+                                    },
+                                },
+                            },
+                        })
 
                         return comment
                     } else {

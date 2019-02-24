@@ -11,6 +11,45 @@ export const resolvers = {
             }
         },
     },
+    CommentSection: {
+        comments(parent: any, _: any, { db }: Context) {
+            try {
+                return db.commentSection({ id: parent.id }).comments()
+            } catch (error) {
+                return logger('').error({ level: '5', message: error })
+            }
+        },
+        admin(parent: any, _: any, { db }: Context) {
+            try {
+                return db.commentSection({ id: parent.id }).admin()
+            } catch (error) {
+                return logger('').error({ level: '5', message: error })
+            }
+        },
+        moderators(parent: any, _: any, { db }: Context) {
+            try {
+                return db.commentSection({ id: parent.id }).moderators()
+            } catch (error) {
+                return logger('').error({ level: '5', message: error })
+            }
+        },
+        options(parent: any, _: any, { db }: Context) {
+            try {
+                return db.commentSection({ id: parent.id }).options()
+            } catch (error) {
+                return logger('').error({ level: '5', message: error })
+            }
+        },
+    },
+    Moderator: {
+        user(parent: any, _: any, { db }: Context) {
+            try {
+                return db.moderator({ id: parent.id }).user()
+            } catch (error) {
+                return logger('').error({ level: '5', message: error })
+            }
+        },
+    },
     Comment: {
         async author(parent: any, _: any, { db }: Context) {
             try {

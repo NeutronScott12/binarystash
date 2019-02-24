@@ -16,7 +16,12 @@ import { Channel } from './Channel'
 import { File } from './File'
 import { Rating } from './Rating'
 import { AggregateComment } from './AggregateComment'
+import { CommentSection } from './CommentSection'
+import { Moderator } from './Moderator'
+import { CommentOptions } from './CommentOptions'
 import { Mutation } from './Mutation'
+import { ModeratorsArgs } from './ModeratorsArgs'
+import { CommentSectionOptions } from './CommentSectionOptions'
 import { DeleteCommentResponse } from './DeleteCommentResponse'
 import { Subscription } from './Subscription'
 import { CommentSubscriptionPayload } from './CommentSubscriptionPayload'
@@ -36,7 +41,12 @@ export const resolvers: Resolvers = {
     File,
     Rating,
     AggregateComment,
+    CommentSection,
+    Moderator,
+    CommentOptions,
     Mutation,
+    ModeratorsArgs,
+    CommentSectionOptions,
     DeleteCommentResponse,
     Subscription,
     CommentSubscriptionPayload,

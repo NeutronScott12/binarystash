@@ -20,7 +20,7 @@ export interface User {
 
 export interface Session extends Express.Session {
     userId?: string
-    decodedUser?: string
+    decodedUser?: User
 }
 
 export interface Context {
@@ -86,6 +86,9 @@ export interface ProductsInput {
     id: string[]
 }
 
+export interface ModeratorsArgs {
+    users: string[]
+}
 export interface MyUser {
     id: string
     email: string
@@ -114,4 +117,8 @@ export interface DeleteCommentResponse {
 
 export interface UpdateProfileResponse {
     username: string | null
+}
+
+export interface CommentSectionOptions {
+    open: boolean
 }

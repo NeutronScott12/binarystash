@@ -1,14 +1,14 @@
-import * as compression from 'compression'
-import * as express from 'express'
-import { Express } from 'express'
-import * as session from 'express-session'
-import * as helmet from 'helmet'
-import { Redis } from 'ioredis'
-import * as morgan from 'morgan'
-import * as passport from 'passport'
-import * as path from 'path'
-import { REDIS_PREFIX } from '../constants'
-import { addUser } from '../utils/auth/middleware'
+import * as compression from 'compression';
+import * as express from 'express';
+import { Express } from 'express';
+import * as session from 'express-session';
+import * as helmet from 'helmet';
+import { Redis } from 'ioredis';
+import * as morgan from 'morgan';
+import * as passport from 'passport';
+import * as path from 'path';
+import { REDIS_PREFIX } from '../constants';
+import { addUser } from '../utils/auth/middleware';
 
 const redisStore = require('connect-redis')(session)
 
@@ -42,7 +42,7 @@ export const expressMiddleware = (
                 prefix: REDIS_PREFIX,
             }),
             name: 'qid',
-            secret: process.env.SESSION_SECRET as string,
+            secret: process.env.SESSION_SECRET as string || "secret",
             resave: false,
             saveUninitialized: false,
             cookie: {

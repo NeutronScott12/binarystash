@@ -5,6 +5,9 @@ import { MutationResolvers } from '../graphqlgen'
 
 export const Mutation: MutationResolvers.Type = {
     ...MutationResolvers.defaultResolvers,
+    createCommentSection: (parent, args, ctx) => {
+        throw new Error('Resolver not implemented')
+    },
     deleteComment: (parent, args, ctx) => {
         throw new Error('Resolver not implemented')
     },

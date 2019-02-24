@@ -8,4 +8,7 @@ export const Query: QueryResolvers.Type = {
     queryComment: (parent, args, ctx) => {
         throw new Error('Resolver not implemented')
     },
+    fetchCommentSection: (parent, args, ctx) => {
+        throw new Error('Resolver not implemented')
+    },
 }
