@@ -1,0 +1,18 @@
+# import * from "./generated/prisma.graphql"
+
+type CreateCommentAPIResponse {
+    commentAPI: CommentAPI
+    privateKey: String!
+}
+
+type Query {
+    currentUser: Boolean
+    fetchCommentAPIs: [CommentAPI]
+    fetchCommentAPI(id: ID!): CommentAPI
+}
+
+type Mutation {
+    createCommentApi: CreateCommentAPIResponse!
+    createChatApi(name: String): Boolean
+    updateCommentAPI(id: ID!): CommentAPI
+}

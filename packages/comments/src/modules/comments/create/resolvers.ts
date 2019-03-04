@@ -1,5 +1,5 @@
 import { ApolloError, ForbiddenError } from 'apollo-server-express'
-import { logger } from 'scotts_utilities'
+import { comparePassword, logger } from 'scotts_utilities'
 import { INVALID_CREDENTIALS } from '../../../constants'
 import { MutationResolvers } from '../../../generated/graphqlgen'
 import { Comment } from '../../../generated/prisma-client'
@@ -15,6 +15,8 @@ export const resolvers = {
                 url,
                 moderators,
                 options,
+                privateKey,
+                consumerKey,
             }: MutationResolvers.ArgsCreateCommentSection,
             { db, session }: Context,
         ) {
@@ -28,21 +30,40 @@ export const resolvers = {
                     adminId = session.userId
                 }
 
+                const commentApi = await db.commentAPIs({
+                    where: {
+                        consumerKey,
+                    },
+                })
+
+                const valid = comparePassword(
+                    commentApi[0].privateKey,
+                    privateKey,
+                )
+
+                if (!valid) {
+                    return new ForbiddenError(INVALID_CREDENTIALS)
+                }
+
                 if (adminId === undefined || adminId === null) {
                     throw new ForbiddenError(INVALID_CREDENTIALS)
                 }
 
-                const mods = moderators.users.map(u => ({
-                    user: {
-                        connect: {
-                            id: u,
+                let mods
+
+                if (moderators && moderators.users) {
+                    mods = moderators.users.map(u => ({
+                        user: {
+                            connect: {
+                                id: u,
+                            },
                         },
-                    },
-                    can_ban: true,
-                    can_delete: true,
-                    can_edit: true,
-                    can_close: true,
-                }))
+                        can_ban: true,
+                        can_delete: true,
+                        can_edit: true,
+                        can_close: true,
+                    }))
+                }
 
                 console.log('MODS', mods)
 
@@ -60,6 +81,19 @@ export const resolvers = {
                     options: {
                         create: {
                             comments_open: options.open,
+                        },
+                    },
+                })
+
+                await db.updateCommentAPI({
+                    where: {
+                        id: commentApi[0].id,
+                    },
+                    data: {
+                        commentSections: {
+                            connect: {
+                                id: commentSection.id,
+                            },
                         },
                     },
                 })
@@ -171,7 +205,7 @@ export const resolvers = {
                             },
                         })
 
-                        const commentSection = await db.updateCommentSection({
+                        await db.updateCommentSection({
                             where: {
                                 id: commentSectionId,
                             },

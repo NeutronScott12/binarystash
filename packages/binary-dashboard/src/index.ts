@@ -4,7 +4,6 @@ import { S3 } from 'aws-sdk'
 import 'dotenv/config'
 import * as express from 'express'
 import { importSchema } from 'graphql-import'
-import { applyMiddleware } from 'graphql-middleware'
 import { makeExecutableSchema } from 'graphql-tools'
 import * as http from 'http'
 import { arch, platform } from 'os'
@@ -58,10 +57,10 @@ expressMiddleware(app, passport, redis)
 
 // app.use('/api/v1', ApiRouter)
 
-const { schema } = applyMiddleware(makeSchema)
+// const { schema } = applyMiddleware(makeSchema)
 
 const server: ApolloServer = new ApolloServer({
-    schema,
+    schema: makeSchema,
     playground: {
         endpoint: '/',
         subscriptionEndpoint: '/',

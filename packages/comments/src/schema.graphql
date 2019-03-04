@@ -28,6 +28,8 @@ type Mutation {
         url: String!
         moderators: ModeratorsArgs!
         options: CommentSectionOptions!
+        consumerKey: String!
+        privateKey: String!
     ): CommentSection!
     deleteComment(id: ID!): DeleteCommentResponse!
     editComment(id: ID!, body: String!): Comment!

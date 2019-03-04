@@ -1,40 +1,52 @@
-import { Response } from 'express'
-import { v4 as uuid } from 'uuid'
+import { ForbiddenError } from 'apollo-server-express'
 import { S3 } from 'aws-sdk'
 import { stringType } from 'aws-sdk/clients/iam'
+import { Response } from 'express'
+import { v4 as uuid } from 'uuid'
+import { INVALID_CREDENTIALS } from '../constants'
+
+export const checkUserId = (session: Express.Session): string => {
+    if (session.userId) {
+        return session.userId
+    } else if (session.decodedUser) {
+        return session.decodedUser.id
+    } else {
+        throw new ForbiddenError(INVALID_CREDENTIALS)
+    }
+}
 
 export const respond = (
-	res: Response,
-	status: number,
-	boolean: boolean,
-	data: Object | null
+    res: Response,
+    status: number,
+    boolean: boolean,
+    data: Object | null,
 ) => {
-	return res.status(status).json({
-		success: boolean,
-		result: data
-	})
+    return res.status(status).json({
+        success: boolean,
+        result: data,
+    })
 }
 
 interface IProcessUpload {
-	filename: stringType
-	mimetype: stringType
-	encoding: stringType
-	key: string
-	url: string
-	Etag: string
+    filename: stringType
+    mimetype: stringType
+    encoding: stringType
+    key: string
+    url: string
+    Etag: string
 }
 
 export const filteredBody = (body: any, whitelist: []) => {
-	const items: any = {}
+    const items: any = {}
 
-	Object.keys(body).forEach((key: any) => {
-		// @ts-ignore
-		if (whitelist.indexOf(key) >= 0) {
-			items[key] = body[key]
-		}
-	})
+    Object.keys(body).forEach((key: any) => {
+        // @ts-ignore
+        if (whitelist.indexOf(key) >= 0) {
+            items[key] = body[key]
+        }
+    })
 
-	return items
+    return items
 }
 
 // export const parseErrors = ({ errors }) => {
@@ -46,37 +58,37 @@ export const filteredBody = (body: any, whitelist: []) => {
 // }
 
 export const processUpload = async (
-	s3: S3,
-	picture: string,
-	folder: string
+    s3: S3,
+    picture: string,
+    folder: string,
 ): Promise<IProcessUpload> => {
-	const {
-		createReadStream,
-		filename,
-		mimetype,
-		encoding
-	}: any = await picture
-	const key = folder + '/' + uuid() + '-' + filename
+    const {
+        createReadStream,
+        filename,
+        mimetype,
+        encoding,
+    }: any = await picture
+    const key = folder + '/' + uuid() + '-' + filename
 
-	const stream = createReadStream()
+    const stream = createReadStream()
 
-	const response = await s3
-		.upload({
-			Bucket: process.env.AWS_BUCKET || 'mainhubbucket',
-			Key: key,
-			ACL: 'public-read',
-			Body: stream
-		})
-		.promise()
+    const response = await s3
+        .upload({
+            Bucket: process.env.AWS_BUCKET || 'mainhubbucket',
+            Key: key,
+            ACL: 'public-read',
+            Body: stream,
+        })
+        .promise()
 
-	return {
-		filename,
-		mimetype,
-		encoding,
-		key: response.Key,
-		url: response.Location,
-		Etag: response.ETag
-	}
+    return {
+        filename,
+        mimetype,
+        encoding,
+        key: response.Key,
+        url: response.Location,
+        Etag: response.ETag,
+    }
 }
 
 // export class FetchError extends Error {

@@ -16,6 +16,7 @@ export type AtLeastOne<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> &
 export interface Exists {
   channel: (where?: ChannelWhereInput) => Promise<boolean>;
   comment: (where?: CommentWhereInput) => Promise<boolean>;
+  commentAPI: (where?: CommentAPIWhereInput) => Promise<boolean>;
   commentOptions: (where?: CommentOptionsWhereInput) => Promise<boolean>;
   commentSection: (where?: CommentSectionWhereInput) => Promise<boolean>;
   customer: (where?: CustomerWhereInput) => Promise<boolean>;
@@ -98,6 +99,29 @@ export interface Prisma {
       last?: Int;
     }
   ) => CommentConnectionPromise;
+  commentAPI: (where: CommentAPIWhereUniqueInput) => CommentAPIPromise;
+  commentAPIs: (
+    args?: {
+      where?: CommentAPIWhereInput;
+      orderBy?: CommentAPIOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => FragmentableArray<CommentAPI>;
+  commentAPIsConnection: (
+    args?: {
+      where?: CommentAPIWhereInput;
+      orderBy?: CommentAPIOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => CommentAPIConnectionPromise;
   commentOptionses: (
     args?: {
       where?: CommentOptionsWhereInput;
@@ -482,6 +506,25 @@ export interface Prisma {
   ) => CommentPromise;
   deleteComment: (where: CommentWhereUniqueInput) => CommentPromise;
   deleteManyComments: (where?: CommentWhereInput) => BatchPayloadPromise;
+  createCommentAPI: (data: CommentAPICreateInput) => CommentAPIPromise;
+  updateCommentAPI: (
+    args: { data: CommentAPIUpdateInput; where: CommentAPIWhereUniqueInput }
+  ) => CommentAPIPromise;
+  updateManyCommentAPIs: (
+    args: {
+      data: CommentAPIUpdateManyMutationInput;
+      where?: CommentAPIWhereInput;
+    }
+  ) => BatchPayloadPromise;
+  upsertCommentAPI: (
+    args: {
+      where: CommentAPIWhereUniqueInput;
+      create: CommentAPICreateInput;
+      update: CommentAPIUpdateInput;
+    }
+  ) => CommentAPIPromise;
+  deleteCommentAPI: (where: CommentAPIWhereUniqueInput) => CommentAPIPromise;
+  deleteManyCommentAPIs: (where?: CommentAPIWhereInput) => BatchPayloadPromise;
   createCommentOptions: (
     data: CommentOptionsCreateInput
   ) => CommentOptionsPromise;
@@ -765,6 +808,9 @@ export interface Subscription {
   comment: (
     where?: CommentSubscriptionWhereInput
   ) => CommentSubscriptionPayloadSubscription;
+  commentAPI: (
+    where?: CommentAPISubscriptionWhereInput
+  ) => CommentAPISubscriptionPayloadSubscription;
   commentOptions: (
     where?: CommentOptionsSubscriptionWhereInput
   ) => CommentOptionsSubscriptionPayloadSubscription;
@@ -926,11 +972,13 @@ export type MessageOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type CommentOptionsOrderByInput =
-  | "comments_open_ASC"
-  | "comments_open_DESC"
+export type CommentSectionOrderByInput =
   | "id_ASC"
   | "id_DESC"
+  | "pageId_ASC"
+  | "pageId_DESC"
+  | "url_ASC"
+  | "url_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -952,13 +1000,23 @@ export type ModeratorOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type CommentSectionOrderByInput =
+export type CommentAPIOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "pageId_ASC"
-  | "pageId_DESC"
-  | "url_ASC"
-  | "url_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC"
+  | "consumerKey_ASC"
+  | "consumerKey_DESC"
+  | "privateKey_ASC"
+  | "privateKey_DESC";
+
+export type CommentOptionsOrderByInput =
+  | "comments_open_ASC"
+  | "comments_open_DESC"
+  | "id_ASC"
+  | "id_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -1784,64 +1842,9 @@ export type CommentWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
 }>;
 
-export interface CommentOptionsWhereInput {
-  comments_open?: Boolean;
-  comments_open_not?: Boolean;
-  AND?: CommentOptionsWhereInput[] | CommentOptionsWhereInput;
-  OR?: CommentOptionsWhereInput[] | CommentOptionsWhereInput;
-  NOT?: CommentOptionsWhereInput[] | CommentOptionsWhereInput;
-}
-
-export type CommentSectionWhereUniqueInput = AtLeastOne<{
+export type CommentAPIWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
-  pageId?: ID_Input;
-  url?: String;
 }>;
-
-export interface ModeratorWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  user?: UserWhereInput;
-  can_delete?: Boolean;
-  can_delete_not?: Boolean;
-  can_ban?: Boolean;
-  can_ban_not?: Boolean;
-  can_edit?: Boolean;
-  can_edit_not?: Boolean;
-  can_close?: Boolean;
-  can_close_not?: Boolean;
-  createdAt?: DateTimeInput;
-  createdAt_not?: DateTimeInput;
-  createdAt_in?: DateTimeInput[] | DateTimeInput;
-  createdAt_not_in?: DateTimeInput[] | DateTimeInput;
-  createdAt_lt?: DateTimeInput;
-  createdAt_lte?: DateTimeInput;
-  createdAt_gt?: DateTimeInput;
-  createdAt_gte?: DateTimeInput;
-  updatedAt?: DateTimeInput;
-  updatedAt_not?: DateTimeInput;
-  updatedAt_in?: DateTimeInput[] | DateTimeInput;
-  updatedAt_not_in?: DateTimeInput[] | DateTimeInput;
-  updatedAt_lt?: DateTimeInput;
-  updatedAt_lte?: DateTimeInput;
-  updatedAt_gt?: DateTimeInput;
-  updatedAt_gte?: DateTimeInput;
-  AND?: ModeratorWhereInput[] | ModeratorWhereInput;
-  OR?: ModeratorWhereInput[] | ModeratorWhereInput;
-  NOT?: ModeratorWhereInput[] | ModeratorWhereInput;
-}
 
 export interface CommentSectionWhereInput {
   id?: ID_Input;
@@ -1917,6 +1920,133 @@ export interface CommentSectionWhereInput {
   OR?: CommentSectionWhereInput[] | CommentSectionWhereInput;
   NOT?: CommentSectionWhereInput[] | CommentSectionWhereInput;
 }
+
+export interface ModeratorWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  user?: UserWhereInput;
+  can_delete?: Boolean;
+  can_delete_not?: Boolean;
+  can_ban?: Boolean;
+  can_ban_not?: Boolean;
+  can_edit?: Boolean;
+  can_edit_not?: Boolean;
+  can_close?: Boolean;
+  can_close_not?: Boolean;
+  createdAt?: DateTimeInput;
+  createdAt_not?: DateTimeInput;
+  createdAt_in?: DateTimeInput[] | DateTimeInput;
+  createdAt_not_in?: DateTimeInput[] | DateTimeInput;
+  createdAt_lt?: DateTimeInput;
+  createdAt_lte?: DateTimeInput;
+  createdAt_gt?: DateTimeInput;
+  createdAt_gte?: DateTimeInput;
+  updatedAt?: DateTimeInput;
+  updatedAt_not?: DateTimeInput;
+  updatedAt_in?: DateTimeInput[] | DateTimeInput;
+  updatedAt_not_in?: DateTimeInput[] | DateTimeInput;
+  updatedAt_lt?: DateTimeInput;
+  updatedAt_lte?: DateTimeInput;
+  updatedAt_gt?: DateTimeInput;
+  updatedAt_gte?: DateTimeInput;
+  AND?: ModeratorWhereInput[] | ModeratorWhereInput;
+  OR?: ModeratorWhereInput[] | ModeratorWhereInput;
+  NOT?: ModeratorWhereInput[] | ModeratorWhereInput;
+}
+
+export interface CommentOptionsWhereInput {
+  comments_open?: Boolean;
+  comments_open_not?: Boolean;
+  AND?: CommentOptionsWhereInput[] | CommentOptionsWhereInput;
+  OR?: CommentOptionsWhereInput[] | CommentOptionsWhereInput;
+  NOT?: CommentOptionsWhereInput[] | CommentOptionsWhereInput;
+}
+
+export interface CommentAPIWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  commentSections_every?: CommentSectionWhereInput;
+  commentSections_some?: CommentSectionWhereInput;
+  commentSections_none?: CommentSectionWhereInput;
+  createdAt?: DateTimeInput;
+  createdAt_not?: DateTimeInput;
+  createdAt_in?: DateTimeInput[] | DateTimeInput;
+  createdAt_not_in?: DateTimeInput[] | DateTimeInput;
+  createdAt_lt?: DateTimeInput;
+  createdAt_lte?: DateTimeInput;
+  createdAt_gt?: DateTimeInput;
+  createdAt_gte?: DateTimeInput;
+  updatedAt?: DateTimeInput;
+  updatedAt_not?: DateTimeInput;
+  updatedAt_in?: DateTimeInput[] | DateTimeInput;
+  updatedAt_not_in?: DateTimeInput[] | DateTimeInput;
+  updatedAt_lt?: DateTimeInput;
+  updatedAt_lte?: DateTimeInput;
+  updatedAt_gt?: DateTimeInput;
+  updatedAt_gte?: DateTimeInput;
+  owner?: UserWhereInput;
+  consumerKey?: String;
+  consumerKey_not?: String;
+  consumerKey_in?: String[] | String;
+  consumerKey_not_in?: String[] | String;
+  consumerKey_lt?: String;
+  consumerKey_lte?: String;
+  consumerKey_gt?: String;
+  consumerKey_gte?: String;
+  consumerKey_contains?: String;
+  consumerKey_not_contains?: String;
+  consumerKey_starts_with?: String;
+  consumerKey_not_starts_with?: String;
+  consumerKey_ends_with?: String;
+  consumerKey_not_ends_with?: String;
+  privateKey?: String;
+  privateKey_not?: String;
+  privateKey_in?: String[] | String;
+  privateKey_not_in?: String[] | String;
+  privateKey_lt?: String;
+  privateKey_lte?: String;
+  privateKey_gt?: String;
+  privateKey_gte?: String;
+  privateKey_contains?: String;
+  privateKey_not_contains?: String;
+  privateKey_starts_with?: String;
+  privateKey_not_starts_with?: String;
+  privateKey_ends_with?: String;
+  privateKey_not_ends_with?: String;
+  AND?: CommentAPIWhereInput[] | CommentAPIWhereInput;
+  OR?: CommentAPIWhereInput[] | CommentAPIWhereInput;
+  NOT?: CommentAPIWhereInput[] | CommentAPIWhereInput;
+}
+
+export type CommentSectionWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+  pageId?: ID_Input;
+  url?: String;
+}>;
 
 export type CustomerWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
@@ -4203,12 +4333,16 @@ export interface CommentUpdateManyMutationInput {
   pageId?: ID_Input;
 }
 
-export interface CommentOptionsCreateInput {
-  comments_open: Boolean;
+export interface CommentAPICreateInput {
+  commentSections?: CommentSectionCreateManyInput;
+  owner: UserCreateOneInput;
+  consumerKey: String;
+  privateKey: String;
 }
 
-export interface CommentOptionsUpdateManyMutationInput {
-  comments_open?: Boolean;
+export interface CommentSectionCreateManyInput {
+  create?: CommentSectionCreateInput[] | CommentSectionCreateInput;
+  connect?: CommentSectionWhereUniqueInput[] | CommentSectionWhereUniqueInput;
 }
 
 export interface CommentSectionCreateInput {
@@ -4238,7 +4372,45 @@ export interface CommentOptionsCreateOneInput {
   create?: CommentOptionsCreateInput;
 }
 
-export interface CommentSectionUpdateInput {
+export interface CommentOptionsCreateInput {
+  comments_open: Boolean;
+}
+
+export interface CommentAPIUpdateInput {
+  commentSections?: CommentSectionUpdateManyInput;
+  owner?: UserUpdateOneRequiredInput;
+  consumerKey?: String;
+  privateKey?: String;
+}
+
+export interface CommentSectionUpdateManyInput {
+  create?: CommentSectionCreateInput[] | CommentSectionCreateInput;
+  update?:
+    | CommentSectionUpdateWithWhereUniqueNestedInput[]
+    | CommentSectionUpdateWithWhereUniqueNestedInput;
+  upsert?:
+    | CommentSectionUpsertWithWhereUniqueNestedInput[]
+    | CommentSectionUpsertWithWhereUniqueNestedInput;
+  delete?: CommentSectionWhereUniqueInput[] | CommentSectionWhereUniqueInput;
+  connect?: CommentSectionWhereUniqueInput[] | CommentSectionWhereUniqueInput;
+  set?: CommentSectionWhereUniqueInput[] | CommentSectionWhereUniqueInput;
+  disconnect?:
+    | CommentSectionWhereUniqueInput[]
+    | CommentSectionWhereUniqueInput;
+  deleteMany?:
+    | CommentSectionScalarWhereInput[]
+    | CommentSectionScalarWhereInput;
+  updateMany?:
+    | CommentSectionUpdateManyWithWhereNestedInput[]
+    | CommentSectionUpdateManyWithWhereNestedInput;
+}
+
+export interface CommentSectionUpdateWithWhereUniqueNestedInput {
+  where: CommentSectionWhereUniqueInput;
+  data: CommentSectionUpdateDataInput;
+}
+
+export interface CommentSectionUpdateDataInput {
   comments?: CommentUpdateManyInput;
   pageId?: ID_Input;
   url?: String;
@@ -4354,6 +4526,105 @@ export interface CommentOptionsUpdateDataInput {
 export interface CommentOptionsUpsertNestedInput {
   update: CommentOptionsUpdateDataInput;
   create: CommentOptionsCreateInput;
+}
+
+export interface CommentSectionUpsertWithWhereUniqueNestedInput {
+  where: CommentSectionWhereUniqueInput;
+  update: CommentSectionUpdateDataInput;
+  create: CommentSectionCreateInput;
+}
+
+export interface CommentSectionScalarWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  pageId?: ID_Input;
+  pageId_not?: ID_Input;
+  pageId_in?: ID_Input[] | ID_Input;
+  pageId_not_in?: ID_Input[] | ID_Input;
+  pageId_lt?: ID_Input;
+  pageId_lte?: ID_Input;
+  pageId_gt?: ID_Input;
+  pageId_gte?: ID_Input;
+  pageId_contains?: ID_Input;
+  pageId_not_contains?: ID_Input;
+  pageId_starts_with?: ID_Input;
+  pageId_not_starts_with?: ID_Input;
+  pageId_ends_with?: ID_Input;
+  pageId_not_ends_with?: ID_Input;
+  url?: String;
+  url_not?: String;
+  url_in?: String[] | String;
+  url_not_in?: String[] | String;
+  url_lt?: String;
+  url_lte?: String;
+  url_gt?: String;
+  url_gte?: String;
+  url_contains?: String;
+  url_not_contains?: String;
+  url_starts_with?: String;
+  url_not_starts_with?: String;
+  url_ends_with?: String;
+  url_not_ends_with?: String;
+  createdAt?: DateTimeInput;
+  createdAt_not?: DateTimeInput;
+  createdAt_in?: DateTimeInput[] | DateTimeInput;
+  createdAt_not_in?: DateTimeInput[] | DateTimeInput;
+  createdAt_lt?: DateTimeInput;
+  createdAt_lte?: DateTimeInput;
+  createdAt_gt?: DateTimeInput;
+  createdAt_gte?: DateTimeInput;
+  updatedAt?: DateTimeInput;
+  updatedAt_not?: DateTimeInput;
+  updatedAt_in?: DateTimeInput[] | DateTimeInput;
+  updatedAt_not_in?: DateTimeInput[] | DateTimeInput;
+  updatedAt_lt?: DateTimeInput;
+  updatedAt_lte?: DateTimeInput;
+  updatedAt_gt?: DateTimeInput;
+  updatedAt_gte?: DateTimeInput;
+  AND?: CommentSectionScalarWhereInput[] | CommentSectionScalarWhereInput;
+  OR?: CommentSectionScalarWhereInput[] | CommentSectionScalarWhereInput;
+  NOT?: CommentSectionScalarWhereInput[] | CommentSectionScalarWhereInput;
+}
+
+export interface CommentSectionUpdateManyWithWhereNestedInput {
+  where: CommentSectionScalarWhereInput;
+  data: CommentSectionUpdateManyDataInput;
+}
+
+export interface CommentSectionUpdateManyDataInput {
+  pageId?: ID_Input;
+  url?: String;
+}
+
+export interface CommentAPIUpdateManyMutationInput {
+  consumerKey?: String;
+  privateKey?: String;
+}
+
+export interface CommentOptionsUpdateManyMutationInput {
+  comments_open?: Boolean;
+}
+
+export interface CommentSectionUpdateInput {
+  comments?: CommentUpdateManyInput;
+  pageId?: ID_Input;
+  url?: String;
+  admin?: UserUpdateOneRequiredInput;
+  moderators?: ModeratorUpdateManyInput;
+  options?: CommentOptionsUpdateOneRequiredInput;
+  bannedUsers?: UserUpdateManyInput;
 }
 
 export interface CommentSectionUpdateManyMutationInput {
@@ -4844,6 +5115,17 @@ export interface CommentSubscriptionWhereInput {
   AND?: CommentSubscriptionWhereInput[] | CommentSubscriptionWhereInput;
   OR?: CommentSubscriptionWhereInput[] | CommentSubscriptionWhereInput;
   NOT?: CommentSubscriptionWhereInput[] | CommentSubscriptionWhereInput;
+}
+
+export interface CommentAPISubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: CommentAPIWhereInput;
+  AND?: CommentAPISubscriptionWhereInput[] | CommentAPISubscriptionWhereInput;
+  OR?: CommentAPISubscriptionWhereInput[] | CommentAPISubscriptionWhereInput;
+  NOT?: CommentAPISubscriptionWhereInput[] | CommentAPISubscriptionWhereInput;
 }
 
 export interface CommentOptionsSubscriptionWhereInput {
@@ -5821,76 +6103,54 @@ export interface AggregateCommentSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface CommentOptions {
-  comments_open: Boolean;
+export interface CommentAPI {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  consumerKey: String;
+  privateKey: String;
 }
 
-export interface CommentOptionsPromise
-  extends Promise<CommentOptions>,
+export interface CommentAPIPromise extends Promise<CommentAPI>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  commentSections: <T = FragmentableArray<CommentSection>>(
+    args?: {
+      where?: CommentSectionWhereInput;
+      orderBy?: CommentSectionOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  owner: <T = UserPromise>() => T;
+  consumerKey: () => Promise<String>;
+  privateKey: () => Promise<String>;
+}
+
+export interface CommentAPISubscription
+  extends Promise<AsyncIterator<CommentAPI>>,
     Fragmentable {
-  comments_open: () => Promise<Boolean>;
-}
-
-export interface CommentOptionsSubscription
-  extends Promise<AsyncIterator<CommentOptions>>,
-    Fragmentable {
-  comments_open: () => Promise<AsyncIterator<Boolean>>;
-}
-
-export interface CommentOptionsConnection {
-  pageInfo: PageInfo;
-  edges: CommentOptionsEdge[];
-}
-
-export interface CommentOptionsConnectionPromise
-  extends Promise<CommentOptionsConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<CommentOptionsEdge>>() => T;
-  aggregate: <T = AggregateCommentOptionsPromise>() => T;
-}
-
-export interface CommentOptionsConnectionSubscription
-  extends Promise<AsyncIterator<CommentOptionsConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<CommentOptionsEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateCommentOptionsSubscription>() => T;
-}
-
-export interface CommentOptionsEdge {
-  node: CommentOptions;
-  cursor: String;
-}
-
-export interface CommentOptionsEdgePromise
-  extends Promise<CommentOptionsEdge>,
-    Fragmentable {
-  node: <T = CommentOptionsPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface CommentOptionsEdgeSubscription
-  extends Promise<AsyncIterator<CommentOptionsEdge>>,
-    Fragmentable {
-  node: <T = CommentOptionsSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregateCommentOptions {
-  count: Int;
-}
-
-export interface AggregateCommentOptionsPromise
-  extends Promise<AggregateCommentOptions>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateCommentOptionsSubscription
-  extends Promise<AsyncIterator<AggregateCommentOptions>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  commentSections: <T = Promise<AsyncIterator<CommentSectionSubscription>>>(
+    args?: {
+      where?: CommentSectionWhereInput;
+      orderBy?: CommentSectionOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  owner: <T = UserSubscription>() => T;
+  consumerKey: () => Promise<AsyncIterator<String>>;
+  privateKey: () => Promise<AsyncIterator<String>>;
 }
 
 export interface CommentSection {
@@ -6023,6 +6283,134 @@ export interface ModeratorSubscription
   can_close: () => Promise<AsyncIterator<Boolean>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface CommentOptions {
+  comments_open: Boolean;
+}
+
+export interface CommentOptionsPromise
+  extends Promise<CommentOptions>,
+    Fragmentable {
+  comments_open: () => Promise<Boolean>;
+}
+
+export interface CommentOptionsSubscription
+  extends Promise<AsyncIterator<CommentOptions>>,
+    Fragmentable {
+  comments_open: () => Promise<AsyncIterator<Boolean>>;
+}
+
+export interface CommentAPIConnection {
+  pageInfo: PageInfo;
+  edges: CommentAPIEdge[];
+}
+
+export interface CommentAPIConnectionPromise
+  extends Promise<CommentAPIConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<CommentAPIEdge>>() => T;
+  aggregate: <T = AggregateCommentAPIPromise>() => T;
+}
+
+export interface CommentAPIConnectionSubscription
+  extends Promise<AsyncIterator<CommentAPIConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<CommentAPIEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateCommentAPISubscription>() => T;
+}
+
+export interface CommentAPIEdge {
+  node: CommentAPI;
+  cursor: String;
+}
+
+export interface CommentAPIEdgePromise
+  extends Promise<CommentAPIEdge>,
+    Fragmentable {
+  node: <T = CommentAPIPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface CommentAPIEdgeSubscription
+  extends Promise<AsyncIterator<CommentAPIEdge>>,
+    Fragmentable {
+  node: <T = CommentAPISubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateCommentAPI {
+  count: Int;
+}
+
+export interface AggregateCommentAPIPromise
+  extends Promise<AggregateCommentAPI>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateCommentAPISubscription
+  extends Promise<AsyncIterator<AggregateCommentAPI>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface CommentOptionsConnection {
+  pageInfo: PageInfo;
+  edges: CommentOptionsEdge[];
+}
+
+export interface CommentOptionsConnectionPromise
+  extends Promise<CommentOptionsConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<CommentOptionsEdge>>() => T;
+  aggregate: <T = AggregateCommentOptionsPromise>() => T;
+}
+
+export interface CommentOptionsConnectionSubscription
+  extends Promise<AsyncIterator<CommentOptionsConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<CommentOptionsEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateCommentOptionsSubscription>() => T;
+}
+
+export interface CommentOptionsEdge {
+  node: CommentOptions;
+  cursor: String;
+}
+
+export interface CommentOptionsEdgePromise
+  extends Promise<CommentOptionsEdge>,
+    Fragmentable {
+  node: <T = CommentOptionsPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface CommentOptionsEdgeSubscription
+  extends Promise<AsyncIterator<CommentOptionsEdge>>,
+    Fragmentable {
+  node: <T = CommentOptionsSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateCommentOptions {
+  count: Int;
+}
+
+export interface AggregateCommentOptionsPromise
+  extends Promise<AggregateCommentOptions>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateCommentOptionsSubscription
+  extends Promise<AsyncIterator<AggregateCommentOptions>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface CommentSectionConnection {
@@ -7120,6 +7508,59 @@ export interface CommentPreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
+export interface CommentAPISubscriptionPayload {
+  mutation: MutationType;
+  node: CommentAPI;
+  updatedFields: String[];
+  previousValues: CommentAPIPreviousValues;
+}
+
+export interface CommentAPISubscriptionPayloadPromise
+  extends Promise<CommentAPISubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = CommentAPIPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = CommentAPIPreviousValuesPromise>() => T;
+}
+
+export interface CommentAPISubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<CommentAPISubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = CommentAPISubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = CommentAPIPreviousValuesSubscription>() => T;
+}
+
+export interface CommentAPIPreviousValues {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  consumerKey: String;
+  privateKey: String;
+}
+
+export interface CommentAPIPreviousValuesPromise
+  extends Promise<CommentAPIPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  consumerKey: () => Promise<String>;
+  privateKey: () => Promise<String>;
+}
+
+export interface CommentAPIPreviousValuesSubscription
+  extends Promise<AsyncIterator<CommentAPIPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  consumerKey: () => Promise<AsyncIterator<String>>;
+  privateKey: () => Promise<AsyncIterator<String>>;
+}
+
 export interface CommentOptionsSubscriptionPayload {
   mutation: MutationType;
   node: CommentOptions;
@@ -8042,6 +8483,10 @@ export const models: Model[] = [
   },
   {
     name: "Product",
+    embedded: false
+  },
+  {
+    name: "CommentAPI",
     embedded: false
   },
   {

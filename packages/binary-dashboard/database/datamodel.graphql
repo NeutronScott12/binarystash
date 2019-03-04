@@ -201,3 +201,13 @@ type Product {
     createdAt: DateTime!
     updatedAt: DateTime!
 }
+
+type CommentAPI {
+    id: ID! @unique
+    commentSections: [CommentSection!]!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    owner: User!
+    consumerKey: String! @unqiue
+    privateKey: String! @unqiue
+}

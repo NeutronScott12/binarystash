@@ -2,9 +2,8 @@
 
 import { GraphQLResolveInfo } from 'graphql'
 import {
-    CommentConnection,
-    PageInfo,
-    CommentEdge,
+    CommentAPI,
+    CommentSection,
     Comment,
     User,
     Notification,
@@ -13,16 +12,36 @@ import {
     Channel,
     File,
     Rating,
-    AggregateComment,
-    CommentSection,
     Moderator,
     CommentOptions,
-    CommentSubscriptionPayload,
-    CommentPreviousValues,
 } from './prisma-client/index'
-import { DeleteCommentResponse, Context } from '../tstypes/index'
+import { CreateCommentAPIResponse, Context } from '../tstypes/index'
 
 export type UserRole = 'ADMIN' | 'MODERATOR' | 'USER'
+export type CommentSectionOrderByInput =
+    | 'id_ASC'
+    | 'id_DESC'
+    | 'pageId_ASC'
+    | 'pageId_DESC'
+    | 'url_ASC'
+    | 'url_DESC'
+    | 'createdAt_ASC'
+    | 'createdAt_DESC'
+    | 'updatedAt_ASC'
+    | 'updatedAt_DESC'
+export type CommentOrderByInput =
+    | 'id_ASC'
+    | 'id_DESC'
+    | 'body_ASC'
+    | 'body_DESC'
+    | 'parentId_ASC'
+    | 'parentId_DESC'
+    | 'pageId_ASC'
+    | 'pageId_DESC'
+    | 'createdAt_ASC'
+    | 'createdAt_DESC'
+    | 'updatedAt_ASC'
+    | 'updatedAt_DESC'
 export type NotificationOrderByInput =
     | 'id_ASC'
     | 'id_DESC'
@@ -93,19 +112,6 @@ export type MessageOrderByInput =
     | 'createdAt_DESC'
     | 'updatedAt_ASC'
     | 'updatedAt_DESC'
-export type CommentOrderByInput =
-    | 'id_ASC'
-    | 'id_DESC'
-    | 'body_ASC'
-    | 'body_DESC'
-    | 'parentId_ASC'
-    | 'parentId_DESC'
-    | 'pageId_ASC'
-    | 'pageId_DESC'
-    | 'createdAt_ASC'
-    | 'createdAt_DESC'
-    | 'updatedAt_ASC'
-    | 'updatedAt_DESC'
 export type TeamOrderByInput =
     | 'id_ASC'
     | 'id_DESC'
@@ -136,386 +142,984 @@ export type ModeratorOrderByInput =
     | 'createdAt_DESC'
     | 'updatedAt_ASC'
     | 'updatedAt_DESC'
-export type MutationType = 'CREATED' | 'UPDATED' | 'DELETED'
 
 export namespace QueryResolvers {
     export const defaultResolvers = {}
 
-    export interface ArgsQueryComment {
-        parentId: string
-        limit?: number | null
-        offset?: number | null
+    export interface ArgsFetchCommentAPI {
+        id: string
     }
 
-    export interface ArgsFetchCommentSection {
-        pageId: string
-        url: string
-    }
-
-    export type QueryCommentResolver =
+    export type CurrentUserResolver =
         | ((
               parent: undefined,
-              args: ArgsQueryComment,
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => CommentConnection | Promise<CommentConnection>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: undefined,
-                  args: ArgsQueryComment,
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => CommentConnection | Promise<CommentConnection>
-          }
-
-    export type FetchCommentSectionResolver =
-        | ((
-              parent: undefined,
-              args: ArgsFetchCommentSection,
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => CommentSection | Promise<CommentSection>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: undefined,
-                  args: ArgsFetchCommentSection,
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => CommentSection | Promise<CommentSection>
-          }
-
-    export interface Type {
-        queryComment:
-            | ((
-                  parent: undefined,
-                  args: ArgsQueryComment,
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => CommentConnection | Promise<CommentConnection>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: undefined,
-                      args: ArgsQueryComment,
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => CommentConnection | Promise<CommentConnection>
-              }
-
-        fetchCommentSection:
-            | ((
-                  parent: undefined,
-                  args: ArgsFetchCommentSection,
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => CommentSection | Promise<CommentSection>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: undefined,
-                      args: ArgsFetchCommentSection,
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => CommentSection | Promise<CommentSection>
-              }
-    }
-}
-
-export namespace CommentConnectionResolvers {
-    export const defaultResolvers = {
-        pageInfo: (parent: CommentConnection) => parent.pageInfo,
-        edges: (parent: CommentConnection) => parent.edges,
-    }
-
-    export type PageInfoResolver =
-        | ((
-              parent: CommentConnection,
               args: {},
               ctx: Context,
               info: GraphQLResolveInfo,
-          ) => PageInfo | Promise<PageInfo>)
+          ) => boolean | null | Promise<boolean | null>)
         | {
               fragment: string
               resolve: (
-                  parent: CommentConnection,
+                  parent: undefined,
                   args: {},
                   ctx: Context,
                   info: GraphQLResolveInfo,
-              ) => PageInfo | Promise<PageInfo>
+              ) => boolean | null | Promise<boolean | null>
           }
 
-    export type EdgesResolver =
+    export type FetchCommentAPIsResolver =
         | ((
-              parent: CommentConnection,
+              parent: undefined,
               args: {},
               ctx: Context,
               info: GraphQLResolveInfo,
-          ) => Array<CommentEdge | null> | Promise<Array<CommentEdge | null>>)
+          ) =>
+              | Array<CommentAPI | null>
+              | null
+              | Promise<Array<CommentAPI | null> | null>
+          )
         | {
               fragment: string
               resolve: (
-                  parent: CommentConnection,
+                  parent: undefined,
                   args: {},
                   ctx: Context,
                   info: GraphQLResolveInfo,
               ) =>
-                  | Array<CommentEdge | null>
-                  | Promise<Array<CommentEdge | null>>
+                  | Array<CommentAPI | null>
+                  | null
+                  | Promise<Array<CommentAPI | null> | null>
           }
 
-    export type AggregateResolver =
+    export type FetchCommentAPIResolver =
         | ((
-              parent: CommentConnection,
-              args: {},
+              parent: undefined,
+              args: ArgsFetchCommentAPI,
               ctx: Context,
               info: GraphQLResolveInfo,
-          ) => AggregateComment | Promise<AggregateComment>)
+          ) => CommentAPI | null | Promise<CommentAPI | null>)
         | {
               fragment: string
               resolve: (
-                  parent: CommentConnection,
-                  args: {},
+                  parent: undefined,
+                  args: ArgsFetchCommentAPI,
                   ctx: Context,
                   info: GraphQLResolveInfo,
-              ) => AggregateComment | Promise<AggregateComment>
+              ) => CommentAPI | null | Promise<CommentAPI | null>
           }
 
     export interface Type {
-        pageInfo:
+        currentUser:
             | ((
-                  parent: CommentConnection,
+                  parent: undefined,
                   args: {},
                   ctx: Context,
                   info: GraphQLResolveInfo,
-              ) => PageInfo | Promise<PageInfo>)
+              ) => boolean | null | Promise<boolean | null>)
             | {
                   fragment: string
                   resolve: (
-                      parent: CommentConnection,
+                      parent: undefined,
                       args: {},
                       ctx: Context,
                       info: GraphQLResolveInfo,
-                  ) => PageInfo | Promise<PageInfo>
+                  ) => boolean | null | Promise<boolean | null>
               }
 
-        edges:
+        fetchCommentAPIs:
             | ((
-                  parent: CommentConnection,
+                  parent: undefined,
                   args: {},
                   ctx: Context,
                   info: GraphQLResolveInfo,
               ) =>
-                  | Array<CommentEdge | null>
-                  | Promise<Array<CommentEdge | null>>
+                  | Array<CommentAPI | null>
+                  | null
+                  | Promise<Array<CommentAPI | null> | null>
               )
             | {
                   fragment: string
                   resolve: (
-                      parent: CommentConnection,
+                      parent: undefined,
                       args: {},
                       ctx: Context,
                       info: GraphQLResolveInfo,
                   ) =>
-                      | Array<CommentEdge | null>
-                      | Promise<Array<CommentEdge | null>>
+                      | Array<CommentAPI | null>
+                      | null
+                      | Promise<Array<CommentAPI | null> | null>
               }
 
-        aggregate:
+        fetchCommentAPI:
             | ((
-                  parent: CommentConnection,
-                  args: {},
+                  parent: undefined,
+                  args: ArgsFetchCommentAPI,
                   ctx: Context,
                   info: GraphQLResolveInfo,
-              ) => AggregateComment | Promise<AggregateComment>)
+              ) => CommentAPI | null | Promise<CommentAPI | null>)
             | {
                   fragment: string
                   resolve: (
-                      parent: CommentConnection,
-                      args: {},
+                      parent: undefined,
+                      args: ArgsFetchCommentAPI,
                       ctx: Context,
                       info: GraphQLResolveInfo,
-                  ) => AggregateComment | Promise<AggregateComment>
+                  ) => CommentAPI | null | Promise<CommentAPI | null>
               }
     }
 }
 
-export namespace PageInfoResolvers {
+export namespace CommentAPIResolvers {
     export const defaultResolvers = {
-        hasNextPage: (parent: PageInfo) => parent.hasNextPage,
-        hasPreviousPage: (parent: PageInfo) => parent.hasPreviousPage,
-        startCursor: (parent: PageInfo) =>
-            parent.startCursor === undefined ? null : parent.startCursor,
-        endCursor: (parent: PageInfo) =>
-            parent.endCursor === undefined ? null : parent.endCursor,
+        id: (parent: CommentAPI) => parent.id,
+        createdAt: (parent: CommentAPI) => parent.createdAt,
+        updatedAt: (parent: CommentAPI) => parent.updatedAt,
+        consumerKey: (parent: CommentAPI) => parent.consumerKey,
+        privateKey: (parent: CommentAPI) => parent.privateKey,
     }
 
-    export type HasNextPageResolver =
-        | ((
-              parent: PageInfo,
-              args: {},
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => boolean | Promise<boolean>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: PageInfo,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => boolean | Promise<boolean>
-          }
-
-    export type HasPreviousPageResolver =
-        | ((
-              parent: PageInfo,
-              args: {},
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => boolean | Promise<boolean>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: PageInfo,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => boolean | Promise<boolean>
-          }
-
-    export type StartCursorResolver =
-        | ((
-              parent: PageInfo,
-              args: {},
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => string | null | Promise<string | null>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: PageInfo,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | null | Promise<string | null>
-          }
-
-    export type EndCursorResolver =
-        | ((
-              parent: PageInfo,
-              args: {},
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => string | null | Promise<string | null>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: PageInfo,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | null | Promise<string | null>
-          }
-
-    export interface Type {
-        hasNextPage:
-            | ((
-                  parent: PageInfo,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => boolean | Promise<boolean>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: PageInfo,
-                      args: {},
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => boolean | Promise<boolean>
-              }
-
-        hasPreviousPage:
-            | ((
-                  parent: PageInfo,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => boolean | Promise<boolean>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: PageInfo,
-                      args: {},
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => boolean | Promise<boolean>
-              }
-
-        startCursor:
-            | ((
-                  parent: PageInfo,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | null | Promise<string | null>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: PageInfo,
-                      args: {},
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => string | null | Promise<string | null>
-              }
-
-        endCursor:
-            | ((
-                  parent: PageInfo,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | null | Promise<string | null>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: PageInfo,
-                      args: {},
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => string | null | Promise<string | null>
-              }
+    export interface CommentSectionWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        comments_every?: CommentWhereInput | null
+        comments_some?: CommentWhereInput | null
+        comments_none?: CommentWhereInput | null
+        pageId?: string | null
+        pageId_not?: string | null
+        pageId_in?: string[] | null
+        pageId_not_in?: string[] | null
+        pageId_lt?: string | null
+        pageId_lte?: string | null
+        pageId_gt?: string | null
+        pageId_gte?: string | null
+        pageId_contains?: string | null
+        pageId_not_contains?: string | null
+        pageId_starts_with?: string | null
+        pageId_not_starts_with?: string | null
+        pageId_ends_with?: string | null
+        pageId_not_ends_with?: string | null
+        url?: string | null
+        url_not?: string | null
+        url_in?: string[] | null
+        url_not_in?: string[] | null
+        url_lt?: string | null
+        url_lte?: string | null
+        url_gt?: string | null
+        url_gte?: string | null
+        url_contains?: string | null
+        url_not_contains?: string | null
+        url_starts_with?: string | null
+        url_not_starts_with?: string | null
+        url_ends_with?: string | null
+        url_not_ends_with?: string | null
+        admin?: UserWhereInput | null
+        moderators_every?: ModeratorWhereInput | null
+        moderators_some?: ModeratorWhereInput | null
+        moderators_none?: ModeratorWhereInput | null
+        options?: CommentOptionsWhereInput | null
+        bannedUsers_every?: UserWhereInput | null
+        bannedUsers_some?: UserWhereInput | null
+        bannedUsers_none?: UserWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: CommentSectionWhereInput[] | null
+        OR?: CommentSectionWhereInput[] | null
+        NOT?: CommentSectionWhereInput[] | null
     }
-}
-
-export namespace CommentEdgeResolvers {
-    export const defaultResolvers = {
-        node: (parent: CommentEdge) => parent.node,
-        cursor: (parent: CommentEdge) => parent.cursor,
+    export interface CommentWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        body?: string | null
+        body_not?: string | null
+        body_in?: string[] | null
+        body_not_in?: string[] | null
+        body_lt?: string | null
+        body_lte?: string | null
+        body_gt?: string | null
+        body_gte?: string | null
+        body_contains?: string | null
+        body_not_contains?: string | null
+        body_starts_with?: string | null
+        body_not_starts_with?: string | null
+        body_ends_with?: string | null
+        body_not_ends_with?: string | null
+        parentId?: string | null
+        parentId_not?: string | null
+        parentId_in?: string[] | null
+        parentId_not_in?: string[] | null
+        parentId_lt?: string | null
+        parentId_lte?: string | null
+        parentId_gt?: string | null
+        parentId_gte?: string | null
+        parentId_contains?: string | null
+        parentId_not_contains?: string | null
+        parentId_starts_with?: string | null
+        parentId_not_starts_with?: string | null
+        parentId_ends_with?: string | null
+        parentId_not_ends_with?: string | null
+        pageId?: string | null
+        pageId_not?: string | null
+        pageId_in?: string[] | null
+        pageId_not_in?: string[] | null
+        pageId_lt?: string | null
+        pageId_lte?: string | null
+        pageId_gt?: string | null
+        pageId_gte?: string | null
+        pageId_contains?: string | null
+        pageId_not_contains?: string | null
+        pageId_starts_with?: string | null
+        pageId_not_starts_with?: string | null
+        pageId_ends_with?: string | null
+        pageId_not_ends_with?: string | null
+        repliedTo?: UserWhereInput | null
+        ratings?: RatingWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        replies_every?: CommentWhereInput | null
+        replies_some?: CommentWhereInput | null
+        replies_none?: CommentWhereInput | null
+        author?: UserWhereInput | null
+        AND?: CommentWhereInput[] | null
+        OR?: CommentWhereInput[] | null
+        NOT?: CommentWhereInput[] | null
+    }
+    export interface UserWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        email?: string | null
+        email_not?: string | null
+        email_in?: string[] | null
+        email_not_in?: string[] | null
+        email_lt?: string | null
+        email_lte?: string | null
+        email_gt?: string | null
+        email_gte?: string | null
+        email_contains?: string | null
+        email_not_contains?: string | null
+        email_starts_with?: string | null
+        email_not_starts_with?: string | null
+        email_ends_with?: string | null
+        email_not_ends_with?: string | null
+        notifications_every?: NotificationWhereInput | null
+        notifications_some?: NotificationWhereInput | null
+        notifications_none?: NotificationWhereInput | null
+        set_private?: boolean | null
+        set_private_not?: boolean | null
+        username?: string | null
+        username_not?: string | null
+        username_in?: string[] | null
+        username_not_in?: string[] | null
+        username_lt?: string | null
+        username_lte?: string | null
+        username_gt?: string | null
+        username_gte?: string | null
+        username_contains?: string | null
+        username_not_contains?: string | null
+        username_starts_with?: string | null
+        username_not_starts_with?: string | null
+        username_ends_with?: string | null
+        username_not_ends_with?: string | null
+        password?: string | null
+        password_not?: string | null
+        password_in?: string[] | null
+        password_not_in?: string[] | null
+        password_lt?: string | null
+        password_lte?: string | null
+        password_gt?: string | null
+        password_gte?: string | null
+        password_contains?: string | null
+        password_not_contains?: string | null
+        password_starts_with?: string | null
+        password_not_starts_with?: string | null
+        password_ends_with?: string | null
+        password_not_ends_with?: string | null
+        gitHubId?: string | null
+        gitHubId_not?: string | null
+        gitHubId_in?: string[] | null
+        gitHubId_not_in?: string[] | null
+        gitHubId_lt?: string | null
+        gitHubId_lte?: string | null
+        gitHubId_gt?: string | null
+        gitHubId_gte?: string | null
+        gitHubId_contains?: string | null
+        gitHubId_not_contains?: string | null
+        gitHubId_starts_with?: string | null
+        gitHubId_not_starts_with?: string | null
+        gitHubId_ends_with?: string | null
+        gitHubId_not_ends_with?: string | null
+        facebookId?: string | null
+        facebookId_not?: string | null
+        facebookId_in?: string[] | null
+        facebookId_not_in?: string[] | null
+        facebookId_lt?: string | null
+        facebookId_lte?: string | null
+        facebookId_gt?: string | null
+        facebookId_gte?: string | null
+        facebookId_contains?: string | null
+        facebookId_not_contains?: string | null
+        facebookId_starts_with?: string | null
+        facebookId_not_starts_with?: string | null
+        facebookId_ends_with?: string | null
+        facebookId_not_ends_with?: string | null
+        twitterId?: string | null
+        twitterId_not?: string | null
+        twitterId_in?: string[] | null
+        twitterId_not_in?: string[] | null
+        twitterId_lt?: string | null
+        twitterId_lte?: string | null
+        twitterId_gt?: string | null
+        twitterId_gte?: string | null
+        twitterId_contains?: string | null
+        twitterId_not_contains?: string | null
+        twitterId_starts_with?: string | null
+        twitterId_not_starts_with?: string | null
+        twitterId_ends_with?: string | null
+        twitterId_not_ends_with?: string | null
+        gmailId?: string | null
+        gmailId_not?: string | null
+        gmailId_in?: string[] | null
+        gmailId_not_in?: string[] | null
+        gmailId_lt?: string | null
+        gmailId_lte?: string | null
+        gmailId_gt?: string | null
+        gmailId_gte?: string | null
+        gmailId_contains?: string | null
+        gmailId_not_contains?: string | null
+        gmailId_starts_with?: string | null
+        gmailId_not_starts_with?: string | null
+        gmailId_ends_with?: string | null
+        gmailId_not_ends_with?: string | null
+        directMessages_every?: CommentWhereInput | null
+        directMessages_some?: CommentWhereInput | null
+        directMessages_none?: CommentWhereInput | null
+        avatar_url?: FileWhereInput | null
+        private?: boolean | null
+        private_not?: boolean | null
+        blockedUsers_every?: UserWhereInput | null
+        blockedUsers_some?: UserWhereInput | null
+        blockedUsers_none?: UserWhereInput | null
+        confirmed?: boolean | null
+        confirmed_not?: boolean | null
+        online?: boolean | null
+        online_not?: boolean | null
+        friends_every?: UserWhereInput | null
+        friends_some?: UserWhereInput | null
+        friends_none?: UserWhereInput | null
+        friend_requests_every?: UserWhereInput | null
+        friend_requests_some?: UserWhereInput | null
+        friend_requests_none?: UserWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        role?: UserRole | null
+        role_not?: UserRole | null
+        role_in?: UserRole[] | null
+        role_not_in?: UserRole[] | null
+        teams_every?: TeamWhereInput | null
+        teams_some?: TeamWhereInput | null
+        teams_none?: TeamWhereInput | null
+        channels_every?: ChannelWhereInput | null
+        channels_some?: ChannelWhereInput | null
+        channels_none?: ChannelWhereInput | null
+        owned_teams_every?: TeamWhereInput | null
+        owned_teams_some?: TeamWhereInput | null
+        owned_teams_none?: TeamWhereInput | null
+        owned_channels_every?: ChannelWhereInput | null
+        owned_channels_some?: ChannelWhereInput | null
+        owned_channels_none?: ChannelWhereInput | null
+        AND?: UserWhereInput[] | null
+        OR?: UserWhereInput[] | null
+        NOT?: UserWhereInput[] | null
+    }
+    export interface ModeratorWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        user?: UserWhereInput | null
+        can_delete?: boolean | null
+        can_delete_not?: boolean | null
+        can_ban?: boolean | null
+        can_ban_not?: boolean | null
+        can_edit?: boolean | null
+        can_edit_not?: boolean | null
+        can_close?: boolean | null
+        can_close_not?: boolean | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: ModeratorWhereInput[] | null
+        OR?: ModeratorWhereInput[] | null
+        NOT?: ModeratorWhereInput[] | null
+    }
+    export interface CommentOptionsWhereInput {
+        comments_open?: boolean | null
+        comments_open_not?: boolean | null
+        AND?: CommentOptionsWhereInput[] | null
+        OR?: CommentOptionsWhereInput[] | null
+        NOT?: CommentOptionsWhereInput[] | null
+    }
+    export interface RatingWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        vote?: number | null
+        vote_not?: number | null
+        vote_in?: number[] | null
+        vote_not_in?: number[] | null
+        vote_lt?: number | null
+        vote_lte?: number | null
+        vote_gt?: number | null
+        vote_gte?: number | null
+        author_every?: UserWhereInput | null
+        author_some?: UserWhereInput | null
+        author_none?: UserWhereInput | null
+        AND?: RatingWhereInput[] | null
+        OR?: RatingWhereInput[] | null
+        NOT?: RatingWhereInput[] | null
+    }
+    export interface NotificationWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        message?: string | null
+        message_not?: string | null
+        message_in?: string[] | null
+        message_not_in?: string[] | null
+        message_lt?: string | null
+        message_lte?: string | null
+        message_gt?: string | null
+        message_gte?: string | null
+        message_contains?: string | null
+        message_not_contains?: string | null
+        message_starts_with?: string | null
+        message_not_starts_with?: string | null
+        message_ends_with?: string | null
+        message_not_ends_with?: string | null
+        comments?: CommentWhereInput | null
+        messages?: MessageWhereInput | null
+        team?: TeamWhereInput | null
+        channel?: ChannelWhereInput | null
+        friend_requests?: UserWhereInput | null
+        friend?: UserWhereInput | null
+        author?: UserWhereInput | null
+        AND?: NotificationWhereInput[] | null
+        OR?: NotificationWhereInput[] | null
+        NOT?: NotificationWhereInput[] | null
+    }
+    export interface FileWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        filename?: string | null
+        filename_not?: string | null
+        filename_in?: string[] | null
+        filename_not_in?: string[] | null
+        filename_lt?: string | null
+        filename_lte?: string | null
+        filename_gt?: string | null
+        filename_gte?: string | null
+        filename_contains?: string | null
+        filename_not_contains?: string | null
+        filename_starts_with?: string | null
+        filename_not_starts_with?: string | null
+        filename_ends_with?: string | null
+        filename_not_ends_with?: string | null
+        mimetype?: string | null
+        mimetype_not?: string | null
+        mimetype_in?: string[] | null
+        mimetype_not_in?: string[] | null
+        mimetype_lt?: string | null
+        mimetype_lte?: string | null
+        mimetype_gt?: string | null
+        mimetype_gte?: string | null
+        mimetype_contains?: string | null
+        mimetype_not_contains?: string | null
+        mimetype_starts_with?: string | null
+        mimetype_not_starts_with?: string | null
+        mimetype_ends_with?: string | null
+        mimetype_not_ends_with?: string | null
+        encoding?: string | null
+        encoding_not?: string | null
+        encoding_in?: string[] | null
+        encoding_not_in?: string[] | null
+        encoding_lt?: string | null
+        encoding_lte?: string | null
+        encoding_gt?: string | null
+        encoding_gte?: string | null
+        encoding_contains?: string | null
+        encoding_not_contains?: string | null
+        encoding_starts_with?: string | null
+        encoding_not_starts_with?: string | null
+        encoding_ends_with?: string | null
+        encoding_not_ends_with?: string | null
+        key?: string | null
+        key_not?: string | null
+        key_in?: string[] | null
+        key_not_in?: string[] | null
+        key_lt?: string | null
+        key_lte?: string | null
+        key_gt?: string | null
+        key_gte?: string | null
+        key_contains?: string | null
+        key_not_contains?: string | null
+        key_starts_with?: string | null
+        key_not_starts_with?: string | null
+        key_ends_with?: string | null
+        key_not_ends_with?: string | null
+        ETag?: string | null
+        ETag_not?: string | null
+        ETag_in?: string[] | null
+        ETag_not_in?: string[] | null
+        ETag_lt?: string | null
+        ETag_lte?: string | null
+        ETag_gt?: string | null
+        ETag_gte?: string | null
+        ETag_contains?: string | null
+        ETag_not_contains?: string | null
+        ETag_starts_with?: string | null
+        ETag_not_starts_with?: string | null
+        ETag_ends_with?: string | null
+        ETag_not_ends_with?: string | null
+        url?: string | null
+        url_not?: string | null
+        url_in?: string[] | null
+        url_not_in?: string[] | null
+        url_lt?: string | null
+        url_lte?: string | null
+        url_gt?: string | null
+        url_gte?: string | null
+        url_contains?: string | null
+        url_not_contains?: string | null
+        url_starts_with?: string | null
+        url_not_starts_with?: string | null
+        url_ends_with?: string | null
+        url_not_ends_with?: string | null
+        AND?: FileWhereInput[] | null
+        OR?: FileWhereInput[] | null
+        NOT?: FileWhereInput[] | null
+    }
+    export interface TeamWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        name?: string | null
+        name_not?: string | null
+        name_in?: string[] | null
+        name_not_in?: string[] | null
+        name_lt?: string | null
+        name_lte?: string | null
+        name_gt?: string | null
+        name_gte?: string | null
+        name_contains?: string | null
+        name_not_contains?: string | null
+        name_starts_with?: string | null
+        name_not_starts_with?: string | null
+        name_ends_with?: string | null
+        name_not_ends_with?: string | null
+        slug?: string | null
+        slug_not?: string | null
+        slug_in?: string[] | null
+        slug_not_in?: string[] | null
+        slug_lt?: string | null
+        slug_lte?: string | null
+        slug_gt?: string | null
+        slug_gte?: string | null
+        slug_contains?: string | null
+        slug_not_contains?: string | null
+        slug_starts_with?: string | null
+        slug_not_starts_with?: string | null
+        slug_ends_with?: string | null
+        slug_not_ends_with?: string | null
+        moderators_every?: UserWhereInput | null
+        moderators_some?: UserWhereInput | null
+        moderators_none?: UserWhereInput | null
+        author?: UserWhereInput | null
+        members_every?: UserWhereInput | null
+        members_some?: UserWhereInput | null
+        members_none?: UserWhereInput | null
+        channels_every?: ChannelWhereInput | null
+        channels_some?: ChannelWhereInput | null
+        channels_none?: ChannelWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        confirmed?: boolean | null
+        confirmed_not?: boolean | null
+        online?: boolean | null
+        online_not?: boolean | null
+        AND?: TeamWhereInput[] | null
+        OR?: TeamWhereInput[] | null
+        NOT?: TeamWhereInput[] | null
+    }
+    export interface ChannelWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        name?: string | null
+        name_not?: string | null
+        name_in?: string[] | null
+        name_not_in?: string[] | null
+        name_lt?: string | null
+        name_lte?: string | null
+        name_gt?: string | null
+        name_gte?: string | null
+        name_contains?: string | null
+        name_not_contains?: string | null
+        name_starts_with?: string | null
+        name_not_starts_with?: string | null
+        name_ends_with?: string | null
+        name_not_ends_with?: string | null
+        slug?: string | null
+        slug_not?: string | null
+        slug_in?: string[] | null
+        slug_not_in?: string[] | null
+        slug_lt?: string | null
+        slug_lte?: string | null
+        slug_gt?: string | null
+        slug_gte?: string | null
+        slug_contains?: string | null
+        slug_not_contains?: string | null
+        slug_starts_with?: string | null
+        slug_not_starts_with?: string | null
+        slug_ends_with?: string | null
+        slug_not_ends_with?: string | null
+        moderators_every?: UserWhereInput | null
+        moderators_some?: UserWhereInput | null
+        moderators_none?: UserWhereInput | null
+        public?: boolean | null
+        public_not?: boolean | null
+        messages_every?: MessageWhereInput | null
+        messages_some?: MessageWhereInput | null
+        messages_none?: MessageWhereInput | null
+        teamId?: string | null
+        teamId_not?: string | null
+        teamId_in?: string[] | null
+        teamId_not_in?: string[] | null
+        teamId_lt?: string | null
+        teamId_lte?: string | null
+        teamId_gt?: string | null
+        teamId_gte?: string | null
+        teamId_contains?: string | null
+        teamId_not_contains?: string | null
+        teamId_starts_with?: string | null
+        teamId_not_starts_with?: string | null
+        teamId_ends_with?: string | null
+        teamId_not_ends_with?: string | null
+        members_every?: UserWhereInput | null
+        members_some?: UserWhereInput | null
+        members_none?: UserWhereInput | null
+        author?: UserWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: ChannelWhereInput[] | null
+        OR?: ChannelWhereInput[] | null
+        NOT?: ChannelWhereInput[] | null
+    }
+    export interface MessageWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        body?: string | null
+        body_not?: string | null
+        body_in?: string[] | null
+        body_not_in?: string[] | null
+        body_lt?: string | null
+        body_lte?: string | null
+        body_gt?: string | null
+        body_gte?: string | null
+        body_contains?: string | null
+        body_not_contains?: string | null
+        body_starts_with?: string | null
+        body_not_starts_with?: string | null
+        body_ends_with?: string | null
+        body_not_ends_with?: string | null
+        parentId?: string | null
+        parentId_not?: string | null
+        parentId_in?: string[] | null
+        parentId_not_in?: string[] | null
+        parentId_lt?: string | null
+        parentId_lte?: string | null
+        parentId_gt?: string | null
+        parentId_gte?: string | null
+        parentId_contains?: string | null
+        parentId_not_contains?: string | null
+        parentId_starts_with?: string | null
+        parentId_not_starts_with?: string | null
+        parentId_ends_with?: string | null
+        parentId_not_ends_with?: string | null
+        url?: string | null
+        url_not?: string | null
+        url_in?: string[] | null
+        url_not_in?: string[] | null
+        url_lt?: string | null
+        url_lte?: string | null
+        url_gt?: string | null
+        url_gte?: string | null
+        url_contains?: string | null
+        url_not_contains?: string | null
+        url_starts_with?: string | null
+        url_not_starts_with?: string | null
+        url_ends_with?: string | null
+        url_not_ends_with?: string | null
+        filetype?: string | null
+        filetype_not?: string | null
+        filetype_in?: string[] | null
+        filetype_not_in?: string[] | null
+        filetype_lt?: string | null
+        filetype_lte?: string | null
+        filetype_gt?: string | null
+        filetype_gte?: string | null
+        filetype_contains?: string | null
+        filetype_not_contains?: string | null
+        filetype_starts_with?: string | null
+        filetype_not_starts_with?: string | null
+        filetype_ends_with?: string | null
+        filetype_not_ends_with?: string | null
+        author?: UserWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: MessageWhereInput[] | null
+        OR?: MessageWhereInput[] | null
+        NOT?: MessageWhereInput[] | null
     }
 
-    export type NodeResolver =
-        | ((
-              parent: CommentEdge,
-              args: {},
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => Comment | Promise<Comment>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: CommentEdge,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => Comment | Promise<Comment>
-          }
+    export interface ArgsCommentSections {
+        where?: CommentSectionWhereInput | null
+        orderBy?: CommentSectionOrderByInput | null
+        skip?: number | null
+        after?: string | null
+        before?: string | null
+        first?: number | null
+        last?: number | null
+    }
 
-    export type CursorResolver =
+    export type IdResolver =
         | ((
-              parent: CommentEdge,
+              parent: CommentAPI,
               args: {},
               ctx: Context,
               info: GraphQLResolveInfo,
@@ -523,7 +1127,109 @@ export namespace CommentEdgeResolvers {
         | {
               fragment: string
               resolve: (
-                  parent: CommentEdge,
+                  parent: CommentAPI,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>
+          }
+
+    export type CommentSectionsResolver =
+        | ((
+              parent: CommentAPI,
+              args: ArgsCommentSections,
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => CommentSection[] | null | Promise<CommentSection[] | null>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: CommentAPI,
+                  args: ArgsCommentSections,
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => CommentSection[] | null | Promise<CommentSection[] | null>
+          }
+
+    export type CreatedAtResolver =
+        | ((
+              parent: CommentAPI,
+              args: {},
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => string | Promise<string>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: CommentAPI,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>
+          }
+
+    export type UpdatedAtResolver =
+        | ((
+              parent: CommentAPI,
+              args: {},
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => string | Promise<string>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: CommentAPI,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>
+          }
+
+    export type OwnerResolver =
+        | ((
+              parent: CommentAPI,
+              args: {},
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => User | Promise<User>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: CommentAPI,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => User | Promise<User>
+          }
+
+    export type ConsumerKeyResolver =
+        | ((
+              parent: CommentAPI,
+              args: {},
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => string | Promise<string>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: CommentAPI,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>
+          }
+
+    export type PrivateKeyResolver =
+        | ((
+              parent: CommentAPI,
+              args: {},
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => string | Promise<string>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: CommentAPI,
                   args: {},
                   ctx: Context,
                   info: GraphQLResolveInfo,
@@ -531,26 +1237,9 @@ export namespace CommentEdgeResolvers {
           }
 
     export interface Type {
-        node:
+        id:
             | ((
-                  parent: CommentEdge,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => Comment | Promise<Comment>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: CommentEdge,
-                      args: {},
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => Comment | Promise<Comment>
-              }
-
-        cursor:
-            | ((
-                  parent: CommentEdge,
+                  parent: CommentAPI,
                   args: {},
                   ctx: Context,
                   info: GraphQLResolveInfo,
@@ -558,7 +1247,1242 @@ export namespace CommentEdgeResolvers {
             | {
                   fragment: string
                   resolve: (
-                      parent: CommentEdge,
+                      parent: CommentAPI,
+                      args: {},
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => string | Promise<string>
+              }
+
+        commentSections:
+            | ((
+                  parent: CommentAPI,
+                  args: ArgsCommentSections,
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => CommentSection[] | null | Promise<CommentSection[] | null>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: CommentAPI,
+                      args: ArgsCommentSections,
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) =>
+                      | CommentSection[]
+                      | null
+                      | Promise<CommentSection[] | null>
+              }
+
+        createdAt:
+            | ((
+                  parent: CommentAPI,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: CommentAPI,
+                      args: {},
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => string | Promise<string>
+              }
+
+        updatedAt:
+            | ((
+                  parent: CommentAPI,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: CommentAPI,
+                      args: {},
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => string | Promise<string>
+              }
+
+        owner:
+            | ((
+                  parent: CommentAPI,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => User | Promise<User>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: CommentAPI,
+                      args: {},
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => User | Promise<User>
+              }
+
+        consumerKey:
+            | ((
+                  parent: CommentAPI,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: CommentAPI,
+                      args: {},
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => string | Promise<string>
+              }
+
+        privateKey:
+            | ((
+                  parent: CommentAPI,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: CommentAPI,
+                      args: {},
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => string | Promise<string>
+              }
+    }
+}
+
+export namespace CommentSectionResolvers {
+    export const defaultResolvers = {
+        id: (parent: CommentSection) => parent.id,
+        pageId: (parent: CommentSection) => parent.pageId,
+        url: (parent: CommentSection) => parent.url,
+        createdAt: (parent: CommentSection) => parent.createdAt,
+        updatedAt: (parent: CommentSection) => parent.updatedAt,
+    }
+
+    export interface CommentWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        body?: string | null
+        body_not?: string | null
+        body_in?: string[] | null
+        body_not_in?: string[] | null
+        body_lt?: string | null
+        body_lte?: string | null
+        body_gt?: string | null
+        body_gte?: string | null
+        body_contains?: string | null
+        body_not_contains?: string | null
+        body_starts_with?: string | null
+        body_not_starts_with?: string | null
+        body_ends_with?: string | null
+        body_not_ends_with?: string | null
+        parentId?: string | null
+        parentId_not?: string | null
+        parentId_in?: string[] | null
+        parentId_not_in?: string[] | null
+        parentId_lt?: string | null
+        parentId_lte?: string | null
+        parentId_gt?: string | null
+        parentId_gte?: string | null
+        parentId_contains?: string | null
+        parentId_not_contains?: string | null
+        parentId_starts_with?: string | null
+        parentId_not_starts_with?: string | null
+        parentId_ends_with?: string | null
+        parentId_not_ends_with?: string | null
+        pageId?: string | null
+        pageId_not?: string | null
+        pageId_in?: string[] | null
+        pageId_not_in?: string[] | null
+        pageId_lt?: string | null
+        pageId_lte?: string | null
+        pageId_gt?: string | null
+        pageId_gte?: string | null
+        pageId_contains?: string | null
+        pageId_not_contains?: string | null
+        pageId_starts_with?: string | null
+        pageId_not_starts_with?: string | null
+        pageId_ends_with?: string | null
+        pageId_not_ends_with?: string | null
+        repliedTo?: UserWhereInput | null
+        ratings?: RatingWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        replies_every?: CommentWhereInput | null
+        replies_some?: CommentWhereInput | null
+        replies_none?: CommentWhereInput | null
+        author?: UserWhereInput | null
+        AND?: CommentWhereInput[] | null
+        OR?: CommentWhereInput[] | null
+        NOT?: CommentWhereInput[] | null
+    }
+    export interface ModeratorWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        user?: UserWhereInput | null
+        can_delete?: boolean | null
+        can_delete_not?: boolean | null
+        can_ban?: boolean | null
+        can_ban_not?: boolean | null
+        can_edit?: boolean | null
+        can_edit_not?: boolean | null
+        can_close?: boolean | null
+        can_close_not?: boolean | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: ModeratorWhereInput[] | null
+        OR?: ModeratorWhereInput[] | null
+        NOT?: ModeratorWhereInput[] | null
+    }
+    export interface UserWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        email?: string | null
+        email_not?: string | null
+        email_in?: string[] | null
+        email_not_in?: string[] | null
+        email_lt?: string | null
+        email_lte?: string | null
+        email_gt?: string | null
+        email_gte?: string | null
+        email_contains?: string | null
+        email_not_contains?: string | null
+        email_starts_with?: string | null
+        email_not_starts_with?: string | null
+        email_ends_with?: string | null
+        email_not_ends_with?: string | null
+        notifications_every?: NotificationWhereInput | null
+        notifications_some?: NotificationWhereInput | null
+        notifications_none?: NotificationWhereInput | null
+        set_private?: boolean | null
+        set_private_not?: boolean | null
+        username?: string | null
+        username_not?: string | null
+        username_in?: string[] | null
+        username_not_in?: string[] | null
+        username_lt?: string | null
+        username_lte?: string | null
+        username_gt?: string | null
+        username_gte?: string | null
+        username_contains?: string | null
+        username_not_contains?: string | null
+        username_starts_with?: string | null
+        username_not_starts_with?: string | null
+        username_ends_with?: string | null
+        username_not_ends_with?: string | null
+        password?: string | null
+        password_not?: string | null
+        password_in?: string[] | null
+        password_not_in?: string[] | null
+        password_lt?: string | null
+        password_lte?: string | null
+        password_gt?: string | null
+        password_gte?: string | null
+        password_contains?: string | null
+        password_not_contains?: string | null
+        password_starts_with?: string | null
+        password_not_starts_with?: string | null
+        password_ends_with?: string | null
+        password_not_ends_with?: string | null
+        gitHubId?: string | null
+        gitHubId_not?: string | null
+        gitHubId_in?: string[] | null
+        gitHubId_not_in?: string[] | null
+        gitHubId_lt?: string | null
+        gitHubId_lte?: string | null
+        gitHubId_gt?: string | null
+        gitHubId_gte?: string | null
+        gitHubId_contains?: string | null
+        gitHubId_not_contains?: string | null
+        gitHubId_starts_with?: string | null
+        gitHubId_not_starts_with?: string | null
+        gitHubId_ends_with?: string | null
+        gitHubId_not_ends_with?: string | null
+        facebookId?: string | null
+        facebookId_not?: string | null
+        facebookId_in?: string[] | null
+        facebookId_not_in?: string[] | null
+        facebookId_lt?: string | null
+        facebookId_lte?: string | null
+        facebookId_gt?: string | null
+        facebookId_gte?: string | null
+        facebookId_contains?: string | null
+        facebookId_not_contains?: string | null
+        facebookId_starts_with?: string | null
+        facebookId_not_starts_with?: string | null
+        facebookId_ends_with?: string | null
+        facebookId_not_ends_with?: string | null
+        twitterId?: string | null
+        twitterId_not?: string | null
+        twitterId_in?: string[] | null
+        twitterId_not_in?: string[] | null
+        twitterId_lt?: string | null
+        twitterId_lte?: string | null
+        twitterId_gt?: string | null
+        twitterId_gte?: string | null
+        twitterId_contains?: string | null
+        twitterId_not_contains?: string | null
+        twitterId_starts_with?: string | null
+        twitterId_not_starts_with?: string | null
+        twitterId_ends_with?: string | null
+        twitterId_not_ends_with?: string | null
+        gmailId?: string | null
+        gmailId_not?: string | null
+        gmailId_in?: string[] | null
+        gmailId_not_in?: string[] | null
+        gmailId_lt?: string | null
+        gmailId_lte?: string | null
+        gmailId_gt?: string | null
+        gmailId_gte?: string | null
+        gmailId_contains?: string | null
+        gmailId_not_contains?: string | null
+        gmailId_starts_with?: string | null
+        gmailId_not_starts_with?: string | null
+        gmailId_ends_with?: string | null
+        gmailId_not_ends_with?: string | null
+        directMessages_every?: CommentWhereInput | null
+        directMessages_some?: CommentWhereInput | null
+        directMessages_none?: CommentWhereInput | null
+        avatar_url?: FileWhereInput | null
+        private?: boolean | null
+        private_not?: boolean | null
+        blockedUsers_every?: UserWhereInput | null
+        blockedUsers_some?: UserWhereInput | null
+        blockedUsers_none?: UserWhereInput | null
+        confirmed?: boolean | null
+        confirmed_not?: boolean | null
+        online?: boolean | null
+        online_not?: boolean | null
+        friends_every?: UserWhereInput | null
+        friends_some?: UserWhereInput | null
+        friends_none?: UserWhereInput | null
+        friend_requests_every?: UserWhereInput | null
+        friend_requests_some?: UserWhereInput | null
+        friend_requests_none?: UserWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        role?: UserRole | null
+        role_not?: UserRole | null
+        role_in?: UserRole[] | null
+        role_not_in?: UserRole[] | null
+        teams_every?: TeamWhereInput | null
+        teams_some?: TeamWhereInput | null
+        teams_none?: TeamWhereInput | null
+        channels_every?: ChannelWhereInput | null
+        channels_some?: ChannelWhereInput | null
+        channels_none?: ChannelWhereInput | null
+        owned_teams_every?: TeamWhereInput | null
+        owned_teams_some?: TeamWhereInput | null
+        owned_teams_none?: TeamWhereInput | null
+        owned_channels_every?: ChannelWhereInput | null
+        owned_channels_some?: ChannelWhereInput | null
+        owned_channels_none?: ChannelWhereInput | null
+        AND?: UserWhereInput[] | null
+        OR?: UserWhereInput[] | null
+        NOT?: UserWhereInput[] | null
+    }
+    export interface RatingWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        vote?: number | null
+        vote_not?: number | null
+        vote_in?: number[] | null
+        vote_not_in?: number[] | null
+        vote_lt?: number | null
+        vote_lte?: number | null
+        vote_gt?: number | null
+        vote_gte?: number | null
+        author_every?: UserWhereInput | null
+        author_some?: UserWhereInput | null
+        author_none?: UserWhereInput | null
+        AND?: RatingWhereInput[] | null
+        OR?: RatingWhereInput[] | null
+        NOT?: RatingWhereInput[] | null
+    }
+    export interface NotificationWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        message?: string | null
+        message_not?: string | null
+        message_in?: string[] | null
+        message_not_in?: string[] | null
+        message_lt?: string | null
+        message_lte?: string | null
+        message_gt?: string | null
+        message_gte?: string | null
+        message_contains?: string | null
+        message_not_contains?: string | null
+        message_starts_with?: string | null
+        message_not_starts_with?: string | null
+        message_ends_with?: string | null
+        message_not_ends_with?: string | null
+        comments?: CommentWhereInput | null
+        messages?: MessageWhereInput | null
+        team?: TeamWhereInput | null
+        channel?: ChannelWhereInput | null
+        friend_requests?: UserWhereInput | null
+        friend?: UserWhereInput | null
+        author?: UserWhereInput | null
+        AND?: NotificationWhereInput[] | null
+        OR?: NotificationWhereInput[] | null
+        NOT?: NotificationWhereInput[] | null
+    }
+    export interface FileWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        filename?: string | null
+        filename_not?: string | null
+        filename_in?: string[] | null
+        filename_not_in?: string[] | null
+        filename_lt?: string | null
+        filename_lte?: string | null
+        filename_gt?: string | null
+        filename_gte?: string | null
+        filename_contains?: string | null
+        filename_not_contains?: string | null
+        filename_starts_with?: string | null
+        filename_not_starts_with?: string | null
+        filename_ends_with?: string | null
+        filename_not_ends_with?: string | null
+        mimetype?: string | null
+        mimetype_not?: string | null
+        mimetype_in?: string[] | null
+        mimetype_not_in?: string[] | null
+        mimetype_lt?: string | null
+        mimetype_lte?: string | null
+        mimetype_gt?: string | null
+        mimetype_gte?: string | null
+        mimetype_contains?: string | null
+        mimetype_not_contains?: string | null
+        mimetype_starts_with?: string | null
+        mimetype_not_starts_with?: string | null
+        mimetype_ends_with?: string | null
+        mimetype_not_ends_with?: string | null
+        encoding?: string | null
+        encoding_not?: string | null
+        encoding_in?: string[] | null
+        encoding_not_in?: string[] | null
+        encoding_lt?: string | null
+        encoding_lte?: string | null
+        encoding_gt?: string | null
+        encoding_gte?: string | null
+        encoding_contains?: string | null
+        encoding_not_contains?: string | null
+        encoding_starts_with?: string | null
+        encoding_not_starts_with?: string | null
+        encoding_ends_with?: string | null
+        encoding_not_ends_with?: string | null
+        key?: string | null
+        key_not?: string | null
+        key_in?: string[] | null
+        key_not_in?: string[] | null
+        key_lt?: string | null
+        key_lte?: string | null
+        key_gt?: string | null
+        key_gte?: string | null
+        key_contains?: string | null
+        key_not_contains?: string | null
+        key_starts_with?: string | null
+        key_not_starts_with?: string | null
+        key_ends_with?: string | null
+        key_not_ends_with?: string | null
+        ETag?: string | null
+        ETag_not?: string | null
+        ETag_in?: string[] | null
+        ETag_not_in?: string[] | null
+        ETag_lt?: string | null
+        ETag_lte?: string | null
+        ETag_gt?: string | null
+        ETag_gte?: string | null
+        ETag_contains?: string | null
+        ETag_not_contains?: string | null
+        ETag_starts_with?: string | null
+        ETag_not_starts_with?: string | null
+        ETag_ends_with?: string | null
+        ETag_not_ends_with?: string | null
+        url?: string | null
+        url_not?: string | null
+        url_in?: string[] | null
+        url_not_in?: string[] | null
+        url_lt?: string | null
+        url_lte?: string | null
+        url_gt?: string | null
+        url_gte?: string | null
+        url_contains?: string | null
+        url_not_contains?: string | null
+        url_starts_with?: string | null
+        url_not_starts_with?: string | null
+        url_ends_with?: string | null
+        url_not_ends_with?: string | null
+        AND?: FileWhereInput[] | null
+        OR?: FileWhereInput[] | null
+        NOT?: FileWhereInput[] | null
+    }
+    export interface TeamWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        name?: string | null
+        name_not?: string | null
+        name_in?: string[] | null
+        name_not_in?: string[] | null
+        name_lt?: string | null
+        name_lte?: string | null
+        name_gt?: string | null
+        name_gte?: string | null
+        name_contains?: string | null
+        name_not_contains?: string | null
+        name_starts_with?: string | null
+        name_not_starts_with?: string | null
+        name_ends_with?: string | null
+        name_not_ends_with?: string | null
+        slug?: string | null
+        slug_not?: string | null
+        slug_in?: string[] | null
+        slug_not_in?: string[] | null
+        slug_lt?: string | null
+        slug_lte?: string | null
+        slug_gt?: string | null
+        slug_gte?: string | null
+        slug_contains?: string | null
+        slug_not_contains?: string | null
+        slug_starts_with?: string | null
+        slug_not_starts_with?: string | null
+        slug_ends_with?: string | null
+        slug_not_ends_with?: string | null
+        moderators_every?: UserWhereInput | null
+        moderators_some?: UserWhereInput | null
+        moderators_none?: UserWhereInput | null
+        author?: UserWhereInput | null
+        members_every?: UserWhereInput | null
+        members_some?: UserWhereInput | null
+        members_none?: UserWhereInput | null
+        channels_every?: ChannelWhereInput | null
+        channels_some?: ChannelWhereInput | null
+        channels_none?: ChannelWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        confirmed?: boolean | null
+        confirmed_not?: boolean | null
+        online?: boolean | null
+        online_not?: boolean | null
+        AND?: TeamWhereInput[] | null
+        OR?: TeamWhereInput[] | null
+        NOT?: TeamWhereInput[] | null
+    }
+    export interface ChannelWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        name?: string | null
+        name_not?: string | null
+        name_in?: string[] | null
+        name_not_in?: string[] | null
+        name_lt?: string | null
+        name_lte?: string | null
+        name_gt?: string | null
+        name_gte?: string | null
+        name_contains?: string | null
+        name_not_contains?: string | null
+        name_starts_with?: string | null
+        name_not_starts_with?: string | null
+        name_ends_with?: string | null
+        name_not_ends_with?: string | null
+        slug?: string | null
+        slug_not?: string | null
+        slug_in?: string[] | null
+        slug_not_in?: string[] | null
+        slug_lt?: string | null
+        slug_lte?: string | null
+        slug_gt?: string | null
+        slug_gte?: string | null
+        slug_contains?: string | null
+        slug_not_contains?: string | null
+        slug_starts_with?: string | null
+        slug_not_starts_with?: string | null
+        slug_ends_with?: string | null
+        slug_not_ends_with?: string | null
+        moderators_every?: UserWhereInput | null
+        moderators_some?: UserWhereInput | null
+        moderators_none?: UserWhereInput | null
+        public?: boolean | null
+        public_not?: boolean | null
+        messages_every?: MessageWhereInput | null
+        messages_some?: MessageWhereInput | null
+        messages_none?: MessageWhereInput | null
+        teamId?: string | null
+        teamId_not?: string | null
+        teamId_in?: string[] | null
+        teamId_not_in?: string[] | null
+        teamId_lt?: string | null
+        teamId_lte?: string | null
+        teamId_gt?: string | null
+        teamId_gte?: string | null
+        teamId_contains?: string | null
+        teamId_not_contains?: string | null
+        teamId_starts_with?: string | null
+        teamId_not_starts_with?: string | null
+        teamId_ends_with?: string | null
+        teamId_not_ends_with?: string | null
+        members_every?: UserWhereInput | null
+        members_some?: UserWhereInput | null
+        members_none?: UserWhereInput | null
+        author?: UserWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: ChannelWhereInput[] | null
+        OR?: ChannelWhereInput[] | null
+        NOT?: ChannelWhereInput[] | null
+    }
+    export interface MessageWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        body?: string | null
+        body_not?: string | null
+        body_in?: string[] | null
+        body_not_in?: string[] | null
+        body_lt?: string | null
+        body_lte?: string | null
+        body_gt?: string | null
+        body_gte?: string | null
+        body_contains?: string | null
+        body_not_contains?: string | null
+        body_starts_with?: string | null
+        body_not_starts_with?: string | null
+        body_ends_with?: string | null
+        body_not_ends_with?: string | null
+        parentId?: string | null
+        parentId_not?: string | null
+        parentId_in?: string[] | null
+        parentId_not_in?: string[] | null
+        parentId_lt?: string | null
+        parentId_lte?: string | null
+        parentId_gt?: string | null
+        parentId_gte?: string | null
+        parentId_contains?: string | null
+        parentId_not_contains?: string | null
+        parentId_starts_with?: string | null
+        parentId_not_starts_with?: string | null
+        parentId_ends_with?: string | null
+        parentId_not_ends_with?: string | null
+        url?: string | null
+        url_not?: string | null
+        url_in?: string[] | null
+        url_not_in?: string[] | null
+        url_lt?: string | null
+        url_lte?: string | null
+        url_gt?: string | null
+        url_gte?: string | null
+        url_contains?: string | null
+        url_not_contains?: string | null
+        url_starts_with?: string | null
+        url_not_starts_with?: string | null
+        url_ends_with?: string | null
+        url_not_ends_with?: string | null
+        filetype?: string | null
+        filetype_not?: string | null
+        filetype_in?: string[] | null
+        filetype_not_in?: string[] | null
+        filetype_lt?: string | null
+        filetype_lte?: string | null
+        filetype_gt?: string | null
+        filetype_gte?: string | null
+        filetype_contains?: string | null
+        filetype_not_contains?: string | null
+        filetype_starts_with?: string | null
+        filetype_not_starts_with?: string | null
+        filetype_ends_with?: string | null
+        filetype_not_ends_with?: string | null
+        author?: UserWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: MessageWhereInput[] | null
+        OR?: MessageWhereInput[] | null
+        NOT?: MessageWhereInput[] | null
+    }
+
+    export interface ArgsComments {
+        where?: CommentWhereInput | null
+        orderBy?: CommentOrderByInput | null
+        skip?: number | null
+        after?: string | null
+        before?: string | null
+        first?: number | null
+        last?: number | null
+    }
+
+    export interface ArgsModerators {
+        where?: ModeratorWhereInput | null
+        orderBy?: ModeratorOrderByInput | null
+        skip?: number | null
+        after?: string | null
+        before?: string | null
+        first?: number | null
+        last?: number | null
+    }
+
+    export interface ArgsBannedUsers {
+        where?: UserWhereInput | null
+        orderBy?: UserOrderByInput | null
+        skip?: number | null
+        after?: string | null
+        before?: string | null
+        first?: number | null
+        last?: number | null
+    }
+
+    export type IdResolver =
+        | ((
+              parent: CommentSection,
+              args: {},
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => string | Promise<string>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: CommentSection,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>
+          }
+
+    export type CommentsResolver =
+        | ((
+              parent: CommentSection,
+              args: ArgsComments,
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => Comment[] | null | Promise<Comment[] | null>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: CommentSection,
+                  args: ArgsComments,
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => Comment[] | null | Promise<Comment[] | null>
+          }
+
+    export type PageIdResolver =
+        | ((
+              parent: CommentSection,
+              args: {},
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => string | Promise<string>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: CommentSection,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>
+          }
+
+    export type UrlResolver =
+        | ((
+              parent: CommentSection,
+              args: {},
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => string | Promise<string>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: CommentSection,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>
+          }
+
+    export type AdminResolver =
+        | ((
+              parent: CommentSection,
+              args: {},
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => User | Promise<User>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: CommentSection,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => User | Promise<User>
+          }
+
+    export type ModeratorsResolver =
+        | ((
+              parent: CommentSection,
+              args: ArgsModerators,
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => Moderator[] | null | Promise<Moderator[] | null>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: CommentSection,
+                  args: ArgsModerators,
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => Moderator[] | null | Promise<Moderator[] | null>
+          }
+
+    export type OptionsResolver =
+        | ((
+              parent: CommentSection,
+              args: {},
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => CommentOptions | Promise<CommentOptions>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: CommentSection,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => CommentOptions | Promise<CommentOptions>
+          }
+
+    export type BannedUsersResolver =
+        | ((
+              parent: CommentSection,
+              args: ArgsBannedUsers,
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => User[] | null | Promise<User[] | null>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: CommentSection,
+                  args: ArgsBannedUsers,
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => User[] | null | Promise<User[] | null>
+          }
+
+    export type CreatedAtResolver =
+        | ((
+              parent: CommentSection,
+              args: {},
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => string | Promise<string>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: CommentSection,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>
+          }
+
+    export type UpdatedAtResolver =
+        | ((
+              parent: CommentSection,
+              args: {},
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => string | Promise<string>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: CommentSection,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>
+          }
+
+    export interface Type {
+        id:
+            | ((
+                  parent: CommentSection,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: CommentSection,
+                      args: {},
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => string | Promise<string>
+              }
+
+        comments:
+            | ((
+                  parent: CommentSection,
+                  args: ArgsComments,
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => Comment[] | null | Promise<Comment[] | null>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: CommentSection,
+                      args: ArgsComments,
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => Comment[] | null | Promise<Comment[] | null>
+              }
+
+        pageId:
+            | ((
+                  parent: CommentSection,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: CommentSection,
+                      args: {},
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => string | Promise<string>
+              }
+
+        url:
+            | ((
+                  parent: CommentSection,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: CommentSection,
+                      args: {},
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => string | Promise<string>
+              }
+
+        admin:
+            | ((
+                  parent: CommentSection,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => User | Promise<User>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: CommentSection,
+                      args: {},
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => User | Promise<User>
+              }
+
+        moderators:
+            | ((
+                  parent: CommentSection,
+                  args: ArgsModerators,
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => Moderator[] | null | Promise<Moderator[] | null>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: CommentSection,
+                      args: ArgsModerators,
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => Moderator[] | null | Promise<Moderator[] | null>
+              }
+
+        options:
+            | ((
+                  parent: CommentSection,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => CommentOptions | Promise<CommentOptions>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: CommentSection,
+                      args: {},
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => CommentOptions | Promise<CommentOptions>
+              }
+
+        bannedUsers:
+            | ((
+                  parent: CommentSection,
+                  args: ArgsBannedUsers,
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => User[] | null | Promise<User[] | null>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: CommentSection,
+                      args: ArgsBannedUsers,
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => User[] | null | Promise<User[] | null>
+              }
+
+        createdAt:
+            | ((
+                  parent: CommentSection,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: CommentSection,
+                      args: {},
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => string | Promise<string>
+              }
+
+        updatedAt:
+            | ((
+                  parent: CommentSection,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: CommentSection,
                       args: {},
                       ctx: Context,
                       info: GraphQLResolveInfo,
@@ -7299,1134 +9223,6 @@ export namespace RatingResolvers {
     }
 }
 
-export namespace AggregateCommentResolvers {
-    export const defaultResolvers = {
-        count: (parent: AggregateComment) => parent.count,
-    }
-
-    export type CountResolver =
-        | ((
-              parent: AggregateComment,
-              args: {},
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => number | Promise<number>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: AggregateComment,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => number | Promise<number>
-          }
-
-    export interface Type {
-        count:
-            | ((
-                  parent: AggregateComment,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => number | Promise<number>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: AggregateComment,
-                      args: {},
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => number | Promise<number>
-              }
-    }
-}
-
-export namespace CommentSectionResolvers {
-    export const defaultResolvers = {
-        id: (parent: CommentSection) => parent.id,
-        pageId: (parent: CommentSection) => parent.pageId,
-        url: (parent: CommentSection) => parent.url,
-        createdAt: (parent: CommentSection) => parent.createdAt,
-        updatedAt: (parent: CommentSection) => parent.updatedAt,
-    }
-
-    export interface CommentWhereInput {
-        id?: string | null
-        id_not?: string | null
-        id_in?: string[] | null
-        id_not_in?: string[] | null
-        id_lt?: string | null
-        id_lte?: string | null
-        id_gt?: string | null
-        id_gte?: string | null
-        id_contains?: string | null
-        id_not_contains?: string | null
-        id_starts_with?: string | null
-        id_not_starts_with?: string | null
-        id_ends_with?: string | null
-        id_not_ends_with?: string | null
-        body?: string | null
-        body_not?: string | null
-        body_in?: string[] | null
-        body_not_in?: string[] | null
-        body_lt?: string | null
-        body_lte?: string | null
-        body_gt?: string | null
-        body_gte?: string | null
-        body_contains?: string | null
-        body_not_contains?: string | null
-        body_starts_with?: string | null
-        body_not_starts_with?: string | null
-        body_ends_with?: string | null
-        body_not_ends_with?: string | null
-        parentId?: string | null
-        parentId_not?: string | null
-        parentId_in?: string[] | null
-        parentId_not_in?: string[] | null
-        parentId_lt?: string | null
-        parentId_lte?: string | null
-        parentId_gt?: string | null
-        parentId_gte?: string | null
-        parentId_contains?: string | null
-        parentId_not_contains?: string | null
-        parentId_starts_with?: string | null
-        parentId_not_starts_with?: string | null
-        parentId_ends_with?: string | null
-        parentId_not_ends_with?: string | null
-        pageId?: string | null
-        pageId_not?: string | null
-        pageId_in?: string[] | null
-        pageId_not_in?: string[] | null
-        pageId_lt?: string | null
-        pageId_lte?: string | null
-        pageId_gt?: string | null
-        pageId_gte?: string | null
-        pageId_contains?: string | null
-        pageId_not_contains?: string | null
-        pageId_starts_with?: string | null
-        pageId_not_starts_with?: string | null
-        pageId_ends_with?: string | null
-        pageId_not_ends_with?: string | null
-        repliedTo?: UserWhereInput | null
-        ratings?: RatingWhereInput | null
-        createdAt?: string | null
-        createdAt_not?: string | null
-        createdAt_in?: string[] | null
-        createdAt_not_in?: string[] | null
-        createdAt_lt?: string | null
-        createdAt_lte?: string | null
-        createdAt_gt?: string | null
-        createdAt_gte?: string | null
-        updatedAt?: string | null
-        updatedAt_not?: string | null
-        updatedAt_in?: string[] | null
-        updatedAt_not_in?: string[] | null
-        updatedAt_lt?: string | null
-        updatedAt_lte?: string | null
-        updatedAt_gt?: string | null
-        updatedAt_gte?: string | null
-        replies_every?: CommentWhereInput | null
-        replies_some?: CommentWhereInput | null
-        replies_none?: CommentWhereInput | null
-        author?: UserWhereInput | null
-        AND?: CommentWhereInput[] | null
-        OR?: CommentWhereInput[] | null
-        NOT?: CommentWhereInput[] | null
-    }
-    export interface ModeratorWhereInput {
-        id?: string | null
-        id_not?: string | null
-        id_in?: string[] | null
-        id_not_in?: string[] | null
-        id_lt?: string | null
-        id_lte?: string | null
-        id_gt?: string | null
-        id_gte?: string | null
-        id_contains?: string | null
-        id_not_contains?: string | null
-        id_starts_with?: string | null
-        id_not_starts_with?: string | null
-        id_ends_with?: string | null
-        id_not_ends_with?: string | null
-        user?: UserWhereInput | null
-        can_delete?: boolean | null
-        can_delete_not?: boolean | null
-        can_ban?: boolean | null
-        can_ban_not?: boolean | null
-        can_edit?: boolean | null
-        can_edit_not?: boolean | null
-        can_close?: boolean | null
-        can_close_not?: boolean | null
-        createdAt?: string | null
-        createdAt_not?: string | null
-        createdAt_in?: string[] | null
-        createdAt_not_in?: string[] | null
-        createdAt_lt?: string | null
-        createdAt_lte?: string | null
-        createdAt_gt?: string | null
-        createdAt_gte?: string | null
-        updatedAt?: string | null
-        updatedAt_not?: string | null
-        updatedAt_in?: string[] | null
-        updatedAt_not_in?: string[] | null
-        updatedAt_lt?: string | null
-        updatedAt_lte?: string | null
-        updatedAt_gt?: string | null
-        updatedAt_gte?: string | null
-        AND?: ModeratorWhereInput[] | null
-        OR?: ModeratorWhereInput[] | null
-        NOT?: ModeratorWhereInput[] | null
-    }
-    export interface UserWhereInput {
-        id?: string | null
-        id_not?: string | null
-        id_in?: string[] | null
-        id_not_in?: string[] | null
-        id_lt?: string | null
-        id_lte?: string | null
-        id_gt?: string | null
-        id_gte?: string | null
-        id_contains?: string | null
-        id_not_contains?: string | null
-        id_starts_with?: string | null
-        id_not_starts_with?: string | null
-        id_ends_with?: string | null
-        id_not_ends_with?: string | null
-        email?: string | null
-        email_not?: string | null
-        email_in?: string[] | null
-        email_not_in?: string[] | null
-        email_lt?: string | null
-        email_lte?: string | null
-        email_gt?: string | null
-        email_gte?: string | null
-        email_contains?: string | null
-        email_not_contains?: string | null
-        email_starts_with?: string | null
-        email_not_starts_with?: string | null
-        email_ends_with?: string | null
-        email_not_ends_with?: string | null
-        notifications_every?: NotificationWhereInput | null
-        notifications_some?: NotificationWhereInput | null
-        notifications_none?: NotificationWhereInput | null
-        set_private?: boolean | null
-        set_private_not?: boolean | null
-        username?: string | null
-        username_not?: string | null
-        username_in?: string[] | null
-        username_not_in?: string[] | null
-        username_lt?: string | null
-        username_lte?: string | null
-        username_gt?: string | null
-        username_gte?: string | null
-        username_contains?: string | null
-        username_not_contains?: string | null
-        username_starts_with?: string | null
-        username_not_starts_with?: string | null
-        username_ends_with?: string | null
-        username_not_ends_with?: string | null
-        password?: string | null
-        password_not?: string | null
-        password_in?: string[] | null
-        password_not_in?: string[] | null
-        password_lt?: string | null
-        password_lte?: string | null
-        password_gt?: string | null
-        password_gte?: string | null
-        password_contains?: string | null
-        password_not_contains?: string | null
-        password_starts_with?: string | null
-        password_not_starts_with?: string | null
-        password_ends_with?: string | null
-        password_not_ends_with?: string | null
-        gitHubId?: string | null
-        gitHubId_not?: string | null
-        gitHubId_in?: string[] | null
-        gitHubId_not_in?: string[] | null
-        gitHubId_lt?: string | null
-        gitHubId_lte?: string | null
-        gitHubId_gt?: string | null
-        gitHubId_gte?: string | null
-        gitHubId_contains?: string | null
-        gitHubId_not_contains?: string | null
-        gitHubId_starts_with?: string | null
-        gitHubId_not_starts_with?: string | null
-        gitHubId_ends_with?: string | null
-        gitHubId_not_ends_with?: string | null
-        facebookId?: string | null
-        facebookId_not?: string | null
-        facebookId_in?: string[] | null
-        facebookId_not_in?: string[] | null
-        facebookId_lt?: string | null
-        facebookId_lte?: string | null
-        facebookId_gt?: string | null
-        facebookId_gte?: string | null
-        facebookId_contains?: string | null
-        facebookId_not_contains?: string | null
-        facebookId_starts_with?: string | null
-        facebookId_not_starts_with?: string | null
-        facebookId_ends_with?: string | null
-        facebookId_not_ends_with?: string | null
-        twitterId?: string | null
-        twitterId_not?: string | null
-        twitterId_in?: string[] | null
-        twitterId_not_in?: string[] | null
-        twitterId_lt?: string | null
-        twitterId_lte?: string | null
-        twitterId_gt?: string | null
-        twitterId_gte?: string | null
-        twitterId_contains?: string | null
-        twitterId_not_contains?: string | null
-        twitterId_starts_with?: string | null
-        twitterId_not_starts_with?: string | null
-        twitterId_ends_with?: string | null
-        twitterId_not_ends_with?: string | null
-        gmailId?: string | null
-        gmailId_not?: string | null
-        gmailId_in?: string[] | null
-        gmailId_not_in?: string[] | null
-        gmailId_lt?: string | null
-        gmailId_lte?: string | null
-        gmailId_gt?: string | null
-        gmailId_gte?: string | null
-        gmailId_contains?: string | null
-        gmailId_not_contains?: string | null
-        gmailId_starts_with?: string | null
-        gmailId_not_starts_with?: string | null
-        gmailId_ends_with?: string | null
-        gmailId_not_ends_with?: string | null
-        directMessages_every?: CommentWhereInput | null
-        directMessages_some?: CommentWhereInput | null
-        directMessages_none?: CommentWhereInput | null
-        avatar_url?: FileWhereInput | null
-        private?: boolean | null
-        private_not?: boolean | null
-        blockedUsers_every?: UserWhereInput | null
-        blockedUsers_some?: UserWhereInput | null
-        blockedUsers_none?: UserWhereInput | null
-        confirmed?: boolean | null
-        confirmed_not?: boolean | null
-        online?: boolean | null
-        online_not?: boolean | null
-        friends_every?: UserWhereInput | null
-        friends_some?: UserWhereInput | null
-        friends_none?: UserWhereInput | null
-        friend_requests_every?: UserWhereInput | null
-        friend_requests_some?: UserWhereInput | null
-        friend_requests_none?: UserWhereInput | null
-        createdAt?: string | null
-        createdAt_not?: string | null
-        createdAt_in?: string[] | null
-        createdAt_not_in?: string[] | null
-        createdAt_lt?: string | null
-        createdAt_lte?: string | null
-        createdAt_gt?: string | null
-        createdAt_gte?: string | null
-        updatedAt?: string | null
-        updatedAt_not?: string | null
-        updatedAt_in?: string[] | null
-        updatedAt_not_in?: string[] | null
-        updatedAt_lt?: string | null
-        updatedAt_lte?: string | null
-        updatedAt_gt?: string | null
-        updatedAt_gte?: string | null
-        role?: UserRole | null
-        role_not?: UserRole | null
-        role_in?: UserRole[] | null
-        role_not_in?: UserRole[] | null
-        teams_every?: TeamWhereInput | null
-        teams_some?: TeamWhereInput | null
-        teams_none?: TeamWhereInput | null
-        channels_every?: ChannelWhereInput | null
-        channels_some?: ChannelWhereInput | null
-        channels_none?: ChannelWhereInput | null
-        owned_teams_every?: TeamWhereInput | null
-        owned_teams_some?: TeamWhereInput | null
-        owned_teams_none?: TeamWhereInput | null
-        owned_channels_every?: ChannelWhereInput | null
-        owned_channels_some?: ChannelWhereInput | null
-        owned_channels_none?: ChannelWhereInput | null
-        AND?: UserWhereInput[] | null
-        OR?: UserWhereInput[] | null
-        NOT?: UserWhereInput[] | null
-    }
-    export interface RatingWhereInput {
-        id?: string | null
-        id_not?: string | null
-        id_in?: string[] | null
-        id_not_in?: string[] | null
-        id_lt?: string | null
-        id_lte?: string | null
-        id_gt?: string | null
-        id_gte?: string | null
-        id_contains?: string | null
-        id_not_contains?: string | null
-        id_starts_with?: string | null
-        id_not_starts_with?: string | null
-        id_ends_with?: string | null
-        id_not_ends_with?: string | null
-        vote?: number | null
-        vote_not?: number | null
-        vote_in?: number[] | null
-        vote_not_in?: number[] | null
-        vote_lt?: number | null
-        vote_lte?: number | null
-        vote_gt?: number | null
-        vote_gte?: number | null
-        author_every?: UserWhereInput | null
-        author_some?: UserWhereInput | null
-        author_none?: UserWhereInput | null
-        AND?: RatingWhereInput[] | null
-        OR?: RatingWhereInput[] | null
-        NOT?: RatingWhereInput[] | null
-    }
-    export interface NotificationWhereInput {
-        id?: string | null
-        id_not?: string | null
-        id_in?: string[] | null
-        id_not_in?: string[] | null
-        id_lt?: string | null
-        id_lte?: string | null
-        id_gt?: string | null
-        id_gte?: string | null
-        id_contains?: string | null
-        id_not_contains?: string | null
-        id_starts_with?: string | null
-        id_not_starts_with?: string | null
-        id_ends_with?: string | null
-        id_not_ends_with?: string | null
-        message?: string | null
-        message_not?: string | null
-        message_in?: string[] | null
-        message_not_in?: string[] | null
-        message_lt?: string | null
-        message_lte?: string | null
-        message_gt?: string | null
-        message_gte?: string | null
-        message_contains?: string | null
-        message_not_contains?: string | null
-        message_starts_with?: string | null
-        message_not_starts_with?: string | null
-        message_ends_with?: string | null
-        message_not_ends_with?: string | null
-        comments?: CommentWhereInput | null
-        messages?: MessageWhereInput | null
-        team?: TeamWhereInput | null
-        channel?: ChannelWhereInput | null
-        friend_requests?: UserWhereInput | null
-        friend?: UserWhereInput | null
-        author?: UserWhereInput | null
-        AND?: NotificationWhereInput[] | null
-        OR?: NotificationWhereInput[] | null
-        NOT?: NotificationWhereInput[] | null
-    }
-    export interface FileWhereInput {
-        id?: string | null
-        id_not?: string | null
-        id_in?: string[] | null
-        id_not_in?: string[] | null
-        id_lt?: string | null
-        id_lte?: string | null
-        id_gt?: string | null
-        id_gte?: string | null
-        id_contains?: string | null
-        id_not_contains?: string | null
-        id_starts_with?: string | null
-        id_not_starts_with?: string | null
-        id_ends_with?: string | null
-        id_not_ends_with?: string | null
-        createdAt?: string | null
-        createdAt_not?: string | null
-        createdAt_in?: string[] | null
-        createdAt_not_in?: string[] | null
-        createdAt_lt?: string | null
-        createdAt_lte?: string | null
-        createdAt_gt?: string | null
-        createdAt_gte?: string | null
-        updatedAt?: string | null
-        updatedAt_not?: string | null
-        updatedAt_in?: string[] | null
-        updatedAt_not_in?: string[] | null
-        updatedAt_lt?: string | null
-        updatedAt_lte?: string | null
-        updatedAt_gt?: string | null
-        updatedAt_gte?: string | null
-        filename?: string | null
-        filename_not?: string | null
-        filename_in?: string[] | null
-        filename_not_in?: string[] | null
-        filename_lt?: string | null
-        filename_lte?: string | null
-        filename_gt?: string | null
-        filename_gte?: string | null
-        filename_contains?: string | null
-        filename_not_contains?: string | null
-        filename_starts_with?: string | null
-        filename_not_starts_with?: string | null
-        filename_ends_with?: string | null
-        filename_not_ends_with?: string | null
-        mimetype?: string | null
-        mimetype_not?: string | null
-        mimetype_in?: string[] | null
-        mimetype_not_in?: string[] | null
-        mimetype_lt?: string | null
-        mimetype_lte?: string | null
-        mimetype_gt?: string | null
-        mimetype_gte?: string | null
-        mimetype_contains?: string | null
-        mimetype_not_contains?: string | null
-        mimetype_starts_with?: string | null
-        mimetype_not_starts_with?: string | null
-        mimetype_ends_with?: string | null
-        mimetype_not_ends_with?: string | null
-        encoding?: string | null
-        encoding_not?: string | null
-        encoding_in?: string[] | null
-        encoding_not_in?: string[] | null
-        encoding_lt?: string | null
-        encoding_lte?: string | null
-        encoding_gt?: string | null
-        encoding_gte?: string | null
-        encoding_contains?: string | null
-        encoding_not_contains?: string | null
-        encoding_starts_with?: string | null
-        encoding_not_starts_with?: string | null
-        encoding_ends_with?: string | null
-        encoding_not_ends_with?: string | null
-        key?: string | null
-        key_not?: string | null
-        key_in?: string[] | null
-        key_not_in?: string[] | null
-        key_lt?: string | null
-        key_lte?: string | null
-        key_gt?: string | null
-        key_gte?: string | null
-        key_contains?: string | null
-        key_not_contains?: string | null
-        key_starts_with?: string | null
-        key_not_starts_with?: string | null
-        key_ends_with?: string | null
-        key_not_ends_with?: string | null
-        ETag?: string | null
-        ETag_not?: string | null
-        ETag_in?: string[] | null
-        ETag_not_in?: string[] | null
-        ETag_lt?: string | null
-        ETag_lte?: string | null
-        ETag_gt?: string | null
-        ETag_gte?: string | null
-        ETag_contains?: string | null
-        ETag_not_contains?: string | null
-        ETag_starts_with?: string | null
-        ETag_not_starts_with?: string | null
-        ETag_ends_with?: string | null
-        ETag_not_ends_with?: string | null
-        url?: string | null
-        url_not?: string | null
-        url_in?: string[] | null
-        url_not_in?: string[] | null
-        url_lt?: string | null
-        url_lte?: string | null
-        url_gt?: string | null
-        url_gte?: string | null
-        url_contains?: string | null
-        url_not_contains?: string | null
-        url_starts_with?: string | null
-        url_not_starts_with?: string | null
-        url_ends_with?: string | null
-        url_not_ends_with?: string | null
-        AND?: FileWhereInput[] | null
-        OR?: FileWhereInput[] | null
-        NOT?: FileWhereInput[] | null
-    }
-    export interface TeamWhereInput {
-        id?: string | null
-        id_not?: string | null
-        id_in?: string[] | null
-        id_not_in?: string[] | null
-        id_lt?: string | null
-        id_lte?: string | null
-        id_gt?: string | null
-        id_gte?: string | null
-        id_contains?: string | null
-        id_not_contains?: string | null
-        id_starts_with?: string | null
-        id_not_starts_with?: string | null
-        id_ends_with?: string | null
-        id_not_ends_with?: string | null
-        name?: string | null
-        name_not?: string | null
-        name_in?: string[] | null
-        name_not_in?: string[] | null
-        name_lt?: string | null
-        name_lte?: string | null
-        name_gt?: string | null
-        name_gte?: string | null
-        name_contains?: string | null
-        name_not_contains?: string | null
-        name_starts_with?: string | null
-        name_not_starts_with?: string | null
-        name_ends_with?: string | null
-        name_not_ends_with?: string | null
-        slug?: string | null
-        slug_not?: string | null
-        slug_in?: string[] | null
-        slug_not_in?: string[] | null
-        slug_lt?: string | null
-        slug_lte?: string | null
-        slug_gt?: string | null
-        slug_gte?: string | null
-        slug_contains?: string | null
-        slug_not_contains?: string | null
-        slug_starts_with?: string | null
-        slug_not_starts_with?: string | null
-        slug_ends_with?: string | null
-        slug_not_ends_with?: string | null
-        moderators_every?: UserWhereInput | null
-        moderators_some?: UserWhereInput | null
-        moderators_none?: UserWhereInput | null
-        author?: UserWhereInput | null
-        members_every?: UserWhereInput | null
-        members_some?: UserWhereInput | null
-        members_none?: UserWhereInput | null
-        channels_every?: ChannelWhereInput | null
-        channels_some?: ChannelWhereInput | null
-        channels_none?: ChannelWhereInput | null
-        createdAt?: string | null
-        createdAt_not?: string | null
-        createdAt_in?: string[] | null
-        createdAt_not_in?: string[] | null
-        createdAt_lt?: string | null
-        createdAt_lte?: string | null
-        createdAt_gt?: string | null
-        createdAt_gte?: string | null
-        updatedAt?: string | null
-        updatedAt_not?: string | null
-        updatedAt_in?: string[] | null
-        updatedAt_not_in?: string[] | null
-        updatedAt_lt?: string | null
-        updatedAt_lte?: string | null
-        updatedAt_gt?: string | null
-        updatedAt_gte?: string | null
-        confirmed?: boolean | null
-        confirmed_not?: boolean | null
-        online?: boolean | null
-        online_not?: boolean | null
-        AND?: TeamWhereInput[] | null
-        OR?: TeamWhereInput[] | null
-        NOT?: TeamWhereInput[] | null
-    }
-    export interface ChannelWhereInput {
-        id?: string | null
-        id_not?: string | null
-        id_in?: string[] | null
-        id_not_in?: string[] | null
-        id_lt?: string | null
-        id_lte?: string | null
-        id_gt?: string | null
-        id_gte?: string | null
-        id_contains?: string | null
-        id_not_contains?: string | null
-        id_starts_with?: string | null
-        id_not_starts_with?: string | null
-        id_ends_with?: string | null
-        id_not_ends_with?: string | null
-        name?: string | null
-        name_not?: string | null
-        name_in?: string[] | null
-        name_not_in?: string[] | null
-        name_lt?: string | null
-        name_lte?: string | null
-        name_gt?: string | null
-        name_gte?: string | null
-        name_contains?: string | null
-        name_not_contains?: string | null
-        name_starts_with?: string | null
-        name_not_starts_with?: string | null
-        name_ends_with?: string | null
-        name_not_ends_with?: string | null
-        slug?: string | null
-        slug_not?: string | null
-        slug_in?: string[] | null
-        slug_not_in?: string[] | null
-        slug_lt?: string | null
-        slug_lte?: string | null
-        slug_gt?: string | null
-        slug_gte?: string | null
-        slug_contains?: string | null
-        slug_not_contains?: string | null
-        slug_starts_with?: string | null
-        slug_not_starts_with?: string | null
-        slug_ends_with?: string | null
-        slug_not_ends_with?: string | null
-        moderators_every?: UserWhereInput | null
-        moderators_some?: UserWhereInput | null
-        moderators_none?: UserWhereInput | null
-        public?: boolean | null
-        public_not?: boolean | null
-        messages_every?: MessageWhereInput | null
-        messages_some?: MessageWhereInput | null
-        messages_none?: MessageWhereInput | null
-        teamId?: string | null
-        teamId_not?: string | null
-        teamId_in?: string[] | null
-        teamId_not_in?: string[] | null
-        teamId_lt?: string | null
-        teamId_lte?: string | null
-        teamId_gt?: string | null
-        teamId_gte?: string | null
-        teamId_contains?: string | null
-        teamId_not_contains?: string | null
-        teamId_starts_with?: string | null
-        teamId_not_starts_with?: string | null
-        teamId_ends_with?: string | null
-        teamId_not_ends_with?: string | null
-        members_every?: UserWhereInput | null
-        members_some?: UserWhereInput | null
-        members_none?: UserWhereInput | null
-        author?: UserWhereInput | null
-        createdAt?: string | null
-        createdAt_not?: string | null
-        createdAt_in?: string[] | null
-        createdAt_not_in?: string[] | null
-        createdAt_lt?: string | null
-        createdAt_lte?: string | null
-        createdAt_gt?: string | null
-        createdAt_gte?: string | null
-        updatedAt?: string | null
-        updatedAt_not?: string | null
-        updatedAt_in?: string[] | null
-        updatedAt_not_in?: string[] | null
-        updatedAt_lt?: string | null
-        updatedAt_lte?: string | null
-        updatedAt_gt?: string | null
-        updatedAt_gte?: string | null
-        AND?: ChannelWhereInput[] | null
-        OR?: ChannelWhereInput[] | null
-        NOT?: ChannelWhereInput[] | null
-    }
-    export interface MessageWhereInput {
-        id?: string | null
-        id_not?: string | null
-        id_in?: string[] | null
-        id_not_in?: string[] | null
-        id_lt?: string | null
-        id_lte?: string | null
-        id_gt?: string | null
-        id_gte?: string | null
-        id_contains?: string | null
-        id_not_contains?: string | null
-        id_starts_with?: string | null
-        id_not_starts_with?: string | null
-        id_ends_with?: string | null
-        id_not_ends_with?: string | null
-        body?: string | null
-        body_not?: string | null
-        body_in?: string[] | null
-        body_not_in?: string[] | null
-        body_lt?: string | null
-        body_lte?: string | null
-        body_gt?: string | null
-        body_gte?: string | null
-        body_contains?: string | null
-        body_not_contains?: string | null
-        body_starts_with?: string | null
-        body_not_starts_with?: string | null
-        body_ends_with?: string | null
-        body_not_ends_with?: string | null
-        parentId?: string | null
-        parentId_not?: string | null
-        parentId_in?: string[] | null
-        parentId_not_in?: string[] | null
-        parentId_lt?: string | null
-        parentId_lte?: string | null
-        parentId_gt?: string | null
-        parentId_gte?: string | null
-        parentId_contains?: string | null
-        parentId_not_contains?: string | null
-        parentId_starts_with?: string | null
-        parentId_not_starts_with?: string | null
-        parentId_ends_with?: string | null
-        parentId_not_ends_with?: string | null
-        url?: string | null
-        url_not?: string | null
-        url_in?: string[] | null
-        url_not_in?: string[] | null
-        url_lt?: string | null
-        url_lte?: string | null
-        url_gt?: string | null
-        url_gte?: string | null
-        url_contains?: string | null
-        url_not_contains?: string | null
-        url_starts_with?: string | null
-        url_not_starts_with?: string | null
-        url_ends_with?: string | null
-        url_not_ends_with?: string | null
-        filetype?: string | null
-        filetype_not?: string | null
-        filetype_in?: string[] | null
-        filetype_not_in?: string[] | null
-        filetype_lt?: string | null
-        filetype_lte?: string | null
-        filetype_gt?: string | null
-        filetype_gte?: string | null
-        filetype_contains?: string | null
-        filetype_not_contains?: string | null
-        filetype_starts_with?: string | null
-        filetype_not_starts_with?: string | null
-        filetype_ends_with?: string | null
-        filetype_not_ends_with?: string | null
-        author?: UserWhereInput | null
-        createdAt?: string | null
-        createdAt_not?: string | null
-        createdAt_in?: string[] | null
-        createdAt_not_in?: string[] | null
-        createdAt_lt?: string | null
-        createdAt_lte?: string | null
-        createdAt_gt?: string | null
-        createdAt_gte?: string | null
-        updatedAt?: string | null
-        updatedAt_not?: string | null
-        updatedAt_in?: string[] | null
-        updatedAt_not_in?: string[] | null
-        updatedAt_lt?: string | null
-        updatedAt_lte?: string | null
-        updatedAt_gt?: string | null
-        updatedAt_gte?: string | null
-        AND?: MessageWhereInput[] | null
-        OR?: MessageWhereInput[] | null
-        NOT?: MessageWhereInput[] | null
-    }
-
-    export interface ArgsComments {
-        where?: CommentWhereInput | null
-        orderBy?: CommentOrderByInput | null
-        skip?: number | null
-        after?: string | null
-        before?: string | null
-        first?: number | null
-        last?: number | null
-    }
-
-    export interface ArgsModerators {
-        where?: ModeratorWhereInput | null
-        orderBy?: ModeratorOrderByInput | null
-        skip?: number | null
-        after?: string | null
-        before?: string | null
-        first?: number | null
-        last?: number | null
-    }
-
-    export type IdResolver =
-        | ((
-              parent: CommentSection,
-              args: {},
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => string | Promise<string>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: CommentSection,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | Promise<string>
-          }
-
-    export type CommentsResolver =
-        | ((
-              parent: CommentSection,
-              args: ArgsComments,
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => Comment[] | null | Promise<Comment[] | null>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: CommentSection,
-                  args: ArgsComments,
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => Comment[] | null | Promise<Comment[] | null>
-          }
-
-    export type PageIdResolver =
-        | ((
-              parent: CommentSection,
-              args: {},
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => string | Promise<string>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: CommentSection,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | Promise<string>
-          }
-
-    export type UrlResolver =
-        | ((
-              parent: CommentSection,
-              args: {},
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => string | Promise<string>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: CommentSection,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | Promise<string>
-          }
-
-    export type AdminResolver =
-        | ((
-              parent: CommentSection,
-              args: {},
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => User | Promise<User>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: CommentSection,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => User | Promise<User>
-          }
-
-    export type ModeratorsResolver =
-        | ((
-              parent: CommentSection,
-              args: ArgsModerators,
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => Moderator[] | null | Promise<Moderator[] | null>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: CommentSection,
-                  args: ArgsModerators,
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => Moderator[] | null | Promise<Moderator[] | null>
-          }
-
-    export type OptionsResolver =
-        | ((
-              parent: CommentSection,
-              args: {},
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => CommentOptions | Promise<CommentOptions>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: CommentSection,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => CommentOptions | Promise<CommentOptions>
-          }
-
-    export type CreatedAtResolver =
-        | ((
-              parent: CommentSection,
-              args: {},
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => string | Promise<string>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: CommentSection,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | Promise<string>
-          }
-
-    export type UpdatedAtResolver =
-        | ((
-              parent: CommentSection,
-              args: {},
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => string | Promise<string>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: CommentSection,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | Promise<string>
-          }
-
-    export interface Type {
-        id:
-            | ((
-                  parent: CommentSection,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | Promise<string>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: CommentSection,
-                      args: {},
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => string | Promise<string>
-              }
-
-        comments:
-            | ((
-                  parent: CommentSection,
-                  args: ArgsComments,
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => Comment[] | null | Promise<Comment[] | null>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: CommentSection,
-                      args: ArgsComments,
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => Comment[] | null | Promise<Comment[] | null>
-              }
-
-        pageId:
-            | ((
-                  parent: CommentSection,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | Promise<string>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: CommentSection,
-                      args: {},
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => string | Promise<string>
-              }
-
-        url:
-            | ((
-                  parent: CommentSection,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | Promise<string>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: CommentSection,
-                      args: {},
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => string | Promise<string>
-              }
-
-        admin:
-            | ((
-                  parent: CommentSection,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => User | Promise<User>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: CommentSection,
-                      args: {},
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => User | Promise<User>
-              }
-
-        moderators:
-            | ((
-                  parent: CommentSection,
-                  args: ArgsModerators,
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => Moderator[] | null | Promise<Moderator[] | null>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: CommentSection,
-                      args: ArgsModerators,
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => Moderator[] | null | Promise<Moderator[] | null>
-              }
-
-        options:
-            | ((
-                  parent: CommentSection,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => CommentOptions | Promise<CommentOptions>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: CommentSection,
-                      args: {},
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => CommentOptions | Promise<CommentOptions>
-              }
-
-        createdAt:
-            | ((
-                  parent: CommentSection,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | Promise<string>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: CommentSection,
-                      args: {},
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => string | Promise<string>
-              }
-
-        updatedAt:
-            | ((
-                  parent: CommentSection,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | Promise<string>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: CommentSection,
-                      args: {},
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => string | Promise<string>
-              }
-    }
-}
-
 export namespace ModeratorResolvers {
     export const defaultResolvers = {
         id: (parent: Moderator) => parent.id,
@@ -8758,575 +9554,146 @@ export namespace CommentOptionsResolvers {
 export namespace MutationResolvers {
     export const defaultResolvers = {}
 
-    export interface ModeratorsArgs {
-        users?: string[] | null
-    }
-    export interface CommentSectionOptions {
-        open: boolean
+    export interface ArgsCreateChatApi {
+        name?: string | null
     }
 
-    export interface ArgsCreateCommentSection {
-        pageId: string
-        url: string
-        moderators: ModeratorsArgs
-        options: CommentSectionOptions
-        consumerKey: string
-        privateKey: string
-    }
-
-    export interface ArgsDeleteComment {
+    export interface ArgsUpdateCommentAPI {
         id: string
     }
 
-    export interface ArgsEditComment {
-        id: string
-        body: string
-    }
-
-    export interface ArgsCreateComment {
-        pageId: string
-        parentId: string
-        body?: string | null
-        repliedTo?: string | null
-        commentSectionId: string
-    }
-
-    export interface ArgsCreateReply {
-        pageId: string
-        parentId: string
-        body?: string | null
-        repliedTo?: string | null
-    }
-
-    export interface ArgsLikeComment {
-        commentId: string
-    }
-
-    export type CreateCommentSectionResolver =
+    export type CreateCommentApiResolver =
         | ((
               parent: undefined,
-              args: ArgsCreateCommentSection,
+              args: {},
               ctx: Context,
               info: GraphQLResolveInfo,
-          ) => CommentSection | Promise<CommentSection>)
+          ) => CreateCommentAPIResponse | Promise<CreateCommentAPIResponse>)
         | {
               fragment: string
               resolve: (
                   parent: undefined,
-                  args: ArgsCreateCommentSection,
+                  args: {},
                   ctx: Context,
                   info: GraphQLResolveInfo,
-              ) => CommentSection | Promise<CommentSection>
+              ) => CreateCommentAPIResponse | Promise<CreateCommentAPIResponse>
           }
 
-    export type DeleteCommentResolver =
+    export type CreateChatApiResolver =
         | ((
               parent: undefined,
-              args: ArgsDeleteComment,
+              args: ArgsCreateChatApi,
               ctx: Context,
               info: GraphQLResolveInfo,
-          ) => DeleteCommentResponse | Promise<DeleteCommentResponse>)
+          ) => boolean | null | Promise<boolean | null>)
         | {
               fragment: string
               resolve: (
                   parent: undefined,
-                  args: ArgsDeleteComment,
+                  args: ArgsCreateChatApi,
                   ctx: Context,
                   info: GraphQLResolveInfo,
-              ) => DeleteCommentResponse | Promise<DeleteCommentResponse>
+              ) => boolean | null | Promise<boolean | null>
           }
 
-    export type EditCommentResolver =
+    export type UpdateCommentAPIResolver =
         | ((
               parent: undefined,
-              args: ArgsEditComment,
+              args: ArgsUpdateCommentAPI,
               ctx: Context,
               info: GraphQLResolveInfo,
-          ) => Comment | Promise<Comment>)
+          ) => CommentAPI | null | Promise<CommentAPI | null>)
         | {
               fragment: string
               resolve: (
                   parent: undefined,
-                  args: ArgsEditComment,
+                  args: ArgsUpdateCommentAPI,
                   ctx: Context,
                   info: GraphQLResolveInfo,
-              ) => Comment | Promise<Comment>
-          }
-
-    export type CreateCommentResolver =
-        | ((
-              parent: undefined,
-              args: ArgsCreateComment,
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => Comment | Promise<Comment>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: undefined,
-                  args: ArgsCreateComment,
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => Comment | Promise<Comment>
-          }
-
-    export type CreateReplyResolver =
-        | ((
-              parent: undefined,
-              args: ArgsCreateReply,
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => Comment | Promise<Comment>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: undefined,
-                  args: ArgsCreateReply,
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => Comment | Promise<Comment>
-          }
-
-    export type LikeCommentResolver =
-        | ((
-              parent: undefined,
-              args: ArgsLikeComment,
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => Comment | null | Promise<Comment | null>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: undefined,
-                  args: ArgsLikeComment,
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => Comment | null | Promise<Comment | null>
+              ) => CommentAPI | null | Promise<CommentAPI | null>
           }
 
     export interface Type {
-        createCommentSection:
+        createCommentApi:
             | ((
                   parent: undefined,
-                  args: ArgsCreateCommentSection,
+                  args: {},
                   ctx: Context,
                   info: GraphQLResolveInfo,
-              ) => CommentSection | Promise<CommentSection>)
+              ) => CreateCommentAPIResponse | Promise<CreateCommentAPIResponse>)
             | {
                   fragment: string
                   resolve: (
                       parent: undefined,
-                      args: ArgsCreateCommentSection,
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => CommentSection | Promise<CommentSection>
-              }
-
-        deleteComment:
-            | ((
-                  parent: undefined,
-                  args: ArgsDeleteComment,
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => DeleteCommentResponse | Promise<DeleteCommentResponse>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: undefined,
-                      args: ArgsDeleteComment,
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => DeleteCommentResponse | Promise<DeleteCommentResponse>
-              }
-
-        editComment:
-            | ((
-                  parent: undefined,
-                  args: ArgsEditComment,
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => Comment | Promise<Comment>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: undefined,
-                      args: ArgsEditComment,
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => Comment | Promise<Comment>
-              }
-
-        createComment:
-            | ((
-                  parent: undefined,
-                  args: ArgsCreateComment,
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => Comment | Promise<Comment>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: undefined,
-                      args: ArgsCreateComment,
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => Comment | Promise<Comment>
-              }
-
-        createReply:
-            | ((
-                  parent: undefined,
-                  args: ArgsCreateReply,
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => Comment | Promise<Comment>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: undefined,
-                      args: ArgsCreateReply,
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => Comment | Promise<Comment>
-              }
-
-        likeComment:
-            | ((
-                  parent: undefined,
-                  args: ArgsLikeComment,
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => Comment | null | Promise<Comment | null>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: undefined,
-                      args: ArgsLikeComment,
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => Comment | null | Promise<Comment | null>
-              }
-    }
-}
-
-export namespace DeleteCommentResponseResolvers {
-    export const defaultResolvers = {
-        id: (parent: DeleteCommentResponse) =>
-            parent.id === undefined ? null : parent.id,
-        parentId: (parent: DeleteCommentResponse) =>
-            parent.parentId === undefined ? null : parent.parentId,
-    }
-
-    export type IdResolver =
-        | ((
-              parent: DeleteCommentResponse,
-              args: {},
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => string | null | Promise<string | null>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: DeleteCommentResponse,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | null | Promise<string | null>
-          }
-
-    export type ParentIdResolver =
-        | ((
-              parent: DeleteCommentResponse,
-              args: {},
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => string | null | Promise<string | null>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: DeleteCommentResponse,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | null | Promise<string | null>
-          }
-
-    export interface Type {
-        id:
-            | ((
-                  parent: DeleteCommentResponse,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | null | Promise<string | null>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: DeleteCommentResponse,
-                      args: {},
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => string | null | Promise<string | null>
-              }
-
-        parentId:
-            | ((
-                  parent: DeleteCommentResponse,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | null | Promise<string | null>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: DeleteCommentResponse,
-                      args: {},
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => string | null | Promise<string | null>
-              }
-    }
-}
-
-export namespace SubscriptionResolvers {
-    export const defaultResolvers = {}
-
-    export interface ArgsNewCommentSubscription {
-        pageId: string
-    }
-
-    export type NewCommentSubscriptionResolver = {
-        subscribe: (
-            parent: undefined,
-            args: ArgsNewCommentSubscription,
-            ctx: Context,
-            info: GraphQLResolveInfo,
-        ) =>
-            | AsyncIterator<CommentSubscriptionPayload>
-            | Promise<AsyncIterator<CommentSubscriptionPayload>>
-        resolve?: (
-            parent: undefined,
-            args: ArgsNewCommentSubscription,
-            ctx: Context,
-            info: GraphQLResolveInfo,
-        ) => CommentSubscriptionPayload | Promise<CommentSubscriptionPayload>
-    }
-
-    export interface Type {
-        newCommentSubscription: {
-            subscribe: (
-                parent: undefined,
-                args: ArgsNewCommentSubscription,
-                ctx: Context,
-                info: GraphQLResolveInfo,
-            ) =>
-                | AsyncIterator<CommentSubscriptionPayload>
-                | Promise<AsyncIterator<CommentSubscriptionPayload>>
-            resolve?: (
-                parent: undefined,
-                args: ArgsNewCommentSubscription,
-                ctx: Context,
-                info: GraphQLResolveInfo,
-            ) =>
-                | CommentSubscriptionPayload
-                | Promise<CommentSubscriptionPayload>
-        }
-    }
-}
-
-export namespace CommentSubscriptionPayloadResolvers {
-    export const defaultResolvers = {
-        mutation: (parent: CommentSubscriptionPayload) => parent.mutation,
-        node: (parent: CommentSubscriptionPayload) => parent.node,
-        updatedFields: (parent: CommentSubscriptionPayload) =>
-            parent.updatedFields,
-        previousValues: (parent: CommentSubscriptionPayload) =>
-            parent.previousValues,
-    }
-
-    export type MutationResolver =
-        | ((
-              parent: CommentSubscriptionPayload,
-              args: {},
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => MutationType | Promise<MutationType>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: CommentSubscriptionPayload,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => MutationType | Promise<MutationType>
-          }
-
-    export type NodeResolver =
-        | ((
-              parent: CommentSubscriptionPayload,
-              args: {},
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => Comment | null | Promise<Comment | null>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: CommentSubscriptionPayload,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => Comment | null | Promise<Comment | null>
-          }
-
-    export type UpdatedFieldsResolver =
-        | ((
-              parent: CommentSubscriptionPayload,
-              args: {},
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => string[] | null | Promise<string[] | null>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: CommentSubscriptionPayload,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string[] | null | Promise<string[] | null>
-          }
-
-    export type PreviousValuesResolver =
-        | ((
-              parent: CommentSubscriptionPayload,
-              args: {},
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) =>
-              | CommentPreviousValues
-              | null
-              | Promise<CommentPreviousValues | null>
-          )
-        | {
-              fragment: string
-              resolve: (
-                  parent: CommentSubscriptionPayload,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) =>
-                  | CommentPreviousValues
-                  | null
-                  | Promise<CommentPreviousValues | null>
-          }
-
-    export interface Type {
-        mutation:
-            | ((
-                  parent: CommentSubscriptionPayload,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => MutationType | Promise<MutationType>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: CommentSubscriptionPayload,
-                      args: {},
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => MutationType | Promise<MutationType>
-              }
-
-        node:
-            | ((
-                  parent: CommentSubscriptionPayload,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => Comment | null | Promise<Comment | null>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: CommentSubscriptionPayload,
-                      args: {},
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => Comment | null | Promise<Comment | null>
-              }
-
-        updatedFields:
-            | ((
-                  parent: CommentSubscriptionPayload,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string[] | null | Promise<string[] | null>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: CommentSubscriptionPayload,
-                      args: {},
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => string[] | null | Promise<string[] | null>
-              }
-
-        previousValues:
-            | ((
-                  parent: CommentSubscriptionPayload,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) =>
-                  | CommentPreviousValues
-                  | null
-                  | Promise<CommentPreviousValues | null>
-              )
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: CommentSubscriptionPayload,
                       args: {},
                       ctx: Context,
                       info: GraphQLResolveInfo,
                   ) =>
-                      | CommentPreviousValues
-                      | null
-                      | Promise<CommentPreviousValues | null>
+                      | CreateCommentAPIResponse
+                      | Promise<CreateCommentAPIResponse>
+              }
+
+        createChatApi:
+            | ((
+                  parent: undefined,
+                  args: ArgsCreateChatApi,
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => boolean | null | Promise<boolean | null>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: undefined,
+                      args: ArgsCreateChatApi,
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => boolean | null | Promise<boolean | null>
+              }
+
+        updateCommentAPI:
+            | ((
+                  parent: undefined,
+                  args: ArgsUpdateCommentAPI,
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => CommentAPI | null | Promise<CommentAPI | null>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: undefined,
+                      args: ArgsUpdateCommentAPI,
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => CommentAPI | null | Promise<CommentAPI | null>
               }
     }
 }
 
-export namespace CommentPreviousValuesResolvers {
+export namespace CreateCommentAPIResponseResolvers {
     export const defaultResolvers = {
-        id: (parent: CommentPreviousValues) => parent.id,
-        body: (parent: CommentPreviousValues) => parent.body,
-        parentId: (parent: CommentPreviousValues) => parent.parentId,
-        pageId: (parent: CommentPreviousValues) => parent.pageId,
-        createdAt: (parent: CommentPreviousValues) => parent.createdAt,
-        updatedAt: (parent: CommentPreviousValues) => parent.updatedAt,
+        privateKey: (parent: CreateCommentAPIResponse) => parent.privateKey,
     }
 
-    export type IdResolver =
+    export type CommentAPIResolver =
         | ((
-              parent: CommentPreviousValues,
+              parent: CreateCommentAPIResponse,
               args: {},
               ctx: Context,
               info: GraphQLResolveInfo,
-          ) => string | Promise<string>)
+          ) => CommentAPI | null | Promise<CommentAPI | null>)
         | {
               fragment: string
               resolve: (
-                  parent: CommentPreviousValues,
+                  parent: CreateCommentAPIResponse,
                   args: {},
                   ctx: Context,
                   info: GraphQLResolveInfo,
-              ) => string | Promise<string>
+              ) => CommentAPI | null | Promise<CommentAPI | null>
           }
 
-    export type BodyResolver =
+    export type PrivateKeyResolver =
         | ((
-              parent: CommentPreviousValues,
+              parent: CreateCommentAPIResponse,
               args: {},
               ctx: Context,
               info: GraphQLResolveInfo,
@@ -9334,75 +9701,7 @@ export namespace CommentPreviousValuesResolvers {
         | {
               fragment: string
               resolve: (
-                  parent: CommentPreviousValues,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | Promise<string>
-          }
-
-    export type ParentIdResolver =
-        | ((
-              parent: CommentPreviousValues,
-              args: {},
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => string | Promise<string>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: CommentPreviousValues,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | Promise<string>
-          }
-
-    export type PageIdResolver =
-        | ((
-              parent: CommentPreviousValues,
-              args: {},
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => string | Promise<string>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: CommentPreviousValues,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | Promise<string>
-          }
-
-    export type CreatedAtResolver =
-        | ((
-              parent: CommentPreviousValues,
-              args: {},
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => string | Promise<string>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: CommentPreviousValues,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | Promise<string>
-          }
-
-    export type UpdatedAtResolver =
-        | ((
-              parent: CommentPreviousValues,
-              args: {},
-              ctx: Context,
-              info: GraphQLResolveInfo,
-          ) => string | Promise<string>)
-        | {
-              fragment: string
-              resolve: (
-                  parent: CommentPreviousValues,
+                  parent: CreateCommentAPIResponse,
                   args: {},
                   ctx: Context,
                   info: GraphQLResolveInfo,
@@ -9410,26 +9709,26 @@ export namespace CommentPreviousValuesResolvers {
           }
 
     export interface Type {
-        id:
+        commentAPI:
             | ((
-                  parent: CommentPreviousValues,
+                  parent: CreateCommentAPIResponse,
                   args: {},
                   ctx: Context,
                   info: GraphQLResolveInfo,
-              ) => string | Promise<string>)
+              ) => CommentAPI | null | Promise<CommentAPI | null>)
             | {
                   fragment: string
                   resolve: (
-                      parent: CommentPreviousValues,
+                      parent: CreateCommentAPIResponse,
                       args: {},
                       ctx: Context,
                       info: GraphQLResolveInfo,
-                  ) => string | Promise<string>
+                  ) => CommentAPI | null | Promise<CommentAPI | null>
               }
 
-        body:
+        privateKey:
             | ((
-                  parent: CommentPreviousValues,
+                  parent: CreateCommentAPIResponse,
                   args: {},
                   ctx: Context,
                   info: GraphQLResolveInfo,
@@ -9437,75 +9736,7 @@ export namespace CommentPreviousValuesResolvers {
             | {
                   fragment: string
                   resolve: (
-                      parent: CommentPreviousValues,
-                      args: {},
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => string | Promise<string>
-              }
-
-        parentId:
-            | ((
-                  parent: CommentPreviousValues,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | Promise<string>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: CommentPreviousValues,
-                      args: {},
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => string | Promise<string>
-              }
-
-        pageId:
-            | ((
-                  parent: CommentPreviousValues,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | Promise<string>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: CommentPreviousValues,
-                      args: {},
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => string | Promise<string>
-              }
-
-        createdAt:
-            | ((
-                  parent: CommentPreviousValues,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | Promise<string>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: CommentPreviousValues,
-                      args: {},
-                      ctx: Context,
-                      info: GraphQLResolveInfo,
-                  ) => string | Promise<string>
-              }
-
-        updatedAt:
-            | ((
-                  parent: CommentPreviousValues,
-                  args: {},
-                  ctx: Context,
-                  info: GraphQLResolveInfo,
-              ) => string | Promise<string>)
-            | {
-                  fragment: string
-                  resolve: (
-                      parent: CommentPreviousValues,
+                      parent: CreateCommentAPIResponse,
                       args: {},
                       ctx: Context,
                       info: GraphQLResolveInfo,
@@ -9516,9 +9747,8 @@ export namespace CommentPreviousValuesResolvers {
 
 export interface Resolvers {
     Query: QueryResolvers.Type
-    CommentConnection: CommentConnectionResolvers.Type
-    PageInfo: PageInfoResolvers.Type
-    CommentEdge: CommentEdgeResolvers.Type
+    CommentAPI: CommentAPIResolvers.Type
+    CommentSection: CommentSectionResolvers.Type
     Comment: CommentResolvers.Type
     User: UserResolvers.Type
     Notification: NotificationResolvers.Type
@@ -9527,15 +9757,10 @@ export interface Resolvers {
     Channel: ChannelResolvers.Type
     File: FileResolvers.Type
     Rating: RatingResolvers.Type
-    AggregateComment: AggregateCommentResolvers.Type
-    CommentSection: CommentSectionResolvers.Type
     Moderator: ModeratorResolvers.Type
     CommentOptions: CommentOptionsResolvers.Type
     Mutation: MutationResolvers.Type
-    DeleteCommentResponse: DeleteCommentResponseResolvers.Type
-    Subscription: SubscriptionResolvers.Type
-    CommentSubscriptionPayload: CommentSubscriptionPayloadResolvers.Type
-    CommentPreviousValues: CommentPreviousValuesResolvers.Type
+    CreateCommentAPIResponse: CreateCommentAPIResponseResolvers.Type
 }
 
 // @ts-ignore

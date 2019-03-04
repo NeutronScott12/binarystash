@@ -10,6 +10,10 @@ type AggregateComment {
   count: Int!
 }
 
+type AggregateCommentAPI {
+  count: Int!
+}
+
 type AggregateCommentOptions {
   count: Int!
 }
@@ -527,6 +531,157 @@ type Comment {
   author: User!
 }
 
+type CommentAPI {
+  id: ID!
+  commentSections(where: CommentSectionWhereInput, orderBy: CommentSectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CommentSection!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  owner: User!
+  consumerKey: String!
+  privateKey: String!
+}
+
+type CommentAPIConnection {
+  pageInfo: PageInfo!
+  edges: [CommentAPIEdge]!
+  aggregate: AggregateCommentAPI!
+}
+
+input CommentAPICreateInput {
+  commentSections: CommentSectionCreateManyInput
+  owner: UserCreateOneInput!
+  consumerKey: String!
+  privateKey: String!
+}
+
+type CommentAPIEdge {
+  node: CommentAPI!
+  cursor: String!
+}
+
+enum CommentAPIOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  consumerKey_ASC
+  consumerKey_DESC
+  privateKey_ASC
+  privateKey_DESC
+}
+
+type CommentAPIPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  consumerKey: String!
+  privateKey: String!
+}
+
+type CommentAPISubscriptionPayload {
+  mutation: MutationType!
+  node: CommentAPI
+  updatedFields: [String!]
+  previousValues: CommentAPIPreviousValues
+}
+
+input CommentAPISubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: CommentAPIWhereInput
+  AND: [CommentAPISubscriptionWhereInput!]
+  OR: [CommentAPISubscriptionWhereInput!]
+  NOT: [CommentAPISubscriptionWhereInput!]
+}
+
+input CommentAPIUpdateInput {
+  commentSections: CommentSectionUpdateManyInput
+  owner: UserUpdateOneRequiredInput
+  consumerKey: String
+  privateKey: String
+}
+
+input CommentAPIUpdateManyMutationInput {
+  consumerKey: String
+  privateKey: String
+}
+
+input CommentAPIWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  commentSections_every: CommentSectionWhereInput
+  commentSections_some: CommentSectionWhereInput
+  commentSections_none: CommentSectionWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  owner: UserWhereInput
+  consumerKey: String
+  consumerKey_not: String
+  consumerKey_in: [String!]
+  consumerKey_not_in: [String!]
+  consumerKey_lt: String
+  consumerKey_lte: String
+  consumerKey_gt: String
+  consumerKey_gte: String
+  consumerKey_contains: String
+  consumerKey_not_contains: String
+  consumerKey_starts_with: String
+  consumerKey_not_starts_with: String
+  consumerKey_ends_with: String
+  consumerKey_not_ends_with: String
+  privateKey: String
+  privateKey_not: String
+  privateKey_in: [String!]
+  privateKey_not_in: [String!]
+  privateKey_lt: String
+  privateKey_lte: String
+  privateKey_gt: String
+  privateKey_gte: String
+  privateKey_contains: String
+  privateKey_not_contains: String
+  privateKey_starts_with: String
+  privateKey_not_starts_with: String
+  privateKey_ends_with: String
+  privateKey_not_ends_with: String
+  AND: [CommentAPIWhereInput!]
+  OR: [CommentAPIWhereInput!]
+  NOT: [CommentAPIWhereInput!]
+}
+
+input CommentAPIWhereUniqueInput {
+  id: ID
+}
+
 type CommentConnection {
   pageInfo: PageInfo!
   edges: [CommentEdge]!
@@ -765,6 +920,7 @@ type CommentSection {
   admin: User!
   moderators(where: ModeratorWhereInput, orderBy: ModeratorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Moderator!]
   options: CommentOptions!
+  bannedUsers(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -782,6 +938,12 @@ input CommentSectionCreateInput {
   admin: UserCreateOneInput!
   moderators: ModeratorCreateManyInput
   options: CommentOptionsCreateOneInput!
+  bannedUsers: UserCreateManyInput
+}
+
+input CommentSectionCreateManyInput {
+  create: [CommentSectionCreateInput!]
+  connect: [CommentSectionWhereUniqueInput!]
 }
 
 type CommentSectionEdge {
@@ -810,6 +972,70 @@ type CommentSectionPreviousValues {
   updatedAt: DateTime!
 }
 
+input CommentSectionScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  pageId: ID
+  pageId_not: ID
+  pageId_in: [ID!]
+  pageId_not_in: [ID!]
+  pageId_lt: ID
+  pageId_lte: ID
+  pageId_gt: ID
+  pageId_gte: ID
+  pageId_contains: ID
+  pageId_not_contains: ID
+  pageId_starts_with: ID
+  pageId_not_starts_with: ID
+  pageId_ends_with: ID
+  pageId_not_ends_with: ID
+  url: String
+  url_not: String
+  url_in: [String!]
+  url_not_in: [String!]
+  url_lt: String
+  url_lte: String
+  url_gt: String
+  url_gte: String
+  url_contains: String
+  url_not_contains: String
+  url_starts_with: String
+  url_not_starts_with: String
+  url_ends_with: String
+  url_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [CommentSectionScalarWhereInput!]
+  OR: [CommentSectionScalarWhereInput!]
+  NOT: [CommentSectionScalarWhereInput!]
+}
+
 type CommentSectionSubscriptionPayload {
   mutation: MutationType!
   node: CommentSection
@@ -828,6 +1054,16 @@ input CommentSectionSubscriptionWhereInput {
   NOT: [CommentSectionSubscriptionWhereInput!]
 }
 
+input CommentSectionUpdateDataInput {
+  comments: CommentUpdateManyInput
+  pageId: ID
+  url: String
+  admin: UserUpdateOneRequiredInput
+  moderators: ModeratorUpdateManyInput
+  options: CommentOptionsUpdateOneRequiredInput
+  bannedUsers: UserUpdateManyInput
+}
+
 input CommentSectionUpdateInput {
   comments: CommentUpdateManyInput
   pageId: ID
@@ -835,11 +1071,45 @@ input CommentSectionUpdateInput {
   admin: UserUpdateOneRequiredInput
   moderators: ModeratorUpdateManyInput
   options: CommentOptionsUpdateOneRequiredInput
+  bannedUsers: UserUpdateManyInput
+}
+
+input CommentSectionUpdateManyDataInput {
+  pageId: ID
+  url: String
+}
+
+input CommentSectionUpdateManyInput {
+  create: [CommentSectionCreateInput!]
+  update: [CommentSectionUpdateWithWhereUniqueNestedInput!]
+  upsert: [CommentSectionUpsertWithWhereUniqueNestedInput!]
+  delete: [CommentSectionWhereUniqueInput!]
+  connect: [CommentSectionWhereUniqueInput!]
+  set: [CommentSectionWhereUniqueInput!]
+  disconnect: [CommentSectionWhereUniqueInput!]
+  deleteMany: [CommentSectionScalarWhereInput!]
+  updateMany: [CommentSectionUpdateManyWithWhereNestedInput!]
 }
 
 input CommentSectionUpdateManyMutationInput {
   pageId: ID
   url: String
+}
+
+input CommentSectionUpdateManyWithWhereNestedInput {
+  where: CommentSectionScalarWhereInput!
+  data: CommentSectionUpdateManyDataInput!
+}
+
+input CommentSectionUpdateWithWhereUniqueNestedInput {
+  where: CommentSectionWhereUniqueInput!
+  data: CommentSectionUpdateDataInput!
+}
+
+input CommentSectionUpsertWithWhereUniqueNestedInput {
+  where: CommentSectionWhereUniqueInput!
+  update: CommentSectionUpdateDataInput!
+  create: CommentSectionCreateInput!
 }
 
 input CommentSectionWhereInput {
@@ -893,6 +1163,9 @@ input CommentSectionWhereInput {
   moderators_some: ModeratorWhereInput
   moderators_none: ModeratorWhereInput
   options: CommentOptionsWhereInput
+  bannedUsers_every: UserWhereInput
+  bannedUsers_some: UserWhereInput
+  bannedUsers_none: UserWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -2123,6 +2396,12 @@ type Mutation {
   upsertComment(where: CommentWhereUniqueInput!, create: CommentCreateInput!, update: CommentUpdateInput!): Comment!
   deleteComment(where: CommentWhereUniqueInput!): Comment
   deleteManyComments(where: CommentWhereInput): BatchPayload!
+  createCommentAPI(data: CommentAPICreateInput!): CommentAPI!
+  updateCommentAPI(data: CommentAPIUpdateInput!, where: CommentAPIWhereUniqueInput!): CommentAPI
+  updateManyCommentAPIs(data: CommentAPIUpdateManyMutationInput!, where: CommentAPIWhereInput): BatchPayload!
+  upsertCommentAPI(where: CommentAPIWhereUniqueInput!, create: CommentAPICreateInput!, update: CommentAPIUpdateInput!): CommentAPI!
+  deleteCommentAPI(where: CommentAPIWhereUniqueInput!): CommentAPI
+  deleteManyCommentAPIs(where: CommentAPIWhereInput): BatchPayload!
   createCommentOptions(data: CommentOptionsCreateInput!): CommentOptions!
   updateManyCommentOptionses(data: CommentOptionsUpdateManyMutationInput!, where: CommentOptionsWhereInput): BatchPayload!
   deleteManyCommentOptionses(where: CommentOptionsWhereInput): BatchPayload!
@@ -2862,6 +3141,9 @@ type Query {
   comment(where: CommentWhereUniqueInput!): Comment
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment]!
   commentsConnection(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CommentConnection!
+  commentAPI(where: CommentAPIWhereUniqueInput!): CommentAPI
+  commentAPIs(where: CommentAPIWhereInput, orderBy: CommentAPIOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CommentAPI]!
+  commentAPIsConnection(where: CommentAPIWhereInput, orderBy: CommentAPIOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CommentAPIConnection!
   commentOptionses(where: CommentOptionsWhereInput, orderBy: CommentOptionsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CommentOptions]!
   commentOptionsesConnection(where: CommentOptionsWhereInput, orderBy: CommentOptionsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CommentOptionsConnection!
   commentSection(where: CommentSectionWhereUniqueInput!): CommentSection
@@ -3034,6 +3316,7 @@ input RatingWhereUniqueInput {
 type Subscription {
   channel(where: ChannelSubscriptionWhereInput): ChannelSubscriptionPayload
   comment(where: CommentSubscriptionWhereInput): CommentSubscriptionPayload
+  commentAPI(where: CommentAPISubscriptionWhereInput): CommentAPISubscriptionPayload
   commentOptions(where: CommentOptionsSubscriptionWhereInput): CommentOptionsSubscriptionPayload
   commentSection(where: CommentSectionSubscriptionWhereInput): CommentSectionSubscriptionPayload
   customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
