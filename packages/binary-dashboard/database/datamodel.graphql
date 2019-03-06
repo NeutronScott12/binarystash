@@ -204,10 +204,25 @@ type Product {
 
 type CommentAPI {
     id: ID! @unique
+    name: String!
     commentSections: [CommentSection!]!
     createdAt: DateTime!
     updatedAt: DateTime!
     owner: User!
     consumerKey: String! @unqiue
     privateKey: String! @unqiue
+}
+
+type APISettingDashboard {
+    id: ID! @unique
+    enforceHTTPS: Boolean!
+}
+
+type APIDashboard {
+    id: ID! @unique
+    settings: APISettingDashboard!
+    name: String!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    CommentAPI: CommentAPI!
 }

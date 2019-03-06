@@ -12,7 +12,7 @@ type Query {
 }
 
 type Mutation {
-    createCommentApi: CreateCommentAPIResponse!
+    createCommentApi(name: String!): CreateCommentAPIResponse!
     createChatApi(name: String): Boolean
     updateCommentAPI(id: ID!): CommentAPI
 }

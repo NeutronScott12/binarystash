@@ -272,6 +272,7 @@ export namespace QueryResolvers {
 export namespace CommentAPIResolvers {
     export const defaultResolvers = {
         id: (parent: CommentAPI) => parent.id,
+        name: (parent: CommentAPI) => parent.name,
         createdAt: (parent: CommentAPI) => parent.createdAt,
         updatedAt: (parent: CommentAPI) => parent.updatedAt,
         consumerKey: (parent: CommentAPI) => parent.consumerKey,
@@ -1134,6 +1135,23 @@ export namespace CommentAPIResolvers {
               ) => string | Promise<string>
           }
 
+    export type NameResolver =
+        | ((
+              parent: CommentAPI,
+              args: {},
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => string | Promise<string>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: CommentAPI,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>
+          }
+
     export type CommentSectionsResolver =
         | ((
               parent: CommentAPI,
@@ -1238,6 +1256,23 @@ export namespace CommentAPIResolvers {
 
     export interface Type {
         id:
+            | ((
+                  parent: CommentAPI,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: CommentAPI,
+                      args: {},
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => string | Promise<string>
+              }
+
+        name:
             | ((
                   parent: CommentAPI,
                   args: {},
@@ -9554,6 +9589,10 @@ export namespace CommentOptionsResolvers {
 export namespace MutationResolvers {
     export const defaultResolvers = {}
 
+    export interface ArgsCreateCommentApi {
+        name: string
+    }
+
     export interface ArgsCreateChatApi {
         name?: string | null
     }
@@ -9565,7 +9604,7 @@ export namespace MutationResolvers {
     export type CreateCommentApiResolver =
         | ((
               parent: undefined,
-              args: {},
+              args: ArgsCreateCommentApi,
               ctx: Context,
               info: GraphQLResolveInfo,
           ) => CreateCommentAPIResponse | Promise<CreateCommentAPIResponse>)
@@ -9573,7 +9612,7 @@ export namespace MutationResolvers {
               fragment: string
               resolve: (
                   parent: undefined,
-                  args: {},
+                  args: ArgsCreateCommentApi,
                   ctx: Context,
                   info: GraphQLResolveInfo,
               ) => CreateCommentAPIResponse | Promise<CreateCommentAPIResponse>
@@ -9617,7 +9656,7 @@ export namespace MutationResolvers {
         createCommentApi:
             | ((
                   parent: undefined,
-                  args: {},
+                  args: ArgsCreateCommentApi,
                   ctx: Context,
                   info: GraphQLResolveInfo,
               ) => CreateCommentAPIResponse | Promise<CreateCommentAPIResponse>)
@@ -9625,7 +9664,7 @@ export namespace MutationResolvers {
                   fragment: string
                   resolve: (
                       parent: undefined,
-                      args: {},
+                      args: ArgsCreateCommentApi,
                       ctx: Context,
                       info: GraphQLResolveInfo,
                   ) =>

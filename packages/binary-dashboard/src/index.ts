@@ -94,6 +94,7 @@ server.applyMiddleware({
             'http://localhost:1234',
             'http://localhost:4000',
             'http://localhost:5000',
+            'http://localhost:5252',
             'http://mainsite.surge.sh',
             'https://inspiring-euler-247a1c.netlify.com',
         ],
