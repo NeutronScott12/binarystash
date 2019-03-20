@@ -14,4 +14,10 @@ export const Query: QueryResolvers.Type = {
     fetchCommentAPI: (parent, args, ctx) => {
         throw new Error('Resolver not implemented')
     },
+    fetchApiServices: (parent, args, ctx) => {
+        throw new Error('Resolver not implemented')
+    },
+    fetchApiService: (parent, args, ctx) => {
+        throw new Error('Resolver not implemented')
+    },
 }

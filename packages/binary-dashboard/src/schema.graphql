@@ -9,10 +9,13 @@ type Query {
     currentUser: Boolean
     fetchCommentAPIs: [CommentAPI]
     fetchCommentAPI(id: ID!): CommentAPI
+    fetchApiServices: [APIService!]
+    fetchApiService(id: ID!): APIService
 }
 
 type Mutation {
-    createCommentApi(name: String!): CreateCommentAPIResponse!
+    createCommentApi(name: String!, serviceId: ID!): CreateCommentAPIResponse!
     createChatApi(name: String): Boolean
     updateCommentAPI(id: ID!): CommentAPI
+    createApiService(name: String!): APIService
 }

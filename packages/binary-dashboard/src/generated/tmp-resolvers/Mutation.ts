@@ -14,4 +14,7 @@ export const Mutation: MutationResolvers.Type = {
     updateCommentAPI: (parent, args, ctx) => {
         throw new Error('Resolver not implemented')
     },
+    createApiService: (parent, args, ctx) => {
+        throw new Error('Resolver not implemented')
+    },
 }

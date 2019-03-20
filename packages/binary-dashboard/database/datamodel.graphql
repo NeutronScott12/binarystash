@@ -64,6 +64,7 @@ type User {
     updatedAt: DateTime!
     role: UserRole!
     teams: [Team!]! @relation(name: "TeamMembers")
+    api_services: [APIService!]!
     channels: [Channel!]! @relation(name: "ChannelMembers")
     owned_teams: [Team!]! @relation(name: "TeamAuthor", onDelete: CASCADE)
     owned_channels: [Channel!]!
@@ -213,16 +214,17 @@ type CommentAPI {
     privateKey: String! @unqiue
 }
 
-type APISettingDashboard {
+type APIServiceSettings {
     id: ID! @unique
     enforceHTTPS: Boolean!
 }
 
-type APIDashboard {
+type APIService {
     id: ID! @unique
-    settings: APISettingDashboard!
+    settings: APIServiceSettings
     name: String!
+    commentAPIs: [CommentAPI!]!
+    owner: User!
     createdAt: DateTime!
     updatedAt: DateTime!
-    CommentAPI: CommentAPI!
 }

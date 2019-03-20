@@ -11,6 +11,8 @@ import {
     Team,
     Channel,
     File,
+    APIService,
+    APIServiceSettings,
     Rating,
     Moderator,
     CommentOptions,
@@ -127,6 +129,28 @@ export type TeamOrderByInput =
     | 'confirmed_DESC'
     | 'online_ASC'
     | 'online_DESC'
+export type APIServiceOrderByInput =
+    | 'id_ASC'
+    | 'id_DESC'
+    | 'name_ASC'
+    | 'name_DESC'
+    | 'createdAt_ASC'
+    | 'createdAt_DESC'
+    | 'updatedAt_ASC'
+    | 'updatedAt_DESC'
+export type CommentAPIOrderByInput =
+    | 'id_ASC'
+    | 'id_DESC'
+    | 'name_ASC'
+    | 'name_DESC'
+    | 'createdAt_ASC'
+    | 'createdAt_DESC'
+    | 'updatedAt_ASC'
+    | 'updatedAt_DESC'
+    | 'consumerKey_ASC'
+    | 'consumerKey_DESC'
+    | 'privateKey_ASC'
+    | 'privateKey_DESC'
 export type ModeratorOrderByInput =
     | 'id_ASC'
     | 'id_DESC'
@@ -147,6 +171,10 @@ export namespace QueryResolvers {
     export const defaultResolvers = {}
 
     export interface ArgsFetchCommentAPI {
+        id: string
+    }
+
+    export interface ArgsFetchApiService {
         id: string
     }
 
@@ -208,6 +236,40 @@ export namespace QueryResolvers {
               ) => CommentAPI | null | Promise<CommentAPI | null>
           }
 
+    export type FetchApiServicesResolver =
+        | ((
+              parent: undefined,
+              args: {},
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => APIService[] | null | Promise<APIService[] | null>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: undefined,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => APIService[] | null | Promise<APIService[] | null>
+          }
+
+    export type FetchApiServiceResolver =
+        | ((
+              parent: undefined,
+              args: ArgsFetchApiService,
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => APIService | null | Promise<APIService | null>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: undefined,
+                  args: ArgsFetchApiService,
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => APIService | null | Promise<APIService | null>
+          }
+
     export interface Type {
         currentUser:
             | ((
@@ -265,6 +327,40 @@ export namespace QueryResolvers {
                       ctx: Context,
                       info: GraphQLResolveInfo,
                   ) => CommentAPI | null | Promise<CommentAPI | null>
+              }
+
+        fetchApiServices:
+            | ((
+                  parent: undefined,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => APIService[] | null | Promise<APIService[] | null>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: undefined,
+                      args: {},
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => APIService[] | null | Promise<APIService[] | null>
+              }
+
+        fetchApiService:
+            | ((
+                  parent: undefined,
+                  args: ArgsFetchApiService,
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => APIService | null | Promise<APIService | null>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: undefined,
+                      args: ArgsFetchApiService,
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => APIService | null | Promise<APIService | null>
               }
     }
 }
@@ -596,6 +692,9 @@ export namespace CommentAPIResolvers {
         teams_every?: TeamWhereInput | null
         teams_some?: TeamWhereInput | null
         teams_none?: TeamWhereInput | null
+        api_services_every?: APIServiceWhereInput | null
+        api_services_some?: APIServiceWhereInput | null
+        api_services_none?: APIServiceWhereInput | null
         channels_every?: ChannelWhereInput | null
         channels_some?: ChannelWhereInput | null
         channels_none?: ChannelWhereInput | null
@@ -926,6 +1025,60 @@ export namespace CommentAPIResolvers {
         OR?: TeamWhereInput[] | null
         NOT?: TeamWhereInput[] | null
     }
+    export interface APIServiceWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        settings?: APIServiceSettingsWhereInput | null
+        name?: string | null
+        name_not?: string | null
+        name_in?: string[] | null
+        name_not_in?: string[] | null
+        name_lt?: string | null
+        name_lte?: string | null
+        name_gt?: string | null
+        name_gte?: string | null
+        name_contains?: string | null
+        name_not_contains?: string | null
+        name_starts_with?: string | null
+        name_not_starts_with?: string | null
+        name_ends_with?: string | null
+        name_not_ends_with?: string | null
+        commentAPIs_every?: CommentAPIWhereInput | null
+        commentAPIs_some?: CommentAPIWhereInput | null
+        commentAPIs_none?: CommentAPIWhereInput | null
+        owner?: UserWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: APIServiceWhereInput[] | null
+        OR?: APIServiceWhereInput[] | null
+        NOT?: APIServiceWhereInput[] | null
+    }
     export interface ChannelWhereInput {
         id?: string | null
         id_not?: string | null
@@ -1106,6 +1259,108 @@ export namespace CommentAPIResolvers {
         AND?: MessageWhereInput[] | null
         OR?: MessageWhereInput[] | null
         NOT?: MessageWhereInput[] | null
+    }
+    export interface APIServiceSettingsWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        enforceHTTPS?: boolean | null
+        enforceHTTPS_not?: boolean | null
+        AND?: APIServiceSettingsWhereInput[] | null
+        OR?: APIServiceSettingsWhereInput[] | null
+        NOT?: APIServiceSettingsWhereInput[] | null
+    }
+    export interface CommentAPIWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        name?: string | null
+        name_not?: string | null
+        name_in?: string[] | null
+        name_not_in?: string[] | null
+        name_lt?: string | null
+        name_lte?: string | null
+        name_gt?: string | null
+        name_gte?: string | null
+        name_contains?: string | null
+        name_not_contains?: string | null
+        name_starts_with?: string | null
+        name_not_starts_with?: string | null
+        name_ends_with?: string | null
+        name_not_ends_with?: string | null
+        commentSections_every?: CommentSectionWhereInput | null
+        commentSections_some?: CommentSectionWhereInput | null
+        commentSections_none?: CommentSectionWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        owner?: UserWhereInput | null
+        consumerKey?: string | null
+        consumerKey_not?: string | null
+        consumerKey_in?: string[] | null
+        consumerKey_not_in?: string[] | null
+        consumerKey_lt?: string | null
+        consumerKey_lte?: string | null
+        consumerKey_gt?: string | null
+        consumerKey_gte?: string | null
+        consumerKey_contains?: string | null
+        consumerKey_not_contains?: string | null
+        consumerKey_starts_with?: string | null
+        consumerKey_not_starts_with?: string | null
+        consumerKey_ends_with?: string | null
+        consumerKey_not_ends_with?: string | null
+        privateKey?: string | null
+        privateKey_not?: string | null
+        privateKey_in?: string[] | null
+        privateKey_not_in?: string[] | null
+        privateKey_lt?: string | null
+        privateKey_lte?: string | null
+        privateKey_gt?: string | null
+        privateKey_gte?: string | null
+        privateKey_contains?: string | null
+        privateKey_not_contains?: string | null
+        privateKey_starts_with?: string | null
+        privateKey_not_starts_with?: string | null
+        privateKey_ends_with?: string | null
+        privateKey_not_ends_with?: string | null
+        AND?: CommentAPIWhereInput[] | null
+        OR?: CommentAPIWhereInput[] | null
+        NOT?: CommentAPIWhereInput[] | null
     }
 
     export interface ArgsCommentSections {
@@ -1692,6 +1947,9 @@ export namespace CommentSectionResolvers {
         teams_every?: TeamWhereInput | null
         teams_some?: TeamWhereInput | null
         teams_none?: TeamWhereInput | null
+        api_services_every?: APIServiceWhereInput | null
+        api_services_some?: APIServiceWhereInput | null
+        api_services_none?: APIServiceWhereInput | null
         channels_every?: ChannelWhereInput | null
         channels_some?: ChannelWhereInput | null
         channels_none?: ChannelWhereInput | null
@@ -1971,6 +2229,60 @@ export namespace CommentSectionResolvers {
         OR?: TeamWhereInput[] | null
         NOT?: TeamWhereInput[] | null
     }
+    export interface APIServiceWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        settings?: APIServiceSettingsWhereInput | null
+        name?: string | null
+        name_not?: string | null
+        name_in?: string[] | null
+        name_not_in?: string[] | null
+        name_lt?: string | null
+        name_lte?: string | null
+        name_gt?: string | null
+        name_gte?: string | null
+        name_contains?: string | null
+        name_not_contains?: string | null
+        name_starts_with?: string | null
+        name_not_starts_with?: string | null
+        name_ends_with?: string | null
+        name_not_ends_with?: string | null
+        commentAPIs_every?: CommentAPIWhereInput | null
+        commentAPIs_some?: CommentAPIWhereInput | null
+        commentAPIs_none?: CommentAPIWhereInput | null
+        owner?: UserWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: APIServiceWhereInput[] | null
+        OR?: APIServiceWhereInput[] | null
+        NOT?: APIServiceWhereInput[] | null
+    }
     export interface ChannelWhereInput {
         id?: string | null
         id_not?: string | null
@@ -2151,6 +2463,189 @@ export namespace CommentSectionResolvers {
         AND?: MessageWhereInput[] | null
         OR?: MessageWhereInput[] | null
         NOT?: MessageWhereInput[] | null
+    }
+    export interface APIServiceSettingsWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        enforceHTTPS?: boolean | null
+        enforceHTTPS_not?: boolean | null
+        AND?: APIServiceSettingsWhereInput[] | null
+        OR?: APIServiceSettingsWhereInput[] | null
+        NOT?: APIServiceSettingsWhereInput[] | null
+    }
+    export interface CommentAPIWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        name?: string | null
+        name_not?: string | null
+        name_in?: string[] | null
+        name_not_in?: string[] | null
+        name_lt?: string | null
+        name_lte?: string | null
+        name_gt?: string | null
+        name_gte?: string | null
+        name_contains?: string | null
+        name_not_contains?: string | null
+        name_starts_with?: string | null
+        name_not_starts_with?: string | null
+        name_ends_with?: string | null
+        name_not_ends_with?: string | null
+        commentSections_every?: CommentSectionWhereInput | null
+        commentSections_some?: CommentSectionWhereInput | null
+        commentSections_none?: CommentSectionWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        owner?: UserWhereInput | null
+        consumerKey?: string | null
+        consumerKey_not?: string | null
+        consumerKey_in?: string[] | null
+        consumerKey_not_in?: string[] | null
+        consumerKey_lt?: string | null
+        consumerKey_lte?: string | null
+        consumerKey_gt?: string | null
+        consumerKey_gte?: string | null
+        consumerKey_contains?: string | null
+        consumerKey_not_contains?: string | null
+        consumerKey_starts_with?: string | null
+        consumerKey_not_starts_with?: string | null
+        consumerKey_ends_with?: string | null
+        consumerKey_not_ends_with?: string | null
+        privateKey?: string | null
+        privateKey_not?: string | null
+        privateKey_in?: string[] | null
+        privateKey_not_in?: string[] | null
+        privateKey_lt?: string | null
+        privateKey_lte?: string | null
+        privateKey_gt?: string | null
+        privateKey_gte?: string | null
+        privateKey_contains?: string | null
+        privateKey_not_contains?: string | null
+        privateKey_starts_with?: string | null
+        privateKey_not_starts_with?: string | null
+        privateKey_ends_with?: string | null
+        privateKey_not_ends_with?: string | null
+        AND?: CommentAPIWhereInput[] | null
+        OR?: CommentAPIWhereInput[] | null
+        NOT?: CommentAPIWhereInput[] | null
+    }
+    export interface CommentSectionWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        comments_every?: CommentWhereInput | null
+        comments_some?: CommentWhereInput | null
+        comments_none?: CommentWhereInput | null
+        pageId?: string | null
+        pageId_not?: string | null
+        pageId_in?: string[] | null
+        pageId_not_in?: string[] | null
+        pageId_lt?: string | null
+        pageId_lte?: string | null
+        pageId_gt?: string | null
+        pageId_gte?: string | null
+        pageId_contains?: string | null
+        pageId_not_contains?: string | null
+        pageId_starts_with?: string | null
+        pageId_not_starts_with?: string | null
+        pageId_ends_with?: string | null
+        pageId_not_ends_with?: string | null
+        url?: string | null
+        url_not?: string | null
+        url_in?: string[] | null
+        url_not_in?: string[] | null
+        url_lt?: string | null
+        url_lte?: string | null
+        url_gt?: string | null
+        url_gte?: string | null
+        url_contains?: string | null
+        url_not_contains?: string | null
+        url_starts_with?: string | null
+        url_not_starts_with?: string | null
+        url_ends_with?: string | null
+        url_not_ends_with?: string | null
+        admin?: UserWhereInput | null
+        moderators_every?: ModeratorWhereInput | null
+        moderators_some?: ModeratorWhereInput | null
+        moderators_none?: ModeratorWhereInput | null
+        options?: CommentOptionsWhereInput | null
+        bannedUsers_every?: UserWhereInput | null
+        bannedUsers_some?: UserWhereInput | null
+        bannedUsers_none?: UserWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: CommentSectionWhereInput[] | null
+        OR?: CommentSectionWhereInput[] | null
+        NOT?: CommentSectionWhereInput[] | null
+    }
+    export interface CommentOptionsWhereInput {
+        comments_open?: boolean | null
+        comments_open_not?: boolean | null
+        AND?: CommentOptionsWhereInput[] | null
+        OR?: CommentOptionsWhereInput[] | null
+        NOT?: CommentOptionsWhereInput[] | null
     }
 
     export interface ArgsComments {
@@ -2779,6 +3274,9 @@ export namespace CommentResolvers {
         teams_every?: TeamWhereInput | null
         teams_some?: TeamWhereInput | null
         teams_none?: TeamWhereInput | null
+        api_services_every?: APIServiceWhereInput | null
+        api_services_some?: APIServiceWhereInput | null
+        api_services_none?: APIServiceWhereInput | null
         channels_every?: ChannelWhereInput | null
         channels_some?: ChannelWhereInput | null
         channels_none?: ChannelWhereInput | null
@@ -3058,6 +3556,60 @@ export namespace CommentResolvers {
         OR?: TeamWhereInput[] | null
         NOT?: TeamWhereInput[] | null
     }
+    export interface APIServiceWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        settings?: APIServiceSettingsWhereInput | null
+        name?: string | null
+        name_not?: string | null
+        name_in?: string[] | null
+        name_not_in?: string[] | null
+        name_lt?: string | null
+        name_lte?: string | null
+        name_gt?: string | null
+        name_gte?: string | null
+        name_contains?: string | null
+        name_not_contains?: string | null
+        name_starts_with?: string | null
+        name_not_starts_with?: string | null
+        name_ends_with?: string | null
+        name_not_ends_with?: string | null
+        commentAPIs_every?: CommentAPIWhereInput | null
+        commentAPIs_some?: CommentAPIWhereInput | null
+        commentAPIs_none?: CommentAPIWhereInput | null
+        owner?: UserWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: APIServiceWhereInput[] | null
+        OR?: APIServiceWhereInput[] | null
+        NOT?: APIServiceWhereInput[] | null
+    }
     export interface ChannelWhereInput {
         id?: string | null
         id_not?: string | null
@@ -3238,6 +3790,233 @@ export namespace CommentResolvers {
         AND?: MessageWhereInput[] | null
         OR?: MessageWhereInput[] | null
         NOT?: MessageWhereInput[] | null
+    }
+    export interface APIServiceSettingsWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        enforceHTTPS?: boolean | null
+        enforceHTTPS_not?: boolean | null
+        AND?: APIServiceSettingsWhereInput[] | null
+        OR?: APIServiceSettingsWhereInput[] | null
+        NOT?: APIServiceSettingsWhereInput[] | null
+    }
+    export interface CommentAPIWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        name?: string | null
+        name_not?: string | null
+        name_in?: string[] | null
+        name_not_in?: string[] | null
+        name_lt?: string | null
+        name_lte?: string | null
+        name_gt?: string | null
+        name_gte?: string | null
+        name_contains?: string | null
+        name_not_contains?: string | null
+        name_starts_with?: string | null
+        name_not_starts_with?: string | null
+        name_ends_with?: string | null
+        name_not_ends_with?: string | null
+        commentSections_every?: CommentSectionWhereInput | null
+        commentSections_some?: CommentSectionWhereInput | null
+        commentSections_none?: CommentSectionWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        owner?: UserWhereInput | null
+        consumerKey?: string | null
+        consumerKey_not?: string | null
+        consumerKey_in?: string[] | null
+        consumerKey_not_in?: string[] | null
+        consumerKey_lt?: string | null
+        consumerKey_lte?: string | null
+        consumerKey_gt?: string | null
+        consumerKey_gte?: string | null
+        consumerKey_contains?: string | null
+        consumerKey_not_contains?: string | null
+        consumerKey_starts_with?: string | null
+        consumerKey_not_starts_with?: string | null
+        consumerKey_ends_with?: string | null
+        consumerKey_not_ends_with?: string | null
+        privateKey?: string | null
+        privateKey_not?: string | null
+        privateKey_in?: string[] | null
+        privateKey_not_in?: string[] | null
+        privateKey_lt?: string | null
+        privateKey_lte?: string | null
+        privateKey_gt?: string | null
+        privateKey_gte?: string | null
+        privateKey_contains?: string | null
+        privateKey_not_contains?: string | null
+        privateKey_starts_with?: string | null
+        privateKey_not_starts_with?: string | null
+        privateKey_ends_with?: string | null
+        privateKey_not_ends_with?: string | null
+        AND?: CommentAPIWhereInput[] | null
+        OR?: CommentAPIWhereInput[] | null
+        NOT?: CommentAPIWhereInput[] | null
+    }
+    export interface CommentSectionWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        comments_every?: CommentWhereInput | null
+        comments_some?: CommentWhereInput | null
+        comments_none?: CommentWhereInput | null
+        pageId?: string | null
+        pageId_not?: string | null
+        pageId_in?: string[] | null
+        pageId_not_in?: string[] | null
+        pageId_lt?: string | null
+        pageId_lte?: string | null
+        pageId_gt?: string | null
+        pageId_gte?: string | null
+        pageId_contains?: string | null
+        pageId_not_contains?: string | null
+        pageId_starts_with?: string | null
+        pageId_not_starts_with?: string | null
+        pageId_ends_with?: string | null
+        pageId_not_ends_with?: string | null
+        url?: string | null
+        url_not?: string | null
+        url_in?: string[] | null
+        url_not_in?: string[] | null
+        url_lt?: string | null
+        url_lte?: string | null
+        url_gt?: string | null
+        url_gte?: string | null
+        url_contains?: string | null
+        url_not_contains?: string | null
+        url_starts_with?: string | null
+        url_not_starts_with?: string | null
+        url_ends_with?: string | null
+        url_not_ends_with?: string | null
+        admin?: UserWhereInput | null
+        moderators_every?: ModeratorWhereInput | null
+        moderators_some?: ModeratorWhereInput | null
+        moderators_none?: ModeratorWhereInput | null
+        options?: CommentOptionsWhereInput | null
+        bannedUsers_every?: UserWhereInput | null
+        bannedUsers_some?: UserWhereInput | null
+        bannedUsers_none?: UserWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: CommentSectionWhereInput[] | null
+        OR?: CommentSectionWhereInput[] | null
+        NOT?: CommentSectionWhereInput[] | null
+    }
+    export interface ModeratorWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        user?: UserWhereInput | null
+        can_delete?: boolean | null
+        can_delete_not?: boolean | null
+        can_ban?: boolean | null
+        can_ban_not?: boolean | null
+        can_edit?: boolean | null
+        can_edit_not?: boolean | null
+        can_close?: boolean | null
+        can_close_not?: boolean | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: ModeratorWhereInput[] | null
+        OR?: ModeratorWhereInput[] | null
+        NOT?: ModeratorWhereInput[] | null
+    }
+    export interface CommentOptionsWhereInput {
+        comments_open?: boolean | null
+        comments_open_not?: boolean | null
+        AND?: CommentOptionsWhereInput[] | null
+        OR?: CommentOptionsWhereInput[] | null
+        NOT?: CommentOptionsWhereInput[] | null
     }
 
     export interface ArgsReplies {
@@ -3900,6 +4679,9 @@ export namespace UserResolvers {
         teams_every?: TeamWhereInput | null
         teams_some?: TeamWhereInput | null
         teams_none?: TeamWhereInput | null
+        api_services_every?: APIServiceWhereInput | null
+        api_services_some?: APIServiceWhereInput | null
+        api_services_none?: APIServiceWhereInput | null
         channels_every?: ChannelWhereInput | null
         channels_some?: ChannelWhereInput | null
         channels_none?: ChannelWhereInput | null
@@ -3989,6 +4771,60 @@ export namespace UserResolvers {
         AND?: TeamWhereInput[] | null
         OR?: TeamWhereInput[] | null
         NOT?: TeamWhereInput[] | null
+    }
+    export interface APIServiceWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        settings?: APIServiceSettingsWhereInput | null
+        name?: string | null
+        name_not?: string | null
+        name_in?: string[] | null
+        name_not_in?: string[] | null
+        name_lt?: string | null
+        name_lte?: string | null
+        name_gt?: string | null
+        name_gte?: string | null
+        name_contains?: string | null
+        name_not_contains?: string | null
+        name_starts_with?: string | null
+        name_not_starts_with?: string | null
+        name_ends_with?: string | null
+        name_not_ends_with?: string | null
+        commentAPIs_every?: CommentAPIWhereInput | null
+        commentAPIs_some?: CommentAPIWhereInput | null
+        commentAPIs_none?: CommentAPIWhereInput | null
+        owner?: UserWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: APIServiceWhereInput[] | null
+        OR?: APIServiceWhereInput[] | null
+        NOT?: APIServiceWhereInput[] | null
     }
     export interface ChannelWhereInput {
         id?: string | null
@@ -4320,6 +5156,233 @@ export namespace UserResolvers {
         OR?: FileWhereInput[] | null
         NOT?: FileWhereInput[] | null
     }
+    export interface APIServiceSettingsWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        enforceHTTPS?: boolean | null
+        enforceHTTPS_not?: boolean | null
+        AND?: APIServiceSettingsWhereInput[] | null
+        OR?: APIServiceSettingsWhereInput[] | null
+        NOT?: APIServiceSettingsWhereInput[] | null
+    }
+    export interface CommentAPIWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        name?: string | null
+        name_not?: string | null
+        name_in?: string[] | null
+        name_not_in?: string[] | null
+        name_lt?: string | null
+        name_lte?: string | null
+        name_gt?: string | null
+        name_gte?: string | null
+        name_contains?: string | null
+        name_not_contains?: string | null
+        name_starts_with?: string | null
+        name_not_starts_with?: string | null
+        name_ends_with?: string | null
+        name_not_ends_with?: string | null
+        commentSections_every?: CommentSectionWhereInput | null
+        commentSections_some?: CommentSectionWhereInput | null
+        commentSections_none?: CommentSectionWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        owner?: UserWhereInput | null
+        consumerKey?: string | null
+        consumerKey_not?: string | null
+        consumerKey_in?: string[] | null
+        consumerKey_not_in?: string[] | null
+        consumerKey_lt?: string | null
+        consumerKey_lte?: string | null
+        consumerKey_gt?: string | null
+        consumerKey_gte?: string | null
+        consumerKey_contains?: string | null
+        consumerKey_not_contains?: string | null
+        consumerKey_starts_with?: string | null
+        consumerKey_not_starts_with?: string | null
+        consumerKey_ends_with?: string | null
+        consumerKey_not_ends_with?: string | null
+        privateKey?: string | null
+        privateKey_not?: string | null
+        privateKey_in?: string[] | null
+        privateKey_not_in?: string[] | null
+        privateKey_lt?: string | null
+        privateKey_lte?: string | null
+        privateKey_gt?: string | null
+        privateKey_gte?: string | null
+        privateKey_contains?: string | null
+        privateKey_not_contains?: string | null
+        privateKey_starts_with?: string | null
+        privateKey_not_starts_with?: string | null
+        privateKey_ends_with?: string | null
+        privateKey_not_ends_with?: string | null
+        AND?: CommentAPIWhereInput[] | null
+        OR?: CommentAPIWhereInput[] | null
+        NOT?: CommentAPIWhereInput[] | null
+    }
+    export interface CommentSectionWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        comments_every?: CommentWhereInput | null
+        comments_some?: CommentWhereInput | null
+        comments_none?: CommentWhereInput | null
+        pageId?: string | null
+        pageId_not?: string | null
+        pageId_in?: string[] | null
+        pageId_not_in?: string[] | null
+        pageId_lt?: string | null
+        pageId_lte?: string | null
+        pageId_gt?: string | null
+        pageId_gte?: string | null
+        pageId_contains?: string | null
+        pageId_not_contains?: string | null
+        pageId_starts_with?: string | null
+        pageId_not_starts_with?: string | null
+        pageId_ends_with?: string | null
+        pageId_not_ends_with?: string | null
+        url?: string | null
+        url_not?: string | null
+        url_in?: string[] | null
+        url_not_in?: string[] | null
+        url_lt?: string | null
+        url_lte?: string | null
+        url_gt?: string | null
+        url_gte?: string | null
+        url_contains?: string | null
+        url_not_contains?: string | null
+        url_starts_with?: string | null
+        url_not_starts_with?: string | null
+        url_ends_with?: string | null
+        url_not_ends_with?: string | null
+        admin?: UserWhereInput | null
+        moderators_every?: ModeratorWhereInput | null
+        moderators_some?: ModeratorWhereInput | null
+        moderators_none?: ModeratorWhereInput | null
+        options?: CommentOptionsWhereInput | null
+        bannedUsers_every?: UserWhereInput | null
+        bannedUsers_some?: UserWhereInput | null
+        bannedUsers_none?: UserWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: CommentSectionWhereInput[] | null
+        OR?: CommentSectionWhereInput[] | null
+        NOT?: CommentSectionWhereInput[] | null
+    }
+    export interface ModeratorWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        user?: UserWhereInput | null
+        can_delete?: boolean | null
+        can_delete_not?: boolean | null
+        can_ban?: boolean | null
+        can_ban_not?: boolean | null
+        can_edit?: boolean | null
+        can_edit_not?: boolean | null
+        can_close?: boolean | null
+        can_close_not?: boolean | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: ModeratorWhereInput[] | null
+        OR?: ModeratorWhereInput[] | null
+        NOT?: ModeratorWhereInput[] | null
+    }
+    export interface CommentOptionsWhereInput {
+        comments_open?: boolean | null
+        comments_open_not?: boolean | null
+        AND?: CommentOptionsWhereInput[] | null
+        OR?: CommentOptionsWhereInput[] | null
+        NOT?: CommentOptionsWhereInput[] | null
+    }
 
     export interface ArgsNotifications {
         where?: NotificationWhereInput | null
@@ -4374,6 +5437,16 @@ export namespace UserResolvers {
     export interface ArgsTeams {
         where?: TeamWhereInput | null
         orderBy?: TeamOrderByInput | null
+        skip?: number | null
+        after?: string | null
+        before?: string | null
+        first?: number | null
+        last?: number | null
+    }
+
+    export interface ArgsApi_services {
+        where?: APIServiceWhereInput | null
+        orderBy?: APIServiceOrderByInput | null
         skip?: number | null
         after?: string | null
         before?: string | null
@@ -4783,6 +5856,23 @@ export namespace UserResolvers {
                   ctx: Context,
                   info: GraphQLResolveInfo,
               ) => Team[] | null | Promise<Team[] | null>
+          }
+
+    export type Api_servicesResolver =
+        | ((
+              parent: User,
+              args: ArgsApi_services,
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => APIService[] | null | Promise<APIService[] | null>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: User,
+                  args: ArgsApi_services,
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => APIService[] | null | Promise<APIService[] | null>
           }
 
     export type ChannelsResolver =
@@ -5209,6 +6299,23 @@ export namespace UserResolvers {
                       ctx: Context,
                       info: GraphQLResolveInfo,
                   ) => Team[] | null | Promise<Team[] | null>
+              }
+
+        api_services:
+            | ((
+                  parent: User,
+                  args: ArgsApi_services,
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => APIService[] | null | Promise<APIService[] | null>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: User,
+                      args: ArgsApi_services,
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => APIService[] | null | Promise<APIService[] | null>
               }
 
         channels:
@@ -6037,6 +7144,9 @@ export namespace TeamResolvers {
         teams_every?: TeamWhereInput | null
         teams_some?: TeamWhereInput | null
         teams_none?: TeamWhereInput | null
+        api_services_every?: APIServiceWhereInput | null
+        api_services_some?: APIServiceWhereInput | null
+        api_services_none?: APIServiceWhereInput | null
         channels_every?: ChannelWhereInput | null
         channels_some?: ChannelWhereInput | null
         channels_none?: ChannelWhereInput | null
@@ -6458,6 +7568,60 @@ export namespace TeamResolvers {
         OR?: TeamWhereInput[] | null
         NOT?: TeamWhereInput[] | null
     }
+    export interface APIServiceWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        settings?: APIServiceSettingsWhereInput | null
+        name?: string | null
+        name_not?: string | null
+        name_in?: string[] | null
+        name_not_in?: string[] | null
+        name_lt?: string | null
+        name_lte?: string | null
+        name_gt?: string | null
+        name_gte?: string | null
+        name_contains?: string | null
+        name_not_contains?: string | null
+        name_starts_with?: string | null
+        name_not_starts_with?: string | null
+        name_ends_with?: string | null
+        name_not_ends_with?: string | null
+        commentAPIs_every?: CommentAPIWhereInput | null
+        commentAPIs_some?: CommentAPIWhereInput | null
+        commentAPIs_none?: CommentAPIWhereInput | null
+        owner?: UserWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: APIServiceWhereInput[] | null
+        OR?: APIServiceWhereInput[] | null
+        NOT?: APIServiceWhereInput[] | null
+    }
     export interface MessageWhereInput {
         id?: string | null
         id_not?: string | null
@@ -6579,6 +7743,233 @@ export namespace TeamResolvers {
         AND?: RatingWhereInput[] | null
         OR?: RatingWhereInput[] | null
         NOT?: RatingWhereInput[] | null
+    }
+    export interface APIServiceSettingsWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        enforceHTTPS?: boolean | null
+        enforceHTTPS_not?: boolean | null
+        AND?: APIServiceSettingsWhereInput[] | null
+        OR?: APIServiceSettingsWhereInput[] | null
+        NOT?: APIServiceSettingsWhereInput[] | null
+    }
+    export interface CommentAPIWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        name?: string | null
+        name_not?: string | null
+        name_in?: string[] | null
+        name_not_in?: string[] | null
+        name_lt?: string | null
+        name_lte?: string | null
+        name_gt?: string | null
+        name_gte?: string | null
+        name_contains?: string | null
+        name_not_contains?: string | null
+        name_starts_with?: string | null
+        name_not_starts_with?: string | null
+        name_ends_with?: string | null
+        name_not_ends_with?: string | null
+        commentSections_every?: CommentSectionWhereInput | null
+        commentSections_some?: CommentSectionWhereInput | null
+        commentSections_none?: CommentSectionWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        owner?: UserWhereInput | null
+        consumerKey?: string | null
+        consumerKey_not?: string | null
+        consumerKey_in?: string[] | null
+        consumerKey_not_in?: string[] | null
+        consumerKey_lt?: string | null
+        consumerKey_lte?: string | null
+        consumerKey_gt?: string | null
+        consumerKey_gte?: string | null
+        consumerKey_contains?: string | null
+        consumerKey_not_contains?: string | null
+        consumerKey_starts_with?: string | null
+        consumerKey_not_starts_with?: string | null
+        consumerKey_ends_with?: string | null
+        consumerKey_not_ends_with?: string | null
+        privateKey?: string | null
+        privateKey_not?: string | null
+        privateKey_in?: string[] | null
+        privateKey_not_in?: string[] | null
+        privateKey_lt?: string | null
+        privateKey_lte?: string | null
+        privateKey_gt?: string | null
+        privateKey_gte?: string | null
+        privateKey_contains?: string | null
+        privateKey_not_contains?: string | null
+        privateKey_starts_with?: string | null
+        privateKey_not_starts_with?: string | null
+        privateKey_ends_with?: string | null
+        privateKey_not_ends_with?: string | null
+        AND?: CommentAPIWhereInput[] | null
+        OR?: CommentAPIWhereInput[] | null
+        NOT?: CommentAPIWhereInput[] | null
+    }
+    export interface CommentSectionWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        comments_every?: CommentWhereInput | null
+        comments_some?: CommentWhereInput | null
+        comments_none?: CommentWhereInput | null
+        pageId?: string | null
+        pageId_not?: string | null
+        pageId_in?: string[] | null
+        pageId_not_in?: string[] | null
+        pageId_lt?: string | null
+        pageId_lte?: string | null
+        pageId_gt?: string | null
+        pageId_gte?: string | null
+        pageId_contains?: string | null
+        pageId_not_contains?: string | null
+        pageId_starts_with?: string | null
+        pageId_not_starts_with?: string | null
+        pageId_ends_with?: string | null
+        pageId_not_ends_with?: string | null
+        url?: string | null
+        url_not?: string | null
+        url_in?: string[] | null
+        url_not_in?: string[] | null
+        url_lt?: string | null
+        url_lte?: string | null
+        url_gt?: string | null
+        url_gte?: string | null
+        url_contains?: string | null
+        url_not_contains?: string | null
+        url_starts_with?: string | null
+        url_not_starts_with?: string | null
+        url_ends_with?: string | null
+        url_not_ends_with?: string | null
+        admin?: UserWhereInput | null
+        moderators_every?: ModeratorWhereInput | null
+        moderators_some?: ModeratorWhereInput | null
+        moderators_none?: ModeratorWhereInput | null
+        options?: CommentOptionsWhereInput | null
+        bannedUsers_every?: UserWhereInput | null
+        bannedUsers_some?: UserWhereInput | null
+        bannedUsers_none?: UserWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: CommentSectionWhereInput[] | null
+        OR?: CommentSectionWhereInput[] | null
+        NOT?: CommentSectionWhereInput[] | null
+    }
+    export interface ModeratorWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        user?: UserWhereInput | null
+        can_delete?: boolean | null
+        can_delete_not?: boolean | null
+        can_ban?: boolean | null
+        can_ban_not?: boolean | null
+        can_edit?: boolean | null
+        can_edit_not?: boolean | null
+        can_close?: boolean | null
+        can_close_not?: boolean | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: ModeratorWhereInput[] | null
+        OR?: ModeratorWhereInput[] | null
+        NOT?: ModeratorWhereInput[] | null
+    }
+    export interface CommentOptionsWhereInput {
+        comments_open?: boolean | null
+        comments_open_not?: boolean | null
+        AND?: CommentOptionsWhereInput[] | null
+        OR?: CommentOptionsWhereInput[] | null
+        NOT?: CommentOptionsWhereInput[] | null
     }
 
     export interface ArgsModerators {
@@ -7160,6 +8551,9 @@ export namespace ChannelResolvers {
         teams_every?: TeamWhereInput | null
         teams_some?: TeamWhereInput | null
         teams_none?: TeamWhereInput | null
+        api_services_every?: APIServiceWhereInput | null
+        api_services_some?: APIServiceWhereInput | null
+        api_services_none?: APIServiceWhereInput | null
         channels_every?: ChannelWhereInput | null
         channels_some?: ChannelWhereInput | null
         channels_none?: ChannelWhereInput | null
@@ -7584,6 +8978,60 @@ export namespace ChannelResolvers {
         OR?: TeamWhereInput[] | null
         NOT?: TeamWhereInput[] | null
     }
+    export interface APIServiceWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        settings?: APIServiceSettingsWhereInput | null
+        name?: string | null
+        name_not?: string | null
+        name_in?: string[] | null
+        name_not_in?: string[] | null
+        name_lt?: string | null
+        name_lte?: string | null
+        name_gt?: string | null
+        name_gte?: string | null
+        name_contains?: string | null
+        name_not_contains?: string | null
+        name_starts_with?: string | null
+        name_not_starts_with?: string | null
+        name_ends_with?: string | null
+        name_not_ends_with?: string | null
+        commentAPIs_every?: CommentAPIWhereInput | null
+        commentAPIs_some?: CommentAPIWhereInput | null
+        commentAPIs_none?: CommentAPIWhereInput | null
+        owner?: UserWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: APIServiceWhereInput[] | null
+        OR?: APIServiceWhereInput[] | null
+        NOT?: APIServiceWhereInput[] | null
+    }
     export interface ChannelWhereInput {
         id?: string | null
         id_not?: string | null
@@ -7702,6 +9150,233 @@ export namespace ChannelResolvers {
         AND?: RatingWhereInput[] | null
         OR?: RatingWhereInput[] | null
         NOT?: RatingWhereInput[] | null
+    }
+    export interface APIServiceSettingsWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        enforceHTTPS?: boolean | null
+        enforceHTTPS_not?: boolean | null
+        AND?: APIServiceSettingsWhereInput[] | null
+        OR?: APIServiceSettingsWhereInput[] | null
+        NOT?: APIServiceSettingsWhereInput[] | null
+    }
+    export interface CommentAPIWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        name?: string | null
+        name_not?: string | null
+        name_in?: string[] | null
+        name_not_in?: string[] | null
+        name_lt?: string | null
+        name_lte?: string | null
+        name_gt?: string | null
+        name_gte?: string | null
+        name_contains?: string | null
+        name_not_contains?: string | null
+        name_starts_with?: string | null
+        name_not_starts_with?: string | null
+        name_ends_with?: string | null
+        name_not_ends_with?: string | null
+        commentSections_every?: CommentSectionWhereInput | null
+        commentSections_some?: CommentSectionWhereInput | null
+        commentSections_none?: CommentSectionWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        owner?: UserWhereInput | null
+        consumerKey?: string | null
+        consumerKey_not?: string | null
+        consumerKey_in?: string[] | null
+        consumerKey_not_in?: string[] | null
+        consumerKey_lt?: string | null
+        consumerKey_lte?: string | null
+        consumerKey_gt?: string | null
+        consumerKey_gte?: string | null
+        consumerKey_contains?: string | null
+        consumerKey_not_contains?: string | null
+        consumerKey_starts_with?: string | null
+        consumerKey_not_starts_with?: string | null
+        consumerKey_ends_with?: string | null
+        consumerKey_not_ends_with?: string | null
+        privateKey?: string | null
+        privateKey_not?: string | null
+        privateKey_in?: string[] | null
+        privateKey_not_in?: string[] | null
+        privateKey_lt?: string | null
+        privateKey_lte?: string | null
+        privateKey_gt?: string | null
+        privateKey_gte?: string | null
+        privateKey_contains?: string | null
+        privateKey_not_contains?: string | null
+        privateKey_starts_with?: string | null
+        privateKey_not_starts_with?: string | null
+        privateKey_ends_with?: string | null
+        privateKey_not_ends_with?: string | null
+        AND?: CommentAPIWhereInput[] | null
+        OR?: CommentAPIWhereInput[] | null
+        NOT?: CommentAPIWhereInput[] | null
+    }
+    export interface CommentSectionWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        comments_every?: CommentWhereInput | null
+        comments_some?: CommentWhereInput | null
+        comments_none?: CommentWhereInput | null
+        pageId?: string | null
+        pageId_not?: string | null
+        pageId_in?: string[] | null
+        pageId_not_in?: string[] | null
+        pageId_lt?: string | null
+        pageId_lte?: string | null
+        pageId_gt?: string | null
+        pageId_gte?: string | null
+        pageId_contains?: string | null
+        pageId_not_contains?: string | null
+        pageId_starts_with?: string | null
+        pageId_not_starts_with?: string | null
+        pageId_ends_with?: string | null
+        pageId_not_ends_with?: string | null
+        url?: string | null
+        url_not?: string | null
+        url_in?: string[] | null
+        url_not_in?: string[] | null
+        url_lt?: string | null
+        url_lte?: string | null
+        url_gt?: string | null
+        url_gte?: string | null
+        url_contains?: string | null
+        url_not_contains?: string | null
+        url_starts_with?: string | null
+        url_not_starts_with?: string | null
+        url_ends_with?: string | null
+        url_not_ends_with?: string | null
+        admin?: UserWhereInput | null
+        moderators_every?: ModeratorWhereInput | null
+        moderators_some?: ModeratorWhereInput | null
+        moderators_none?: ModeratorWhereInput | null
+        options?: CommentOptionsWhereInput | null
+        bannedUsers_every?: UserWhereInput | null
+        bannedUsers_some?: UserWhereInput | null
+        bannedUsers_none?: UserWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: CommentSectionWhereInput[] | null
+        OR?: CommentSectionWhereInput[] | null
+        NOT?: CommentSectionWhereInput[] | null
+    }
+    export interface ModeratorWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        user?: UserWhereInput | null
+        can_delete?: boolean | null
+        can_delete_not?: boolean | null
+        can_ban?: boolean | null
+        can_ban_not?: boolean | null
+        can_edit?: boolean | null
+        can_edit_not?: boolean | null
+        can_close?: boolean | null
+        can_close_not?: boolean | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: ModeratorWhereInput[] | null
+        OR?: ModeratorWhereInput[] | null
+        NOT?: ModeratorWhereInput[] | null
+    }
+    export interface CommentOptionsWhereInput {
+        comments_open?: boolean | null
+        comments_open_not?: boolean | null
+        AND?: CommentOptionsWhereInput[] | null
+        OR?: CommentOptionsWhereInput[] | null
+        NOT?: CommentOptionsWhereInput[] | null
     }
 
     export interface ArgsModerators {
@@ -8433,6 +10108,1340 @@ export namespace FileResolvers {
     }
 }
 
+export namespace APIServiceResolvers {
+    export const defaultResolvers = {
+        id: (parent: APIService) => parent.id,
+        name: (parent: APIService) => parent.name,
+        createdAt: (parent: APIService) => parent.createdAt,
+        updatedAt: (parent: APIService) => parent.updatedAt,
+    }
+
+    export interface CommentAPIWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        name?: string | null
+        name_not?: string | null
+        name_in?: string[] | null
+        name_not_in?: string[] | null
+        name_lt?: string | null
+        name_lte?: string | null
+        name_gt?: string | null
+        name_gte?: string | null
+        name_contains?: string | null
+        name_not_contains?: string | null
+        name_starts_with?: string | null
+        name_not_starts_with?: string | null
+        name_ends_with?: string | null
+        name_not_ends_with?: string | null
+        commentSections_every?: CommentSectionWhereInput | null
+        commentSections_some?: CommentSectionWhereInput | null
+        commentSections_none?: CommentSectionWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        owner?: UserWhereInput | null
+        consumerKey?: string | null
+        consumerKey_not?: string | null
+        consumerKey_in?: string[] | null
+        consumerKey_not_in?: string[] | null
+        consumerKey_lt?: string | null
+        consumerKey_lte?: string | null
+        consumerKey_gt?: string | null
+        consumerKey_gte?: string | null
+        consumerKey_contains?: string | null
+        consumerKey_not_contains?: string | null
+        consumerKey_starts_with?: string | null
+        consumerKey_not_starts_with?: string | null
+        consumerKey_ends_with?: string | null
+        consumerKey_not_ends_with?: string | null
+        privateKey?: string | null
+        privateKey_not?: string | null
+        privateKey_in?: string[] | null
+        privateKey_not_in?: string[] | null
+        privateKey_lt?: string | null
+        privateKey_lte?: string | null
+        privateKey_gt?: string | null
+        privateKey_gte?: string | null
+        privateKey_contains?: string | null
+        privateKey_not_contains?: string | null
+        privateKey_starts_with?: string | null
+        privateKey_not_starts_with?: string | null
+        privateKey_ends_with?: string | null
+        privateKey_not_ends_with?: string | null
+        AND?: CommentAPIWhereInput[] | null
+        OR?: CommentAPIWhereInput[] | null
+        NOT?: CommentAPIWhereInput[] | null
+    }
+    export interface CommentSectionWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        comments_every?: CommentWhereInput | null
+        comments_some?: CommentWhereInput | null
+        comments_none?: CommentWhereInput | null
+        pageId?: string | null
+        pageId_not?: string | null
+        pageId_in?: string[] | null
+        pageId_not_in?: string[] | null
+        pageId_lt?: string | null
+        pageId_lte?: string | null
+        pageId_gt?: string | null
+        pageId_gte?: string | null
+        pageId_contains?: string | null
+        pageId_not_contains?: string | null
+        pageId_starts_with?: string | null
+        pageId_not_starts_with?: string | null
+        pageId_ends_with?: string | null
+        pageId_not_ends_with?: string | null
+        url?: string | null
+        url_not?: string | null
+        url_in?: string[] | null
+        url_not_in?: string[] | null
+        url_lt?: string | null
+        url_lte?: string | null
+        url_gt?: string | null
+        url_gte?: string | null
+        url_contains?: string | null
+        url_not_contains?: string | null
+        url_starts_with?: string | null
+        url_not_starts_with?: string | null
+        url_ends_with?: string | null
+        url_not_ends_with?: string | null
+        admin?: UserWhereInput | null
+        moderators_every?: ModeratorWhereInput | null
+        moderators_some?: ModeratorWhereInput | null
+        moderators_none?: ModeratorWhereInput | null
+        options?: CommentOptionsWhereInput | null
+        bannedUsers_every?: UserWhereInput | null
+        bannedUsers_some?: UserWhereInput | null
+        bannedUsers_none?: UserWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: CommentSectionWhereInput[] | null
+        OR?: CommentSectionWhereInput[] | null
+        NOT?: CommentSectionWhereInput[] | null
+    }
+    export interface UserWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        email?: string | null
+        email_not?: string | null
+        email_in?: string[] | null
+        email_not_in?: string[] | null
+        email_lt?: string | null
+        email_lte?: string | null
+        email_gt?: string | null
+        email_gte?: string | null
+        email_contains?: string | null
+        email_not_contains?: string | null
+        email_starts_with?: string | null
+        email_not_starts_with?: string | null
+        email_ends_with?: string | null
+        email_not_ends_with?: string | null
+        notifications_every?: NotificationWhereInput | null
+        notifications_some?: NotificationWhereInput | null
+        notifications_none?: NotificationWhereInput | null
+        set_private?: boolean | null
+        set_private_not?: boolean | null
+        username?: string | null
+        username_not?: string | null
+        username_in?: string[] | null
+        username_not_in?: string[] | null
+        username_lt?: string | null
+        username_lte?: string | null
+        username_gt?: string | null
+        username_gte?: string | null
+        username_contains?: string | null
+        username_not_contains?: string | null
+        username_starts_with?: string | null
+        username_not_starts_with?: string | null
+        username_ends_with?: string | null
+        username_not_ends_with?: string | null
+        password?: string | null
+        password_not?: string | null
+        password_in?: string[] | null
+        password_not_in?: string[] | null
+        password_lt?: string | null
+        password_lte?: string | null
+        password_gt?: string | null
+        password_gte?: string | null
+        password_contains?: string | null
+        password_not_contains?: string | null
+        password_starts_with?: string | null
+        password_not_starts_with?: string | null
+        password_ends_with?: string | null
+        password_not_ends_with?: string | null
+        gitHubId?: string | null
+        gitHubId_not?: string | null
+        gitHubId_in?: string[] | null
+        gitHubId_not_in?: string[] | null
+        gitHubId_lt?: string | null
+        gitHubId_lte?: string | null
+        gitHubId_gt?: string | null
+        gitHubId_gte?: string | null
+        gitHubId_contains?: string | null
+        gitHubId_not_contains?: string | null
+        gitHubId_starts_with?: string | null
+        gitHubId_not_starts_with?: string | null
+        gitHubId_ends_with?: string | null
+        gitHubId_not_ends_with?: string | null
+        facebookId?: string | null
+        facebookId_not?: string | null
+        facebookId_in?: string[] | null
+        facebookId_not_in?: string[] | null
+        facebookId_lt?: string | null
+        facebookId_lte?: string | null
+        facebookId_gt?: string | null
+        facebookId_gte?: string | null
+        facebookId_contains?: string | null
+        facebookId_not_contains?: string | null
+        facebookId_starts_with?: string | null
+        facebookId_not_starts_with?: string | null
+        facebookId_ends_with?: string | null
+        facebookId_not_ends_with?: string | null
+        twitterId?: string | null
+        twitterId_not?: string | null
+        twitterId_in?: string[] | null
+        twitterId_not_in?: string[] | null
+        twitterId_lt?: string | null
+        twitterId_lte?: string | null
+        twitterId_gt?: string | null
+        twitterId_gte?: string | null
+        twitterId_contains?: string | null
+        twitterId_not_contains?: string | null
+        twitterId_starts_with?: string | null
+        twitterId_not_starts_with?: string | null
+        twitterId_ends_with?: string | null
+        twitterId_not_ends_with?: string | null
+        gmailId?: string | null
+        gmailId_not?: string | null
+        gmailId_in?: string[] | null
+        gmailId_not_in?: string[] | null
+        gmailId_lt?: string | null
+        gmailId_lte?: string | null
+        gmailId_gt?: string | null
+        gmailId_gte?: string | null
+        gmailId_contains?: string | null
+        gmailId_not_contains?: string | null
+        gmailId_starts_with?: string | null
+        gmailId_not_starts_with?: string | null
+        gmailId_ends_with?: string | null
+        gmailId_not_ends_with?: string | null
+        directMessages_every?: CommentWhereInput | null
+        directMessages_some?: CommentWhereInput | null
+        directMessages_none?: CommentWhereInput | null
+        avatar_url?: FileWhereInput | null
+        private?: boolean | null
+        private_not?: boolean | null
+        blockedUsers_every?: UserWhereInput | null
+        blockedUsers_some?: UserWhereInput | null
+        blockedUsers_none?: UserWhereInput | null
+        confirmed?: boolean | null
+        confirmed_not?: boolean | null
+        online?: boolean | null
+        online_not?: boolean | null
+        friends_every?: UserWhereInput | null
+        friends_some?: UserWhereInput | null
+        friends_none?: UserWhereInput | null
+        friend_requests_every?: UserWhereInput | null
+        friend_requests_some?: UserWhereInput | null
+        friend_requests_none?: UserWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        role?: UserRole | null
+        role_not?: UserRole | null
+        role_in?: UserRole[] | null
+        role_not_in?: UserRole[] | null
+        teams_every?: TeamWhereInput | null
+        teams_some?: TeamWhereInput | null
+        teams_none?: TeamWhereInput | null
+        api_services_every?: APIServiceWhereInput | null
+        api_services_some?: APIServiceWhereInput | null
+        api_services_none?: APIServiceWhereInput | null
+        channels_every?: ChannelWhereInput | null
+        channels_some?: ChannelWhereInput | null
+        channels_none?: ChannelWhereInput | null
+        owned_teams_every?: TeamWhereInput | null
+        owned_teams_some?: TeamWhereInput | null
+        owned_teams_none?: TeamWhereInput | null
+        owned_channels_every?: ChannelWhereInput | null
+        owned_channels_some?: ChannelWhereInput | null
+        owned_channels_none?: ChannelWhereInput | null
+        AND?: UserWhereInput[] | null
+        OR?: UserWhereInput[] | null
+        NOT?: UserWhereInput[] | null
+    }
+    export interface CommentWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        body?: string | null
+        body_not?: string | null
+        body_in?: string[] | null
+        body_not_in?: string[] | null
+        body_lt?: string | null
+        body_lte?: string | null
+        body_gt?: string | null
+        body_gte?: string | null
+        body_contains?: string | null
+        body_not_contains?: string | null
+        body_starts_with?: string | null
+        body_not_starts_with?: string | null
+        body_ends_with?: string | null
+        body_not_ends_with?: string | null
+        parentId?: string | null
+        parentId_not?: string | null
+        parentId_in?: string[] | null
+        parentId_not_in?: string[] | null
+        parentId_lt?: string | null
+        parentId_lte?: string | null
+        parentId_gt?: string | null
+        parentId_gte?: string | null
+        parentId_contains?: string | null
+        parentId_not_contains?: string | null
+        parentId_starts_with?: string | null
+        parentId_not_starts_with?: string | null
+        parentId_ends_with?: string | null
+        parentId_not_ends_with?: string | null
+        pageId?: string | null
+        pageId_not?: string | null
+        pageId_in?: string[] | null
+        pageId_not_in?: string[] | null
+        pageId_lt?: string | null
+        pageId_lte?: string | null
+        pageId_gt?: string | null
+        pageId_gte?: string | null
+        pageId_contains?: string | null
+        pageId_not_contains?: string | null
+        pageId_starts_with?: string | null
+        pageId_not_starts_with?: string | null
+        pageId_ends_with?: string | null
+        pageId_not_ends_with?: string | null
+        repliedTo?: UserWhereInput | null
+        ratings?: RatingWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        replies_every?: CommentWhereInput | null
+        replies_some?: CommentWhereInput | null
+        replies_none?: CommentWhereInput | null
+        author?: UserWhereInput | null
+        AND?: CommentWhereInput[] | null
+        OR?: CommentWhereInput[] | null
+        NOT?: CommentWhereInput[] | null
+    }
+    export interface ModeratorWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        user?: UserWhereInput | null
+        can_delete?: boolean | null
+        can_delete_not?: boolean | null
+        can_ban?: boolean | null
+        can_ban_not?: boolean | null
+        can_edit?: boolean | null
+        can_edit_not?: boolean | null
+        can_close?: boolean | null
+        can_close_not?: boolean | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: ModeratorWhereInput[] | null
+        OR?: ModeratorWhereInput[] | null
+        NOT?: ModeratorWhereInput[] | null
+    }
+    export interface CommentOptionsWhereInput {
+        comments_open?: boolean | null
+        comments_open_not?: boolean | null
+        AND?: CommentOptionsWhereInput[] | null
+        OR?: CommentOptionsWhereInput[] | null
+        NOT?: CommentOptionsWhereInput[] | null
+    }
+    export interface NotificationWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        message?: string | null
+        message_not?: string | null
+        message_in?: string[] | null
+        message_not_in?: string[] | null
+        message_lt?: string | null
+        message_lte?: string | null
+        message_gt?: string | null
+        message_gte?: string | null
+        message_contains?: string | null
+        message_not_contains?: string | null
+        message_starts_with?: string | null
+        message_not_starts_with?: string | null
+        message_ends_with?: string | null
+        message_not_ends_with?: string | null
+        comments?: CommentWhereInput | null
+        messages?: MessageWhereInput | null
+        team?: TeamWhereInput | null
+        channel?: ChannelWhereInput | null
+        friend_requests?: UserWhereInput | null
+        friend?: UserWhereInput | null
+        author?: UserWhereInput | null
+        AND?: NotificationWhereInput[] | null
+        OR?: NotificationWhereInput[] | null
+        NOT?: NotificationWhereInput[] | null
+    }
+    export interface FileWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        filename?: string | null
+        filename_not?: string | null
+        filename_in?: string[] | null
+        filename_not_in?: string[] | null
+        filename_lt?: string | null
+        filename_lte?: string | null
+        filename_gt?: string | null
+        filename_gte?: string | null
+        filename_contains?: string | null
+        filename_not_contains?: string | null
+        filename_starts_with?: string | null
+        filename_not_starts_with?: string | null
+        filename_ends_with?: string | null
+        filename_not_ends_with?: string | null
+        mimetype?: string | null
+        mimetype_not?: string | null
+        mimetype_in?: string[] | null
+        mimetype_not_in?: string[] | null
+        mimetype_lt?: string | null
+        mimetype_lte?: string | null
+        mimetype_gt?: string | null
+        mimetype_gte?: string | null
+        mimetype_contains?: string | null
+        mimetype_not_contains?: string | null
+        mimetype_starts_with?: string | null
+        mimetype_not_starts_with?: string | null
+        mimetype_ends_with?: string | null
+        mimetype_not_ends_with?: string | null
+        encoding?: string | null
+        encoding_not?: string | null
+        encoding_in?: string[] | null
+        encoding_not_in?: string[] | null
+        encoding_lt?: string | null
+        encoding_lte?: string | null
+        encoding_gt?: string | null
+        encoding_gte?: string | null
+        encoding_contains?: string | null
+        encoding_not_contains?: string | null
+        encoding_starts_with?: string | null
+        encoding_not_starts_with?: string | null
+        encoding_ends_with?: string | null
+        encoding_not_ends_with?: string | null
+        key?: string | null
+        key_not?: string | null
+        key_in?: string[] | null
+        key_not_in?: string[] | null
+        key_lt?: string | null
+        key_lte?: string | null
+        key_gt?: string | null
+        key_gte?: string | null
+        key_contains?: string | null
+        key_not_contains?: string | null
+        key_starts_with?: string | null
+        key_not_starts_with?: string | null
+        key_ends_with?: string | null
+        key_not_ends_with?: string | null
+        ETag?: string | null
+        ETag_not?: string | null
+        ETag_in?: string[] | null
+        ETag_not_in?: string[] | null
+        ETag_lt?: string | null
+        ETag_lte?: string | null
+        ETag_gt?: string | null
+        ETag_gte?: string | null
+        ETag_contains?: string | null
+        ETag_not_contains?: string | null
+        ETag_starts_with?: string | null
+        ETag_not_starts_with?: string | null
+        ETag_ends_with?: string | null
+        ETag_not_ends_with?: string | null
+        url?: string | null
+        url_not?: string | null
+        url_in?: string[] | null
+        url_not_in?: string[] | null
+        url_lt?: string | null
+        url_lte?: string | null
+        url_gt?: string | null
+        url_gte?: string | null
+        url_contains?: string | null
+        url_not_contains?: string | null
+        url_starts_with?: string | null
+        url_not_starts_with?: string | null
+        url_ends_with?: string | null
+        url_not_ends_with?: string | null
+        AND?: FileWhereInput[] | null
+        OR?: FileWhereInput[] | null
+        NOT?: FileWhereInput[] | null
+    }
+    export interface TeamWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        name?: string | null
+        name_not?: string | null
+        name_in?: string[] | null
+        name_not_in?: string[] | null
+        name_lt?: string | null
+        name_lte?: string | null
+        name_gt?: string | null
+        name_gte?: string | null
+        name_contains?: string | null
+        name_not_contains?: string | null
+        name_starts_with?: string | null
+        name_not_starts_with?: string | null
+        name_ends_with?: string | null
+        name_not_ends_with?: string | null
+        slug?: string | null
+        slug_not?: string | null
+        slug_in?: string[] | null
+        slug_not_in?: string[] | null
+        slug_lt?: string | null
+        slug_lte?: string | null
+        slug_gt?: string | null
+        slug_gte?: string | null
+        slug_contains?: string | null
+        slug_not_contains?: string | null
+        slug_starts_with?: string | null
+        slug_not_starts_with?: string | null
+        slug_ends_with?: string | null
+        slug_not_ends_with?: string | null
+        moderators_every?: UserWhereInput | null
+        moderators_some?: UserWhereInput | null
+        moderators_none?: UserWhereInput | null
+        author?: UserWhereInput | null
+        members_every?: UserWhereInput | null
+        members_some?: UserWhereInput | null
+        members_none?: UserWhereInput | null
+        channels_every?: ChannelWhereInput | null
+        channels_some?: ChannelWhereInput | null
+        channels_none?: ChannelWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        confirmed?: boolean | null
+        confirmed_not?: boolean | null
+        online?: boolean | null
+        online_not?: boolean | null
+        AND?: TeamWhereInput[] | null
+        OR?: TeamWhereInput[] | null
+        NOT?: TeamWhereInput[] | null
+    }
+    export interface APIServiceWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        settings?: APIServiceSettingsWhereInput | null
+        name?: string | null
+        name_not?: string | null
+        name_in?: string[] | null
+        name_not_in?: string[] | null
+        name_lt?: string | null
+        name_lte?: string | null
+        name_gt?: string | null
+        name_gte?: string | null
+        name_contains?: string | null
+        name_not_contains?: string | null
+        name_starts_with?: string | null
+        name_not_starts_with?: string | null
+        name_ends_with?: string | null
+        name_not_ends_with?: string | null
+        commentAPIs_every?: CommentAPIWhereInput | null
+        commentAPIs_some?: CommentAPIWhereInput | null
+        commentAPIs_none?: CommentAPIWhereInput | null
+        owner?: UserWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: APIServiceWhereInput[] | null
+        OR?: APIServiceWhereInput[] | null
+        NOT?: APIServiceWhereInput[] | null
+    }
+    export interface ChannelWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        name?: string | null
+        name_not?: string | null
+        name_in?: string[] | null
+        name_not_in?: string[] | null
+        name_lt?: string | null
+        name_lte?: string | null
+        name_gt?: string | null
+        name_gte?: string | null
+        name_contains?: string | null
+        name_not_contains?: string | null
+        name_starts_with?: string | null
+        name_not_starts_with?: string | null
+        name_ends_with?: string | null
+        name_not_ends_with?: string | null
+        slug?: string | null
+        slug_not?: string | null
+        slug_in?: string[] | null
+        slug_not_in?: string[] | null
+        slug_lt?: string | null
+        slug_lte?: string | null
+        slug_gt?: string | null
+        slug_gte?: string | null
+        slug_contains?: string | null
+        slug_not_contains?: string | null
+        slug_starts_with?: string | null
+        slug_not_starts_with?: string | null
+        slug_ends_with?: string | null
+        slug_not_ends_with?: string | null
+        moderators_every?: UserWhereInput | null
+        moderators_some?: UserWhereInput | null
+        moderators_none?: UserWhereInput | null
+        public?: boolean | null
+        public_not?: boolean | null
+        messages_every?: MessageWhereInput | null
+        messages_some?: MessageWhereInput | null
+        messages_none?: MessageWhereInput | null
+        teamId?: string | null
+        teamId_not?: string | null
+        teamId_in?: string[] | null
+        teamId_not_in?: string[] | null
+        teamId_lt?: string | null
+        teamId_lte?: string | null
+        teamId_gt?: string | null
+        teamId_gte?: string | null
+        teamId_contains?: string | null
+        teamId_not_contains?: string | null
+        teamId_starts_with?: string | null
+        teamId_not_starts_with?: string | null
+        teamId_ends_with?: string | null
+        teamId_not_ends_with?: string | null
+        members_every?: UserWhereInput | null
+        members_some?: UserWhereInput | null
+        members_none?: UserWhereInput | null
+        author?: UserWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: ChannelWhereInput[] | null
+        OR?: ChannelWhereInput[] | null
+        NOT?: ChannelWhereInput[] | null
+    }
+    export interface RatingWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        vote?: number | null
+        vote_not?: number | null
+        vote_in?: number[] | null
+        vote_not_in?: number[] | null
+        vote_lt?: number | null
+        vote_lte?: number | null
+        vote_gt?: number | null
+        vote_gte?: number | null
+        author_every?: UserWhereInput | null
+        author_some?: UserWhereInput | null
+        author_none?: UserWhereInput | null
+        AND?: RatingWhereInput[] | null
+        OR?: RatingWhereInput[] | null
+        NOT?: RatingWhereInput[] | null
+    }
+    export interface MessageWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        body?: string | null
+        body_not?: string | null
+        body_in?: string[] | null
+        body_not_in?: string[] | null
+        body_lt?: string | null
+        body_lte?: string | null
+        body_gt?: string | null
+        body_gte?: string | null
+        body_contains?: string | null
+        body_not_contains?: string | null
+        body_starts_with?: string | null
+        body_not_starts_with?: string | null
+        body_ends_with?: string | null
+        body_not_ends_with?: string | null
+        parentId?: string | null
+        parentId_not?: string | null
+        parentId_in?: string[] | null
+        parentId_not_in?: string[] | null
+        parentId_lt?: string | null
+        parentId_lte?: string | null
+        parentId_gt?: string | null
+        parentId_gte?: string | null
+        parentId_contains?: string | null
+        parentId_not_contains?: string | null
+        parentId_starts_with?: string | null
+        parentId_not_starts_with?: string | null
+        parentId_ends_with?: string | null
+        parentId_not_ends_with?: string | null
+        url?: string | null
+        url_not?: string | null
+        url_in?: string[] | null
+        url_not_in?: string[] | null
+        url_lt?: string | null
+        url_lte?: string | null
+        url_gt?: string | null
+        url_gte?: string | null
+        url_contains?: string | null
+        url_not_contains?: string | null
+        url_starts_with?: string | null
+        url_not_starts_with?: string | null
+        url_ends_with?: string | null
+        url_not_ends_with?: string | null
+        filetype?: string | null
+        filetype_not?: string | null
+        filetype_in?: string[] | null
+        filetype_not_in?: string[] | null
+        filetype_lt?: string | null
+        filetype_lte?: string | null
+        filetype_gt?: string | null
+        filetype_gte?: string | null
+        filetype_contains?: string | null
+        filetype_not_contains?: string | null
+        filetype_starts_with?: string | null
+        filetype_not_starts_with?: string | null
+        filetype_ends_with?: string | null
+        filetype_not_ends_with?: string | null
+        author?: UserWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: MessageWhereInput[] | null
+        OR?: MessageWhereInput[] | null
+        NOT?: MessageWhereInput[] | null
+    }
+    export interface APIServiceSettingsWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        enforceHTTPS?: boolean | null
+        enforceHTTPS_not?: boolean | null
+        AND?: APIServiceSettingsWhereInput[] | null
+        OR?: APIServiceSettingsWhereInput[] | null
+        NOT?: APIServiceSettingsWhereInput[] | null
+    }
+
+    export interface ArgsCommentAPIs {
+        where?: CommentAPIWhereInput | null
+        orderBy?: CommentAPIOrderByInput | null
+        skip?: number | null
+        after?: string | null
+        before?: string | null
+        first?: number | null
+        last?: number | null
+    }
+
+    export type IdResolver =
+        | ((
+              parent: APIService,
+              args: {},
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => string | Promise<string>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: APIService,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>
+          }
+
+    export type SettingsResolver =
+        | ((
+              parent: APIService,
+              args: {},
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => APIServiceSettings | null | Promise<APIServiceSettings | null>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: APIService,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) =>
+                  | APIServiceSettings
+                  | null
+                  | Promise<APIServiceSettings | null>
+          }
+
+    export type NameResolver =
+        | ((
+              parent: APIService,
+              args: {},
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => string | Promise<string>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: APIService,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>
+          }
+
+    export type CommentAPIsResolver =
+        | ((
+              parent: APIService,
+              args: ArgsCommentAPIs,
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => CommentAPI[] | null | Promise<CommentAPI[] | null>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: APIService,
+                  args: ArgsCommentAPIs,
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => CommentAPI[] | null | Promise<CommentAPI[] | null>
+          }
+
+    export type OwnerResolver =
+        | ((
+              parent: APIService,
+              args: {},
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => User | Promise<User>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: APIService,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => User | Promise<User>
+          }
+
+    export type CreatedAtResolver =
+        | ((
+              parent: APIService,
+              args: {},
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => string | Promise<string>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: APIService,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>
+          }
+
+    export type UpdatedAtResolver =
+        | ((
+              parent: APIService,
+              args: {},
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => string | Promise<string>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: APIService,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>
+          }
+
+    export interface Type {
+        id:
+            | ((
+                  parent: APIService,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: APIService,
+                      args: {},
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => string | Promise<string>
+              }
+
+        settings:
+            | ((
+                  parent: APIService,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) =>
+                  | APIServiceSettings
+                  | null
+                  | Promise<APIServiceSettings | null>
+              )
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: APIService,
+                      args: {},
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) =>
+                      | APIServiceSettings
+                      | null
+                      | Promise<APIServiceSettings | null>
+              }
+
+        name:
+            | ((
+                  parent: APIService,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: APIService,
+                      args: {},
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => string | Promise<string>
+              }
+
+        commentAPIs:
+            | ((
+                  parent: APIService,
+                  args: ArgsCommentAPIs,
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => CommentAPI[] | null | Promise<CommentAPI[] | null>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: APIService,
+                      args: ArgsCommentAPIs,
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => CommentAPI[] | null | Promise<CommentAPI[] | null>
+              }
+
+        owner:
+            | ((
+                  parent: APIService,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => User | Promise<User>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: APIService,
+                      args: {},
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => User | Promise<User>
+              }
+
+        createdAt:
+            | ((
+                  parent: APIService,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: APIService,
+                      args: {},
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => string | Promise<string>
+              }
+
+        updatedAt:
+            | ((
+                  parent: APIService,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: APIService,
+                      args: {},
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => string | Promise<string>
+              }
+    }
+}
+
+export namespace APIServiceSettingsResolvers {
+    export const defaultResolvers = {
+        id: (parent: APIServiceSettings) => parent.id,
+        enforceHTTPS: (parent: APIServiceSettings) => parent.enforceHTTPS,
+    }
+
+    export type IdResolver =
+        | ((
+              parent: APIServiceSettings,
+              args: {},
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => string | Promise<string>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: APIServiceSettings,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>
+          }
+
+    export type EnforceHTTPSResolver =
+        | ((
+              parent: APIServiceSettings,
+              args: {},
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => boolean | Promise<boolean>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: APIServiceSettings,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => boolean | Promise<boolean>
+          }
+
+    export interface Type {
+        id:
+            | ((
+                  parent: APIServiceSettings,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => string | Promise<string>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: APIServiceSettings,
+                      args: {},
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => string | Promise<string>
+              }
+
+        enforceHTTPS:
+            | ((
+                  parent: APIServiceSettings,
+                  args: {},
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => boolean | Promise<boolean>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: APIServiceSettings,
+                      args: {},
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => boolean | Promise<boolean>
+              }
+    }
+}
+
 export namespace RatingResolvers {
     export const defaultResolvers = {
         id: (parent: Rating) => parent.id,
@@ -8599,6 +11608,9 @@ export namespace RatingResolvers {
         teams_every?: TeamWhereInput | null
         teams_some?: TeamWhereInput | null
         teams_none?: TeamWhereInput | null
+        api_services_every?: APIServiceWhereInput | null
+        api_services_some?: APIServiceWhereInput | null
+        api_services_none?: APIServiceWhereInput | null
         channels_every?: ChannelWhereInput | null
         channels_some?: ChannelWhereInput | null
         channels_none?: ChannelWhereInput | null
@@ -8931,6 +11943,60 @@ export namespace RatingResolvers {
         OR?: TeamWhereInput[] | null
         NOT?: TeamWhereInput[] | null
     }
+    export interface APIServiceWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        settings?: APIServiceSettingsWhereInput | null
+        name?: string | null
+        name_not?: string | null
+        name_in?: string[] | null
+        name_not_in?: string[] | null
+        name_lt?: string | null
+        name_lte?: string | null
+        name_gt?: string | null
+        name_gte?: string | null
+        name_contains?: string | null
+        name_not_contains?: string | null
+        name_starts_with?: string | null
+        name_not_starts_with?: string | null
+        name_ends_with?: string | null
+        name_not_ends_with?: string | null
+        commentAPIs_every?: CommentAPIWhereInput | null
+        commentAPIs_some?: CommentAPIWhereInput | null
+        commentAPIs_none?: CommentAPIWhereInput | null
+        owner?: UserWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: APIServiceWhereInput[] | null
+        OR?: APIServiceWhereInput[] | null
+        NOT?: APIServiceWhereInput[] | null
+    }
     export interface ChannelWhereInput {
         id?: string | null
         id_not?: string | null
@@ -9141,6 +12207,233 @@ export namespace RatingResolvers {
         AND?: RatingWhereInput[] | null
         OR?: RatingWhereInput[] | null
         NOT?: RatingWhereInput[] | null
+    }
+    export interface APIServiceSettingsWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        enforceHTTPS?: boolean | null
+        enforceHTTPS_not?: boolean | null
+        AND?: APIServiceSettingsWhereInput[] | null
+        OR?: APIServiceSettingsWhereInput[] | null
+        NOT?: APIServiceSettingsWhereInput[] | null
+    }
+    export interface CommentAPIWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        name?: string | null
+        name_not?: string | null
+        name_in?: string[] | null
+        name_not_in?: string[] | null
+        name_lt?: string | null
+        name_lte?: string | null
+        name_gt?: string | null
+        name_gte?: string | null
+        name_contains?: string | null
+        name_not_contains?: string | null
+        name_starts_with?: string | null
+        name_not_starts_with?: string | null
+        name_ends_with?: string | null
+        name_not_ends_with?: string | null
+        commentSections_every?: CommentSectionWhereInput | null
+        commentSections_some?: CommentSectionWhereInput | null
+        commentSections_none?: CommentSectionWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        owner?: UserWhereInput | null
+        consumerKey?: string | null
+        consumerKey_not?: string | null
+        consumerKey_in?: string[] | null
+        consumerKey_not_in?: string[] | null
+        consumerKey_lt?: string | null
+        consumerKey_lte?: string | null
+        consumerKey_gt?: string | null
+        consumerKey_gte?: string | null
+        consumerKey_contains?: string | null
+        consumerKey_not_contains?: string | null
+        consumerKey_starts_with?: string | null
+        consumerKey_not_starts_with?: string | null
+        consumerKey_ends_with?: string | null
+        consumerKey_not_ends_with?: string | null
+        privateKey?: string | null
+        privateKey_not?: string | null
+        privateKey_in?: string[] | null
+        privateKey_not_in?: string[] | null
+        privateKey_lt?: string | null
+        privateKey_lte?: string | null
+        privateKey_gt?: string | null
+        privateKey_gte?: string | null
+        privateKey_contains?: string | null
+        privateKey_not_contains?: string | null
+        privateKey_starts_with?: string | null
+        privateKey_not_starts_with?: string | null
+        privateKey_ends_with?: string | null
+        privateKey_not_ends_with?: string | null
+        AND?: CommentAPIWhereInput[] | null
+        OR?: CommentAPIWhereInput[] | null
+        NOT?: CommentAPIWhereInput[] | null
+    }
+    export interface CommentSectionWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        comments_every?: CommentWhereInput | null
+        comments_some?: CommentWhereInput | null
+        comments_none?: CommentWhereInput | null
+        pageId?: string | null
+        pageId_not?: string | null
+        pageId_in?: string[] | null
+        pageId_not_in?: string[] | null
+        pageId_lt?: string | null
+        pageId_lte?: string | null
+        pageId_gt?: string | null
+        pageId_gte?: string | null
+        pageId_contains?: string | null
+        pageId_not_contains?: string | null
+        pageId_starts_with?: string | null
+        pageId_not_starts_with?: string | null
+        pageId_ends_with?: string | null
+        pageId_not_ends_with?: string | null
+        url?: string | null
+        url_not?: string | null
+        url_in?: string[] | null
+        url_not_in?: string[] | null
+        url_lt?: string | null
+        url_lte?: string | null
+        url_gt?: string | null
+        url_gte?: string | null
+        url_contains?: string | null
+        url_not_contains?: string | null
+        url_starts_with?: string | null
+        url_not_starts_with?: string | null
+        url_ends_with?: string | null
+        url_not_ends_with?: string | null
+        admin?: UserWhereInput | null
+        moderators_every?: ModeratorWhereInput | null
+        moderators_some?: ModeratorWhereInput | null
+        moderators_none?: ModeratorWhereInput | null
+        options?: CommentOptionsWhereInput | null
+        bannedUsers_every?: UserWhereInput | null
+        bannedUsers_some?: UserWhereInput | null
+        bannedUsers_none?: UserWhereInput | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: CommentSectionWhereInput[] | null
+        OR?: CommentSectionWhereInput[] | null
+        NOT?: CommentSectionWhereInput[] | null
+    }
+    export interface ModeratorWhereInput {
+        id?: string | null
+        id_not?: string | null
+        id_in?: string[] | null
+        id_not_in?: string[] | null
+        id_lt?: string | null
+        id_lte?: string | null
+        id_gt?: string | null
+        id_gte?: string | null
+        id_contains?: string | null
+        id_not_contains?: string | null
+        id_starts_with?: string | null
+        id_not_starts_with?: string | null
+        id_ends_with?: string | null
+        id_not_ends_with?: string | null
+        user?: UserWhereInput | null
+        can_delete?: boolean | null
+        can_delete_not?: boolean | null
+        can_ban?: boolean | null
+        can_ban_not?: boolean | null
+        can_edit?: boolean | null
+        can_edit_not?: boolean | null
+        can_close?: boolean | null
+        can_close_not?: boolean | null
+        createdAt?: string | null
+        createdAt_not?: string | null
+        createdAt_in?: string[] | null
+        createdAt_not_in?: string[] | null
+        createdAt_lt?: string | null
+        createdAt_lte?: string | null
+        createdAt_gt?: string | null
+        createdAt_gte?: string | null
+        updatedAt?: string | null
+        updatedAt_not?: string | null
+        updatedAt_in?: string[] | null
+        updatedAt_not_in?: string[] | null
+        updatedAt_lt?: string | null
+        updatedAt_lte?: string | null
+        updatedAt_gt?: string | null
+        updatedAt_gte?: string | null
+        AND?: ModeratorWhereInput[] | null
+        OR?: ModeratorWhereInput[] | null
+        NOT?: ModeratorWhereInput[] | null
+    }
+    export interface CommentOptionsWhereInput {
+        comments_open?: boolean | null
+        comments_open_not?: boolean | null
+        AND?: CommentOptionsWhereInput[] | null
+        OR?: CommentOptionsWhereInput[] | null
+        NOT?: CommentOptionsWhereInput[] | null
     }
 
     export interface ArgsAuthor {
@@ -9591,6 +12884,7 @@ export namespace MutationResolvers {
 
     export interface ArgsCreateCommentApi {
         name: string
+        serviceId: string
     }
 
     export interface ArgsCreateChatApi {
@@ -9599,6 +12893,10 @@ export namespace MutationResolvers {
 
     export interface ArgsUpdateCommentAPI {
         id: string
+    }
+
+    export interface ArgsCreateApiService {
+        name: string
     }
 
     export type CreateCommentApiResolver =
@@ -9650,6 +12948,23 @@ export namespace MutationResolvers {
                   ctx: Context,
                   info: GraphQLResolveInfo,
               ) => CommentAPI | null | Promise<CommentAPI | null>
+          }
+
+    export type CreateApiServiceResolver =
+        | ((
+              parent: undefined,
+              args: ArgsCreateApiService,
+              ctx: Context,
+              info: GraphQLResolveInfo,
+          ) => APIService | null | Promise<APIService | null>)
+        | {
+              fragment: string
+              resolve: (
+                  parent: undefined,
+                  args: ArgsCreateApiService,
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => APIService | null | Promise<APIService | null>
           }
 
     export interface Type {
@@ -9704,6 +13019,23 @@ export namespace MutationResolvers {
                       ctx: Context,
                       info: GraphQLResolveInfo,
                   ) => CommentAPI | null | Promise<CommentAPI | null>
+              }
+
+        createApiService:
+            | ((
+                  parent: undefined,
+                  args: ArgsCreateApiService,
+                  ctx: Context,
+                  info: GraphQLResolveInfo,
+              ) => APIService | null | Promise<APIService | null>)
+            | {
+                  fragment: string
+                  resolve: (
+                      parent: undefined,
+                      args: ArgsCreateApiService,
+                      ctx: Context,
+                      info: GraphQLResolveInfo,
+                  ) => APIService | null | Promise<APIService | null>
               }
     }
 }
@@ -9795,6 +13127,8 @@ export interface Resolvers {
     Team: TeamResolvers.Type
     Channel: ChannelResolvers.Type
     File: FileResolvers.Type
+    APIService: APIServiceResolvers.Type
+    APIServiceSettings: APIServiceSettingsResolvers.Type
     Rating: RatingResolvers.Type
     Moderator: ModeratorResolvers.Type
     CommentOptions: CommentOptionsResolvers.Type

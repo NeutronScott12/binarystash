@@ -13,6 +13,8 @@ import { Message } from './Message'
 import { Team } from './Team'
 import { Channel } from './Channel'
 import { File } from './File'
+import { APIService } from './APIService'
+import { APIServiceSettings } from './APIServiceSettings'
 import { Rating } from './Rating'
 import { Moderator } from './Moderator'
 import { CommentOptions } from './CommentOptions'
@@ -30,6 +32,8 @@ export const resolvers: Resolvers = {
     Team,
     Channel,
     File,
+    APIService,
+    APIServiceSettings,
     Rating,
     Moderator,
     CommentOptions,

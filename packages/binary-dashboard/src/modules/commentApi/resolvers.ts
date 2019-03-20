@@ -94,7 +94,7 @@ export const resolvers = {
         },
         async createCommentApi(
             _: any,
-            { name }: MutationResolvers.ArgsCreateCommentApi,
+            { name, serviceId }: MutationResolvers.ArgsCreateCommentApi,
             { db, session }: Context,
         ) {
             try {
@@ -124,6 +124,19 @@ export const resolvers = {
                     },
                     consumerKey,
                     privateKey: hashKey,
+                })
+
+                await db.updateAPIService({
+                    where: {
+                        id: serviceId,
+                    },
+                    data: {
+                        commentAPIs: {
+                            connect: {
+                                id: commentAPI.id,
+                            },
+                        },
+                    },
                 })
 
                 return {

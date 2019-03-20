@@ -27,6 +27,9 @@ export const User: UserResolvers.Type = {
     teams: (parent, args, ctx) => {
         throw new Error('Resolver not implemented')
     },
+    api_services: (parent, args, ctx) => {
+        throw new Error('Resolver not implemented')
+    },
     channels: (parent, args, ctx) => {
         throw new Error('Resolver not implemented')
     },

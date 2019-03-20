@@ -1,8 +1,8 @@
-type AggregateAPIDashboard {
+type AggregateAPIService {
   count: Int!
 }
 
-type AggregateAPISettingDashboard {
+type AggregateAPIServiceSettings {
   count: Int!
 }
 
@@ -78,33 +78,46 @@ type AggregateUser {
   count: Int!
 }
 
-type APIDashboard {
+type APIService {
   id: ID!
-  settings: APISettingDashboard!
+  settings: APIServiceSettings
   name: String!
+  commentAPIs(where: CommentAPIWhereInput, orderBy: CommentAPIOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CommentAPI!]
+  owner: User!
   createdAt: DateTime!
   updatedAt: DateTime!
-  CommentAPI: CommentAPI!
 }
 
-type APIDashboardConnection {
+type APIServiceConnection {
   pageInfo: PageInfo!
-  edges: [APIDashboardEdge]!
-  aggregate: AggregateAPIDashboard!
+  edges: [APIServiceEdge]!
+  aggregate: AggregateAPIService!
 }
 
-input APIDashboardCreateInput {
-  settings: APISettingDashboardCreateOneInput!
+input APIServiceCreateInput {
+  settings: APIServiceSettingsCreateOneInput
   name: String!
-  CommentAPI: CommentAPICreateOneInput!
+  commentAPIs: CommentAPICreateManyInput
+  owner: UserCreateOneWithoutApi_servicesInput!
 }
 
-type APIDashboardEdge {
-  node: APIDashboard!
+input APIServiceCreateManyWithoutOwnerInput {
+  create: [APIServiceCreateWithoutOwnerInput!]
+  connect: [APIServiceWhereUniqueInput!]
+}
+
+input APIServiceCreateWithoutOwnerInput {
+  settings: APIServiceSettingsCreateOneInput
+  name: String!
+  commentAPIs: CommentAPICreateManyInput
+}
+
+type APIServiceEdge {
+  node: APIService!
   cursor: String!
 }
 
-enum APIDashboardOrderByInput {
+enum APIServiceOrderByInput {
   id_ASC
   id_DESC
   name_ASC
@@ -115,42 +128,14 @@ enum APIDashboardOrderByInput {
   updatedAt_DESC
 }
 
-type APIDashboardPreviousValues {
+type APIServicePreviousValues {
   id: ID!
   name: String!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
-type APIDashboardSubscriptionPayload {
-  mutation: MutationType!
-  node: APIDashboard
-  updatedFields: [String!]
-  previousValues: APIDashboardPreviousValues
-}
-
-input APIDashboardSubscriptionWhereInput {
-  mutation_in: [MutationType!]
-  updatedFields_contains: String
-  updatedFields_contains_every: [String!]
-  updatedFields_contains_some: [String!]
-  node: APIDashboardWhereInput
-  AND: [APIDashboardSubscriptionWhereInput!]
-  OR: [APIDashboardSubscriptionWhereInput!]
-  NOT: [APIDashboardSubscriptionWhereInput!]
-}
-
-input APIDashboardUpdateInput {
-  settings: APISettingDashboardUpdateOneRequiredInput
-  name: String
-  CommentAPI: CommentAPIUpdateOneRequiredInput
-}
-
-input APIDashboardUpdateManyMutationInput {
-  name: String
-}
-
-input APIDashboardWhereInput {
+input APIServiceScalarWhereInput {
   id: ID
   id_not: ID
   id_in: [ID!]
@@ -165,7 +150,6 @@ input APIDashboardWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  settings: APISettingDashboardWhereInput
   name: String
   name_not: String
   name_in: [String!]
@@ -196,42 +180,37 @@ input APIDashboardWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  CommentAPI: CommentAPIWhereInput
-  AND: [APIDashboardWhereInput!]
-  OR: [APIDashboardWhereInput!]
-  NOT: [APIDashboardWhereInput!]
+  AND: [APIServiceScalarWhereInput!]
+  OR: [APIServiceScalarWhereInput!]
+  NOT: [APIServiceScalarWhereInput!]
 }
 
-input APIDashboardWhereUniqueInput {
-  id: ID
-}
-
-type APISettingDashboard {
+type APIServiceSettings {
   id: ID!
   enforceHTTPS: Boolean!
 }
 
-type APISettingDashboardConnection {
+type APIServiceSettingsConnection {
   pageInfo: PageInfo!
-  edges: [APISettingDashboardEdge]!
-  aggregate: AggregateAPISettingDashboard!
+  edges: [APIServiceSettingsEdge]!
+  aggregate: AggregateAPIServiceSettings!
 }
 
-input APISettingDashboardCreateInput {
+input APIServiceSettingsCreateInput {
   enforceHTTPS: Boolean!
 }
 
-input APISettingDashboardCreateOneInput {
-  create: APISettingDashboardCreateInput
-  connect: APISettingDashboardWhereUniqueInput
+input APIServiceSettingsCreateOneInput {
+  create: APIServiceSettingsCreateInput
+  connect: APIServiceSettingsWhereUniqueInput
 }
 
-type APISettingDashboardEdge {
-  node: APISettingDashboard!
+type APIServiceSettingsEdge {
+  node: APIServiceSettings!
   cursor: String!
 }
 
-enum APISettingDashboardOrderByInput {
+enum APIServiceSettingsOrderByInput {
   id_ASC
   id_DESC
   enforceHTTPS_ASC
@@ -242,54 +221,56 @@ enum APISettingDashboardOrderByInput {
   updatedAt_DESC
 }
 
-type APISettingDashboardPreviousValues {
+type APIServiceSettingsPreviousValues {
   id: ID!
   enforceHTTPS: Boolean!
 }
 
-type APISettingDashboardSubscriptionPayload {
+type APIServiceSettingsSubscriptionPayload {
   mutation: MutationType!
-  node: APISettingDashboard
+  node: APIServiceSettings
   updatedFields: [String!]
-  previousValues: APISettingDashboardPreviousValues
+  previousValues: APIServiceSettingsPreviousValues
 }
 
-input APISettingDashboardSubscriptionWhereInput {
+input APIServiceSettingsSubscriptionWhereInput {
   mutation_in: [MutationType!]
   updatedFields_contains: String
   updatedFields_contains_every: [String!]
   updatedFields_contains_some: [String!]
-  node: APISettingDashboardWhereInput
-  AND: [APISettingDashboardSubscriptionWhereInput!]
-  OR: [APISettingDashboardSubscriptionWhereInput!]
-  NOT: [APISettingDashboardSubscriptionWhereInput!]
+  node: APIServiceSettingsWhereInput
+  AND: [APIServiceSettingsSubscriptionWhereInput!]
+  OR: [APIServiceSettingsSubscriptionWhereInput!]
+  NOT: [APIServiceSettingsSubscriptionWhereInput!]
 }
 
-input APISettingDashboardUpdateDataInput {
+input APIServiceSettingsUpdateDataInput {
   enforceHTTPS: Boolean
 }
 
-input APISettingDashboardUpdateInput {
+input APIServiceSettingsUpdateInput {
   enforceHTTPS: Boolean
 }
 
-input APISettingDashboardUpdateManyMutationInput {
+input APIServiceSettingsUpdateManyMutationInput {
   enforceHTTPS: Boolean
 }
 
-input APISettingDashboardUpdateOneRequiredInput {
-  create: APISettingDashboardCreateInput
-  update: APISettingDashboardUpdateDataInput
-  upsert: APISettingDashboardUpsertNestedInput
-  connect: APISettingDashboardWhereUniqueInput
+input APIServiceSettingsUpdateOneInput {
+  create: APIServiceSettingsCreateInput
+  update: APIServiceSettingsUpdateDataInput
+  upsert: APIServiceSettingsUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: APIServiceSettingsWhereUniqueInput
 }
 
-input APISettingDashboardUpsertNestedInput {
-  update: APISettingDashboardUpdateDataInput!
-  create: APISettingDashboardCreateInput!
+input APIServiceSettingsUpsertNestedInput {
+  update: APIServiceSettingsUpdateDataInput!
+  create: APIServiceSettingsCreateInput!
 }
 
-input APISettingDashboardWhereInput {
+input APIServiceSettingsWhereInput {
   id: ID
   id_not: ID
   id_in: [ID!]
@@ -306,12 +287,138 @@ input APISettingDashboardWhereInput {
   id_not_ends_with: ID
   enforceHTTPS: Boolean
   enforceHTTPS_not: Boolean
-  AND: [APISettingDashboardWhereInput!]
-  OR: [APISettingDashboardWhereInput!]
-  NOT: [APISettingDashboardWhereInput!]
+  AND: [APIServiceSettingsWhereInput!]
+  OR: [APIServiceSettingsWhereInput!]
+  NOT: [APIServiceSettingsWhereInput!]
 }
 
-input APISettingDashboardWhereUniqueInput {
+input APIServiceSettingsWhereUniqueInput {
+  id: ID
+}
+
+type APIServiceSubscriptionPayload {
+  mutation: MutationType!
+  node: APIService
+  updatedFields: [String!]
+  previousValues: APIServicePreviousValues
+}
+
+input APIServiceSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: APIServiceWhereInput
+  AND: [APIServiceSubscriptionWhereInput!]
+  OR: [APIServiceSubscriptionWhereInput!]
+  NOT: [APIServiceSubscriptionWhereInput!]
+}
+
+input APIServiceUpdateInput {
+  settings: APIServiceSettingsUpdateOneInput
+  name: String
+  commentAPIs: CommentAPIUpdateManyInput
+  owner: UserUpdateOneRequiredWithoutApi_servicesInput
+}
+
+input APIServiceUpdateManyDataInput {
+  name: String
+}
+
+input APIServiceUpdateManyMutationInput {
+  name: String
+}
+
+input APIServiceUpdateManyWithoutOwnerInput {
+  create: [APIServiceCreateWithoutOwnerInput!]
+  delete: [APIServiceWhereUniqueInput!]
+  connect: [APIServiceWhereUniqueInput!]
+  set: [APIServiceWhereUniqueInput!]
+  disconnect: [APIServiceWhereUniqueInput!]
+  update: [APIServiceUpdateWithWhereUniqueWithoutOwnerInput!]
+  upsert: [APIServiceUpsertWithWhereUniqueWithoutOwnerInput!]
+  deleteMany: [APIServiceScalarWhereInput!]
+  updateMany: [APIServiceUpdateManyWithWhereNestedInput!]
+}
+
+input APIServiceUpdateManyWithWhereNestedInput {
+  where: APIServiceScalarWhereInput!
+  data: APIServiceUpdateManyDataInput!
+}
+
+input APIServiceUpdateWithoutOwnerDataInput {
+  settings: APIServiceSettingsUpdateOneInput
+  name: String
+  commentAPIs: CommentAPIUpdateManyInput
+}
+
+input APIServiceUpdateWithWhereUniqueWithoutOwnerInput {
+  where: APIServiceWhereUniqueInput!
+  data: APIServiceUpdateWithoutOwnerDataInput!
+}
+
+input APIServiceUpsertWithWhereUniqueWithoutOwnerInput {
+  where: APIServiceWhereUniqueInput!
+  update: APIServiceUpdateWithoutOwnerDataInput!
+  create: APIServiceCreateWithoutOwnerInput!
+}
+
+input APIServiceWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  settings: APIServiceSettingsWhereInput
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  commentAPIs_every: CommentAPIWhereInput
+  commentAPIs_some: CommentAPIWhereInput
+  commentAPIs_none: CommentAPIWhereInput
+  owner: UserWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [APIServiceWhereInput!]
+  OR: [APIServiceWhereInput!]
+  NOT: [APIServiceWhereInput!]
+}
+
+input APIServiceWhereUniqueInput {
   id: ID
 }
 
@@ -797,9 +904,9 @@ input CommentAPICreateInput {
   privateKey: String!
 }
 
-input CommentAPICreateOneInput {
-  create: CommentAPICreateInput
-  connect: CommentAPIWhereUniqueInput
+input CommentAPICreateManyInput {
+  create: [CommentAPICreateInput!]
+  connect: [CommentAPIWhereUniqueInput!]
 }
 
 type CommentAPIEdge {
@@ -829,6 +936,84 @@ type CommentAPIPreviousValues {
   updatedAt: DateTime!
   consumerKey: String!
   privateKey: String!
+}
+
+input CommentAPIScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  consumerKey: String
+  consumerKey_not: String
+  consumerKey_in: [String!]
+  consumerKey_not_in: [String!]
+  consumerKey_lt: String
+  consumerKey_lte: String
+  consumerKey_gt: String
+  consumerKey_gte: String
+  consumerKey_contains: String
+  consumerKey_not_contains: String
+  consumerKey_starts_with: String
+  consumerKey_not_starts_with: String
+  consumerKey_ends_with: String
+  consumerKey_not_ends_with: String
+  privateKey: String
+  privateKey_not: String
+  privateKey_in: [String!]
+  privateKey_not_in: [String!]
+  privateKey_lt: String
+  privateKey_lte: String
+  privateKey_gt: String
+  privateKey_gte: String
+  privateKey_contains: String
+  privateKey_not_contains: String
+  privateKey_starts_with: String
+  privateKey_not_starts_with: String
+  privateKey_ends_with: String
+  privateKey_not_ends_with: String
+  AND: [CommentAPIScalarWhereInput!]
+  OR: [CommentAPIScalarWhereInput!]
+  NOT: [CommentAPIScalarWhereInput!]
 }
 
 type CommentAPISubscriptionPayload {
@@ -865,20 +1050,42 @@ input CommentAPIUpdateInput {
   privateKey: String
 }
 
+input CommentAPIUpdateManyDataInput {
+  name: String
+  consumerKey: String
+  privateKey: String
+}
+
+input CommentAPIUpdateManyInput {
+  create: [CommentAPICreateInput!]
+  update: [CommentAPIUpdateWithWhereUniqueNestedInput!]
+  upsert: [CommentAPIUpsertWithWhereUniqueNestedInput!]
+  delete: [CommentAPIWhereUniqueInput!]
+  connect: [CommentAPIWhereUniqueInput!]
+  set: [CommentAPIWhereUniqueInput!]
+  disconnect: [CommentAPIWhereUniqueInput!]
+  deleteMany: [CommentAPIScalarWhereInput!]
+  updateMany: [CommentAPIUpdateManyWithWhereNestedInput!]
+}
+
 input CommentAPIUpdateManyMutationInput {
   name: String
   consumerKey: String
   privateKey: String
 }
 
-input CommentAPIUpdateOneRequiredInput {
-  create: CommentAPICreateInput
-  update: CommentAPIUpdateDataInput
-  upsert: CommentAPIUpsertNestedInput
-  connect: CommentAPIWhereUniqueInput
+input CommentAPIUpdateManyWithWhereNestedInput {
+  where: CommentAPIScalarWhereInput!
+  data: CommentAPIUpdateManyDataInput!
 }
 
-input CommentAPIUpsertNestedInput {
+input CommentAPIUpdateWithWhereUniqueNestedInput {
+  where: CommentAPIWhereUniqueInput!
+  data: CommentAPIUpdateDataInput!
+}
+
+input CommentAPIUpsertWithWhereUniqueNestedInput {
+  where: CommentAPIWhereUniqueInput!
   update: CommentAPIUpdateDataInput!
   create: CommentAPICreateInput!
 }
@@ -2671,18 +2878,18 @@ input ModeratorWhereUniqueInput {
 }
 
 type Mutation {
-  createAPIDashboard(data: APIDashboardCreateInput!): APIDashboard!
-  updateAPIDashboard(data: APIDashboardUpdateInput!, where: APIDashboardWhereUniqueInput!): APIDashboard
-  updateManyAPIDashboards(data: APIDashboardUpdateManyMutationInput!, where: APIDashboardWhereInput): BatchPayload!
-  upsertAPIDashboard(where: APIDashboardWhereUniqueInput!, create: APIDashboardCreateInput!, update: APIDashboardUpdateInput!): APIDashboard!
-  deleteAPIDashboard(where: APIDashboardWhereUniqueInput!): APIDashboard
-  deleteManyAPIDashboards(where: APIDashboardWhereInput): BatchPayload!
-  createAPISettingDashboard(data: APISettingDashboardCreateInput!): APISettingDashboard!
-  updateAPISettingDashboard(data: APISettingDashboardUpdateInput!, where: APISettingDashboardWhereUniqueInput!): APISettingDashboard
-  updateManyAPISettingDashboards(data: APISettingDashboardUpdateManyMutationInput!, where: APISettingDashboardWhereInput): BatchPayload!
-  upsertAPISettingDashboard(where: APISettingDashboardWhereUniqueInput!, create: APISettingDashboardCreateInput!, update: APISettingDashboardUpdateInput!): APISettingDashboard!
-  deleteAPISettingDashboard(where: APISettingDashboardWhereUniqueInput!): APISettingDashboard
-  deleteManyAPISettingDashboards(where: APISettingDashboardWhereInput): BatchPayload!
+  createAPIService(data: APIServiceCreateInput!): APIService!
+  updateAPIService(data: APIServiceUpdateInput!, where: APIServiceWhereUniqueInput!): APIService
+  updateManyAPIServices(data: APIServiceUpdateManyMutationInput!, where: APIServiceWhereInput): BatchPayload!
+  upsertAPIService(where: APIServiceWhereUniqueInput!, create: APIServiceCreateInput!, update: APIServiceUpdateInput!): APIService!
+  deleteAPIService(where: APIServiceWhereUniqueInput!): APIService
+  deleteManyAPIServices(where: APIServiceWhereInput): BatchPayload!
+  createAPIServiceSettings(data: APIServiceSettingsCreateInput!): APIServiceSettings!
+  updateAPIServiceSettings(data: APIServiceSettingsUpdateInput!, where: APIServiceSettingsWhereUniqueInput!): APIServiceSettings
+  updateManyAPIServiceSettingses(data: APIServiceSettingsUpdateManyMutationInput!, where: APIServiceSettingsWhereInput): BatchPayload!
+  upsertAPIServiceSettings(where: APIServiceSettingsWhereUniqueInput!, create: APIServiceSettingsCreateInput!, update: APIServiceSettingsUpdateInput!): APIServiceSettings!
+  deleteAPIServiceSettings(where: APIServiceSettingsWhereUniqueInput!): APIServiceSettings
+  deleteManyAPIServiceSettingses(where: APIServiceSettingsWhereInput): BatchPayload!
   createChannel(data: ChannelCreateInput!): Channel!
   updateChannel(data: ChannelUpdateInput!, where: ChannelWhereUniqueInput!): Channel
   updateManyChannels(data: ChannelUpdateManyMutationInput!, where: ChannelWhereInput): BatchPayload!
@@ -3434,12 +3641,12 @@ input ProductWhereUniqueInput {
 }
 
 type Query {
-  aPIDashboard(where: APIDashboardWhereUniqueInput!): APIDashboard
-  aPIDashboards(where: APIDashboardWhereInput, orderBy: APIDashboardOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [APIDashboard]!
-  aPIDashboardsConnection(where: APIDashboardWhereInput, orderBy: APIDashboardOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): APIDashboardConnection!
-  aPISettingDashboard(where: APISettingDashboardWhereUniqueInput!): APISettingDashboard
-  aPISettingDashboards(where: APISettingDashboardWhereInput, orderBy: APISettingDashboardOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [APISettingDashboard]!
-  aPISettingDashboardsConnection(where: APISettingDashboardWhereInput, orderBy: APISettingDashboardOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): APISettingDashboardConnection!
+  aPIService(where: APIServiceWhereUniqueInput!): APIService
+  aPIServices(where: APIServiceWhereInput, orderBy: APIServiceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [APIService]!
+  aPIServicesConnection(where: APIServiceWhereInput, orderBy: APIServiceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): APIServiceConnection!
+  aPIServiceSettings(where: APIServiceSettingsWhereUniqueInput!): APIServiceSettings
+  aPIServiceSettingses(where: APIServiceSettingsWhereInput, orderBy: APIServiceSettingsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [APIServiceSettings]!
+  aPIServiceSettingsesConnection(where: APIServiceSettingsWhereInput, orderBy: APIServiceSettingsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): APIServiceSettingsConnection!
   channel(where: ChannelWhereUniqueInput!): Channel
   channels(where: ChannelWhereInput, orderBy: ChannelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Channel]!
   channelsConnection(where: ChannelWhereInput, orderBy: ChannelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ChannelConnection!
@@ -3619,8 +3826,8 @@ input RatingWhereUniqueInput {
 }
 
 type Subscription {
-  aPIDashboard(where: APIDashboardSubscriptionWhereInput): APIDashboardSubscriptionPayload
-  aPISettingDashboard(where: APISettingDashboardSubscriptionWhereInput): APISettingDashboardSubscriptionPayload
+  aPIService(where: APIServiceSubscriptionWhereInput): APIServiceSubscriptionPayload
+  aPIServiceSettings(where: APIServiceSettingsSubscriptionWhereInput): APIServiceSettingsSubscriptionPayload
   channel(where: ChannelSubscriptionWhereInput): ChannelSubscriptionPayload
   comment(where: CommentSubscriptionWhereInput): CommentSubscriptionPayload
   commentAPI(where: CommentAPISubscriptionWhereInput): CommentAPISubscriptionPayload
@@ -4486,6 +4693,7 @@ type User {
   updatedAt: DateTime!
   role: UserRole!
   teams(where: TeamWhereInput, orderBy: TeamOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Team!]
+  api_services(where: APIServiceWhereInput, orderBy: APIServiceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [APIService!]
   channels(where: ChannelWhereInput, orderBy: ChannelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Channel!]
   owned_teams(where: TeamWhereInput, orderBy: TeamOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Team!]
   owned_channels(where: ChannelWhereInput, orderBy: ChannelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Channel!]
@@ -4517,6 +4725,7 @@ input UserCreateInput {
   friend_requests: UserCreateManyWithoutFriend_requestsInput
   role: UserRole!
   teams: TeamCreateManyWithoutMembersInput
+  api_services: APIServiceCreateManyWithoutOwnerInput
   channels: ChannelCreateManyWithoutMembersInput
   owned_teams: TeamCreateManyWithoutAuthorInput
   owned_channels: ChannelCreateManyWithoutAuthorInput
@@ -4557,6 +4766,11 @@ input UserCreateOneInput {
   connect: UserWhereUniqueInput
 }
 
+input UserCreateOneWithoutApi_servicesInput {
+  create: UserCreateWithoutApi_servicesInput
+  connect: UserWhereUniqueInput
+}
+
 input UserCreateOneWithoutOwned_channelsInput {
   create: UserCreateWithoutOwned_channelsInput
   connect: UserWhereUniqueInput
@@ -4565,6 +4779,31 @@ input UserCreateOneWithoutOwned_channelsInput {
 input UserCreateOneWithoutOwned_teamsInput {
   create: UserCreateWithoutOwned_teamsInput
   connect: UserWhereUniqueInput
+}
+
+input UserCreateWithoutApi_servicesInput {
+  email: String
+  notifications: NotificationCreateManyInput
+  set_private: Boolean
+  username: String!
+  password: String!
+  gitHubId: ID
+  facebookId: ID
+  twitterId: ID
+  gmailId: String
+  directMessages: CommentCreateManyInput
+  avatar_url: FileCreateOneInput!
+  private: Boolean
+  blockedUsers: UserCreateManyWithoutBlockedUsersInput
+  confirmed: Boolean
+  online: Boolean
+  friends: UserCreateManyWithoutFriendsInput
+  friend_requests: UserCreateManyWithoutFriend_requestsInput
+  role: UserRole!
+  teams: TeamCreateManyWithoutMembersInput
+  channels: ChannelCreateManyWithoutMembersInput
+  owned_teams: TeamCreateManyWithoutAuthorInput
+  owned_channels: ChannelCreateManyWithoutAuthorInput
 }
 
 input UserCreateWithoutBlockedUsersInput {
@@ -4586,6 +4825,7 @@ input UserCreateWithoutBlockedUsersInput {
   friend_requests: UserCreateManyWithoutFriend_requestsInput
   role: UserRole!
   teams: TeamCreateManyWithoutMembersInput
+  api_services: APIServiceCreateManyWithoutOwnerInput
   channels: ChannelCreateManyWithoutMembersInput
   owned_teams: TeamCreateManyWithoutAuthorInput
   owned_channels: ChannelCreateManyWithoutAuthorInput
@@ -4611,6 +4851,7 @@ input UserCreateWithoutChannelsInput {
   friend_requests: UserCreateManyWithoutFriend_requestsInput
   role: UserRole!
   teams: TeamCreateManyWithoutMembersInput
+  api_services: APIServiceCreateManyWithoutOwnerInput
   owned_teams: TeamCreateManyWithoutAuthorInput
   owned_channels: ChannelCreateManyWithoutAuthorInput
 }
@@ -4634,6 +4875,7 @@ input UserCreateWithoutFriend_requestsInput {
   friends: UserCreateManyWithoutFriendsInput
   role: UserRole!
   teams: TeamCreateManyWithoutMembersInput
+  api_services: APIServiceCreateManyWithoutOwnerInput
   channels: ChannelCreateManyWithoutMembersInput
   owned_teams: TeamCreateManyWithoutAuthorInput
   owned_channels: ChannelCreateManyWithoutAuthorInput
@@ -4658,6 +4900,7 @@ input UserCreateWithoutFriendsInput {
   friend_requests: UserCreateManyWithoutFriend_requestsInput
   role: UserRole!
   teams: TeamCreateManyWithoutMembersInput
+  api_services: APIServiceCreateManyWithoutOwnerInput
   channels: ChannelCreateManyWithoutMembersInput
   owned_teams: TeamCreateManyWithoutAuthorInput
   owned_channels: ChannelCreateManyWithoutAuthorInput
@@ -4683,6 +4926,7 @@ input UserCreateWithoutOwned_channelsInput {
   friend_requests: UserCreateManyWithoutFriend_requestsInput
   role: UserRole!
   teams: TeamCreateManyWithoutMembersInput
+  api_services: APIServiceCreateManyWithoutOwnerInput
   channels: ChannelCreateManyWithoutMembersInput
   owned_teams: TeamCreateManyWithoutAuthorInput
 }
@@ -4707,6 +4951,7 @@ input UserCreateWithoutOwned_teamsInput {
   friend_requests: UserCreateManyWithoutFriend_requestsInput
   role: UserRole!
   teams: TeamCreateManyWithoutMembersInput
+  api_services: APIServiceCreateManyWithoutOwnerInput
   channels: ChannelCreateManyWithoutMembersInput
   owned_channels: ChannelCreateManyWithoutAuthorInput
 }
@@ -4730,6 +4975,7 @@ input UserCreateWithoutTeamsInput {
   friends: UserCreateManyWithoutFriendsInput
   friend_requests: UserCreateManyWithoutFriend_requestsInput
   role: UserRole!
+  api_services: APIServiceCreateManyWithoutOwnerInput
   channels: ChannelCreateManyWithoutMembersInput
   owned_teams: TeamCreateManyWithoutAuthorInput
   owned_channels: ChannelCreateManyWithoutAuthorInput
@@ -4981,6 +5227,7 @@ input UserUpdateDataInput {
   friend_requests: UserUpdateManyWithoutFriend_requestsInput
   role: UserRole
   teams: TeamUpdateManyWithoutMembersInput
+  api_services: APIServiceUpdateManyWithoutOwnerInput
   channels: ChannelUpdateManyWithoutMembersInput
   owned_teams: TeamUpdateManyWithoutAuthorInput
   owned_channels: ChannelUpdateManyWithoutAuthorInput
@@ -5006,6 +5253,7 @@ input UserUpdateInput {
   friend_requests: UserUpdateManyWithoutFriend_requestsInput
   role: UserRole
   teams: TeamUpdateManyWithoutMembersInput
+  api_services: APIServiceUpdateManyWithoutOwnerInput
   channels: ChannelUpdateManyWithoutMembersInput
   owned_teams: TeamUpdateManyWithoutAuthorInput
   owned_channels: ChannelUpdateManyWithoutAuthorInput
@@ -5134,6 +5382,13 @@ input UserUpdateOneRequiredInput {
   connect: UserWhereUniqueInput
 }
 
+input UserUpdateOneRequiredWithoutApi_servicesInput {
+  create: UserCreateWithoutApi_servicesInput
+  update: UserUpdateWithoutApi_servicesDataInput
+  upsert: UserUpsertWithoutApi_servicesInput
+  connect: UserWhereUniqueInput
+}
+
 input UserUpdateOneRequiredWithoutOwned_channelsInput {
   create: UserCreateWithoutOwned_channelsInput
   update: UserUpdateWithoutOwned_channelsDataInput
@@ -5146,6 +5401,31 @@ input UserUpdateOneRequiredWithoutOwned_teamsInput {
   update: UserUpdateWithoutOwned_teamsDataInput
   upsert: UserUpsertWithoutOwned_teamsInput
   connect: UserWhereUniqueInput
+}
+
+input UserUpdateWithoutApi_servicesDataInput {
+  email: String
+  notifications: NotificationUpdateManyInput
+  set_private: Boolean
+  username: String
+  password: String
+  gitHubId: ID
+  facebookId: ID
+  twitterId: ID
+  gmailId: String
+  directMessages: CommentUpdateManyInput
+  avatar_url: FileUpdateOneRequiredInput
+  private: Boolean
+  blockedUsers: UserUpdateManyWithoutBlockedUsersInput
+  confirmed: Boolean
+  online: Boolean
+  friends: UserUpdateManyWithoutFriendsInput
+  friend_requests: UserUpdateManyWithoutFriend_requestsInput
+  role: UserRole
+  teams: TeamUpdateManyWithoutMembersInput
+  channels: ChannelUpdateManyWithoutMembersInput
+  owned_teams: TeamUpdateManyWithoutAuthorInput
+  owned_channels: ChannelUpdateManyWithoutAuthorInput
 }
 
 input UserUpdateWithoutBlockedUsersDataInput {
@@ -5167,6 +5447,7 @@ input UserUpdateWithoutBlockedUsersDataInput {
   friend_requests: UserUpdateManyWithoutFriend_requestsInput
   role: UserRole
   teams: TeamUpdateManyWithoutMembersInput
+  api_services: APIServiceUpdateManyWithoutOwnerInput
   channels: ChannelUpdateManyWithoutMembersInput
   owned_teams: TeamUpdateManyWithoutAuthorInput
   owned_channels: ChannelUpdateManyWithoutAuthorInput
@@ -5192,6 +5473,7 @@ input UserUpdateWithoutChannelsDataInput {
   friend_requests: UserUpdateManyWithoutFriend_requestsInput
   role: UserRole
   teams: TeamUpdateManyWithoutMembersInput
+  api_services: APIServiceUpdateManyWithoutOwnerInput
   owned_teams: TeamUpdateManyWithoutAuthorInput
   owned_channels: ChannelUpdateManyWithoutAuthorInput
 }
@@ -5215,6 +5497,7 @@ input UserUpdateWithoutFriend_requestsDataInput {
   friends: UserUpdateManyWithoutFriendsInput
   role: UserRole
   teams: TeamUpdateManyWithoutMembersInput
+  api_services: APIServiceUpdateManyWithoutOwnerInput
   channels: ChannelUpdateManyWithoutMembersInput
   owned_teams: TeamUpdateManyWithoutAuthorInput
   owned_channels: ChannelUpdateManyWithoutAuthorInput
@@ -5239,6 +5522,7 @@ input UserUpdateWithoutFriendsDataInput {
   friend_requests: UserUpdateManyWithoutFriend_requestsInput
   role: UserRole
   teams: TeamUpdateManyWithoutMembersInput
+  api_services: APIServiceUpdateManyWithoutOwnerInput
   channels: ChannelUpdateManyWithoutMembersInput
   owned_teams: TeamUpdateManyWithoutAuthorInput
   owned_channels: ChannelUpdateManyWithoutAuthorInput
@@ -5264,6 +5548,7 @@ input UserUpdateWithoutOwned_channelsDataInput {
   friend_requests: UserUpdateManyWithoutFriend_requestsInput
   role: UserRole
   teams: TeamUpdateManyWithoutMembersInput
+  api_services: APIServiceUpdateManyWithoutOwnerInput
   channels: ChannelUpdateManyWithoutMembersInput
   owned_teams: TeamUpdateManyWithoutAuthorInput
 }
@@ -5288,6 +5573,7 @@ input UserUpdateWithoutOwned_teamsDataInput {
   friend_requests: UserUpdateManyWithoutFriend_requestsInput
   role: UserRole
   teams: TeamUpdateManyWithoutMembersInput
+  api_services: APIServiceUpdateManyWithoutOwnerInput
   channels: ChannelUpdateManyWithoutMembersInput
   owned_channels: ChannelUpdateManyWithoutAuthorInput
 }
@@ -5311,6 +5597,7 @@ input UserUpdateWithoutTeamsDataInput {
   friends: UserUpdateManyWithoutFriendsInput
   friend_requests: UserUpdateManyWithoutFriend_requestsInput
   role: UserRole
+  api_services: APIServiceUpdateManyWithoutOwnerInput
   channels: ChannelUpdateManyWithoutMembersInput
   owned_teams: TeamUpdateManyWithoutAuthorInput
   owned_channels: ChannelUpdateManyWithoutAuthorInput
@@ -5349,6 +5636,11 @@ input UserUpdateWithWhereUniqueWithoutTeamsInput {
 input UserUpsertNestedInput {
   update: UserUpdateDataInput!
   create: UserCreateInput!
+}
+
+input UserUpsertWithoutApi_servicesInput {
+  update: UserUpdateWithoutApi_servicesDataInput!
+  create: UserCreateWithoutApi_servicesInput!
 }
 
 input UserUpsertWithoutOwned_channelsInput {
@@ -5557,6 +5849,9 @@ input UserWhereInput {
   teams_every: TeamWhereInput
   teams_some: TeamWhereInput
   teams_none: TeamWhereInput
+  api_services_every: APIServiceWhereInput
+  api_services_some: APIServiceWhereInput
+  api_services_none: APIServiceWhereInput
   channels_every: ChannelWhereInput
   channels_some: ChannelWhereInput
   channels_none: ChannelWhereInput

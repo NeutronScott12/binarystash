@@ -10,7 +10,7 @@
         "start": "cross-env NODE_ENV=production && nodemon",
         "dev": "cross-env NODE_ENV=development && npm-run-all --parallel start playground",
         "debug": "dotenv -- nodemon -e ts,graphql -x ts-node --inspect src/index.ts",
-        "playground": "npx graphql playground",
+        "playground": "graphql playground",
         "copy-graphql": "npx copyfiles -u 1 src/**/*.graphql dist",
         "delete-build": "rimraf ./dist",
         "build": "cross-env npm run delete-build && tsc && npm run copy-graphql",
